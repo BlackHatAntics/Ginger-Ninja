@@ -63,3 +63,28 @@ void Ginger::SetMoveLeft(bool z)
 	MoveLeft = z;
 }
 
+bool Ginger::GetMoveRight()
+{
+	return MoveRight;
+}
+
+bool Ginger::GetMoveLeft()
+{
+	return MoveLeft;
+}
+
+int Ginger::GetSpeed()
+{
+	return speed;
+}
+
+int Ginger::GetX()
+{
+	return x;
+}
+
+int Ginger::GetY()
+{
+	return y;
+}
+

@@ -37,6 +37,11 @@ void Game::Go()
 	gfx.EndFrame();
 }
 
+	//Fix:
+
+	//Add:
+//Make the screen move with you
+
 void Game::UserMovement()
 {
 	if (wnd.kbd.KeyIsPressed(0x44)) //"d"
@@ -58,14 +63,42 @@ void Game::UserMovement()
 	}
 }
 
+void Game::MoveScreen()
+{
+	if (gin0.GetX() + 19 > 424 && gin0.GetMoveRight() == true)
+	{
+		ScreenPoint += gin0.GetSpeed();
+	}
+	if (gin0.GetX() < 374 && gin0.GetMoveLeft() == true) 
+	{
+		ScreenPoint -= gin0.GetSpeed();
+	}
+
+	if (ScreenPoint < 0)
+	{
+		ScreenPoint = 0;
+	}
+	if (ScreenPoint > RoomWidth)
+	{
+		ScreenPoint = RoomWidth;
+	}
+}
+
+void Game::DrawBullshit()
+{
+	gfx.PutPixel(255 + ScreenPoint, 255, Colors::White);
+}
+
 void Game::UpdateModel()
 {
 	UserMovement();
 	gin0.Movement();
 	gin0.EyeLogic();
+	MoveScreen();
 }
 
 void Game::ComposeFrame()
 {
 	gin0.Draw(gfx, Colors::Orange2, Colors::Pasty);
+	DrawBullshit();
 }
