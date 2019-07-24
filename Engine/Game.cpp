@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	gin0(50, 500)
+	gin0(50, 500, 3)
 {
 }
 
@@ -39,7 +39,7 @@ void Game::Go()
 
 void Game::UserMovement()
 {
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+	if (wnd.kbd.KeyIsPressed(0x44)) //"d"
 	{
 		gin0.SetMoveRight(true);
 	}
@@ -48,7 +48,7 @@ void Game::UserMovement()
 		gin0.SetMoveRight(false);
 	}
 
-	if (wnd.kbd.KeyIsPressed(VK_LEFT))
+	if (wnd.kbd.KeyIsPressed(0x41)) //"a"
 	{
 		gin0.SetMoveLeft(true);
 	}
@@ -62,6 +62,7 @@ void Game::UpdateModel()
 {
 	UserMovement();
 	gin0.Movement();
+	gin0.EyeLogic();
 }
 
 void Game::ComposeFrame()

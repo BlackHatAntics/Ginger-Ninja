@@ -24,25 +24,33 @@ void Ginger::Draw(Graphics& gfx, Color h, Color b)
 	{
 		for (int loopy = 0; loopy <= 4; loopy++)
 		{
-			gfx.PutPixel(x + 1 + loopx, y + (6 + 2) + loopy, Colors::Blue2);
+			gfx.PutPixel(x + eye + loopx, y + (6 + 2) + loopy, Colors::Blue2);
 		}
 	}
 }
 
 void Ginger::EyeLogic()
 {
-
+	//Maybe just put this inside Movement
+	if (MoveRight && !MoveLeft)
+	{
+		eye = 15;
+	}
+	if (MoveLeft && !MoveRight)
+	{
+		eye = 1;
+	}
 }
 
 void Ginger::Movement()
 {
 	if (MoveRight)
 	{
-		x++;
+		x += speed;
 	}
 	if (MoveLeft)
 	{
-		x--;
+		x -= speed;
 	}
 }
 
@@ -54,5 +62,4 @@ void Ginger::SetMoveLeft(bool z)
 {
 	MoveLeft = z;
 }
-
 
