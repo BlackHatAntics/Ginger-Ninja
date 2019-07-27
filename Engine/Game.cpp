@@ -40,7 +40,7 @@ void Game::Go()
 	//Fix:
 
 	//Add:
-//Make the screen move with you
+//Remove screen scrolling.
 
 void Game::UserMovement()
 {
@@ -61,49 +61,19 @@ void Game::UserMovement()
 	{
 		gin0.SetMoveLeft(false);
 	}
-
-	//His movement is stopped in MoveScreen()
-}
-
-void Game::MoveScreen()
-{
-	//Screenpoint is just where the screen is right now. Think of it as an invisible dot on the left edge of the screen. Whenever you move past the midpoint of the screen, you stop moving, 
-	//and move the ScreenPoint instead. This does nothing on it's own, except you have each item's location set in accordance with the position of ScreenPoint
-	//So for example you would draw EVERY item set to "x + ScreenPoint", so whenever you move the ScreenPoint, everything else moves too. Creates the illusion of your character walking
-
-	if (gin0.GetX() + 19 > 414 && gin0.GetMoveRight() == true)
-	{
-		ScreenPoint += gin0.GetSpeed();
-		gin0.SetMoveRight(false);
-	}
-	if (gin0.GetX() < 384 && gin0.GetMoveLeft() == true)
-	{
-		ScreenPoint -= gin0.GetSpeed();
-		gin0.SetMoveLeft(false); //Stop you from moving, and will always be back on for next frame from UserMovement 
-	}
-
-	if (ScreenPoint < 0) //if it's at the left edge of the room
-	{
-		ScreenPoint = 0;
-		gin0.SetMoveLeft(true); //Re-activates movement once you hit the edge of the room
-	}
-	if (ScreenPoint > RoomWidth) //if you get to the right edge of the room
-	{
-		ScreenPoint = RoomWidth;
-		gin0.SetMoveRight(true);
-	}
-
 }
 
 void Game::DrawBullshit()
 {
-	gfx.PutPixel(255 + ScreenPoint, 255, Colors::White);
+	for (int loopx = 0; loopx <= 70; loopx++)
+	{
+		gfx.PutPixel(255 + loopx, 255, Colors::White);
+	}
 }
 
 void Game::UpdateModel()
 {
 	UserMovement();
-	MoveScreen();
 	gin0.Movement();
 	gin0.EyeLogic();
 }

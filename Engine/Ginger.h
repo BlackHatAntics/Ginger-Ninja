@@ -18,11 +18,11 @@ public:
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
-	bool GetMoveRight();
-	bool GetMoveLeft();
-	int GetSpeed();
-	int GetX();
-	int GetY();
+	//bool GetMoveRight();
+	//bool GetMoveLeft();
+	//int GetSpeed();
+	//int GetX();
+	//int GetY();
 private:
 	int x;
 	int y;

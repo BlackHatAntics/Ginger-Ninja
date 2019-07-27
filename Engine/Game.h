@@ -38,7 +38,6 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void UserMovement();
-	void MoveScreen();
 	void DrawBullshit();
 	/********************************/
 private:
@@ -47,7 +46,5 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Ginger gin0;
-	int ScreenPoint = 0;
-	int RoomWidth = 1000;
 	/********************************/
 };
