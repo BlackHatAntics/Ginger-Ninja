@@ -39,12 +39,14 @@ private:
 	/*  User Functions              */
 	void UserMovement();
 	void DrawBullshit();
+	void Ground(int x, int y, int w);
+	void Screen1();
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Ginger gin0;
+	Ginger gin[2];
 	/********************************/
 };
