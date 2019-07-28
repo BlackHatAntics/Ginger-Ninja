@@ -39,7 +39,7 @@ void Game::Go()
 }
 
 	//Fix:
-//Stop yourself from being able to jump after walking off a ledge
+//Stop yourself from being able to double-jump (or jump after walking off a ledge)
 //Figure out why you can get up onto the platform, even though it's above your jump height
 
 	//Add:
@@ -86,26 +86,6 @@ void Game::UserMovement()
 	}
 }
 
-void Game::DrawBullshit()
-{
-//	for (int loopx = 0; loopx <= 320; loopx++) //ground left
-//	{
-//		gfx.PutPixel(0 + loopx, 450, Colors::White);
-//	}
-	for (int loopy = 0; loopy <= 80; loopy++) //wall
-	{
-		gfx.PutPixel(320, 450 + loopy, Colors::White);
-	}
-//	for (int loopx = 0; loopx <= (799-320); loopx++) //ground low
-//	{
-//		gfx.PutPixel(320 + loopx, 530, Colors::White);
-//	}
-//	for (int loopx = 0; loopx <= (799 - 410); loopx++) //ground right
-//	{
-//		gfx.PutPixel(410 + loopx, 450, Colors::White);
-//	}
-}
-
 void Game::Ground(int x, int y, int w)
 {
 	for (int loopx = 0; loopx <= w; loopx++)
@@ -135,29 +115,54 @@ void Game::Ground(int x, int y, int w)
 	}
 }
 
+void Game::Wall(int x, int y, int h)
+{
+	for (int loopy = 0; loopy <= h; loopy++)
+	{
+		gfx.PutPixel(x, y + loopy, Colors::White);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		if (gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y)
+		{
+			if (gin[i].GetDX() + gin[i].GetW() <= x && gin[i].GetX() + gin[i].GetW() > x)
+			{
+				//you hit the wall on the left side
+				gin[i].HitWall(x - gin[i].GetW());
+			}
+			else if (gin[i].GetDX() >= x && gin[i].GetX() < x)
+			{
+				//you hit the wall on the right side
+				gin[i].HitWall(x);
+			}
+		}
+	}
+}
+
 void Game::Screen1()
 {
 	//Maybe split this shit up into drawing code, and logic code
+	//Also, maybe have this shit as an array, so you can easily set it to "Screen[3]" and back
 	Ground(0, 450, 320); //Left
 	Ground(320, 530, 799-320); //Low
 	Ground(410, 450, 799 - 410); //Right
+	Wall(320, 450, 80); //The only fucking wall
+	Wall(500, 400, 40); //Nevermind, I added a test wall in the middle of everything, to see if it works on both sides.
 }
 
 void Game::UpdateModel()
 {
 
 	UserMovement();
+	gin[0].Delta(); //Keep before Gravity && Movement
 	gin[0].Movement();
 	gin[0].EyeLogic();
 	gin[0].Jump();
-	gin[0].DeltaY(); //Keep before Gravity
 	gin[0].Gravity(); //Keep 2nd last
 	Screen1(); //Keep last
 }
 
 void Game::ComposeFrame()
 {
-	DrawBullshit();
-	gin[0].Draw(gfx, Colors::Orange2, Colors::Magenta);
-	
+	gin[0].Draw(gfx, Colors::Orange2, Colors::Burnt);
 }

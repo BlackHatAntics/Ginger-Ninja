@@ -102,10 +102,17 @@ void Ginger::HitGround(int py)
 	y = py - w - 1;
 }
 
-void Ginger::DeltaY()
+void Ginger::Delta()
 {
 	//Just keeping track of previous y position, so you can land on platforms if you were above them in the previous frame
+	//X pos is so you can tell which side you're hitting the wall from
 	dy = y;
+	dx = x;
+}
+
+void Ginger::HitWall(int wx)
+{
+	x = wx;
 }
 
 void Ginger::SetMoveRight(bool z)
@@ -133,7 +140,6 @@ bool Ginger::GetJumpLock()
 {
 	return JumpLock;
 }
-
 int Ginger::GetW()
 {
 	return w;
@@ -157,6 +163,10 @@ int Ginger::GetX()
 int Ginger::GetY()
 {
 	return y;
+}
+int Ginger::GetDX()
+{
+	return dx;
 }
 int Ginger::GetDY()
 {

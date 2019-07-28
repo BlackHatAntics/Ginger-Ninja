@@ -19,7 +19,8 @@ public:
 	void Jump();
 	void Gravity();
 	void HitGround(int py);
-	void DeltaY();
+	void Delta();
+	void HitWall(int wx);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -33,6 +34,7 @@ public:
 	//int GetSpeed();
 	int GetX();
 	int GetY();
+	int GetDX();
 	int GetDY();
 private:
 	int x;
@@ -43,6 +45,7 @@ private:
 	int jh = 17; //jump height
 	int fh = 1; //fall height?
 	int dy; //Delta Y
+	int dx; //Delta X
 	bool MoveRight = false;
 	bool MoveLeft = false;
 	bool isJumping = false;
