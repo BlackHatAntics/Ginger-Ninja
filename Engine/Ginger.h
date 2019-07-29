@@ -15,13 +15,14 @@ public:
 	void Init(int in_x, int in_y, int in_speed);
 	void Draw(Graphics& gfx, Color h, Color b);
 	void EyeLogic();
-	void Movement();
+	void Movement(bool kbdD);
 	void Jump();
 	void Gravity();
 	void HitGround(int py);
-	void HitWall(int wx);
+	void HitWall(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
+	void WallJump(bool UP);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -40,11 +41,13 @@ public:
 private:
 	int x;
 	int y;
-	int w = 20;
+	const int w = 20;
 	int speed;
 	int eye = 15;
 	const int JumpHeight = 17;
 	int jh = JumpHeight; //jump height
+	const int WallJumpHeight = JumpHeight /*/ 1.5*/; //Remember to make sure this works out to be an odd number
+	int wjh = WallJumpHeight;
 	int fh = 1; //fall height?
 	int dy; //Delta Y
 	int dx; //Delta X
@@ -53,4 +56,9 @@ private:
 	bool isJumping = false;
 	bool isFalling = false;
 	bool JumpLock = false;
+	bool WallJumpLock = true;
+	bool isWallJumping = false;
+	bool HitWallLeft = false;
+	bool HitWallRight = false;
+//	bool OnWall = false;
 };

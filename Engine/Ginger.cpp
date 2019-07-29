@@ -49,7 +49,7 @@ void Ginger::EyeLogic()
 	}
 }
 
-void Ginger::Movement()
+void Ginger::Movement(bool kbdD)
 {
 	if (MoveRight)
 	{
@@ -58,6 +58,10 @@ void Ginger::Movement()
 	if (MoveLeft)
 	{
 		x -= speed;
+	}
+	if (kbdD)
+	{
+		y += speed;
 	}
 }
 
@@ -80,16 +84,13 @@ void Ginger::Jump()
 			jh = JumpHeight;
 			isJumping = false;
 		}
-
 	}
-
-
 }
 
 void Ginger::Gravity()
 {
 	//Maybe keep this last in load order?
-	if (!isJumping && isFalling)
+	if (isFalling && !isJumping && !isWallJumping)
 	{
 		y += fh;
 		fh += 2;
@@ -115,9 +116,65 @@ void Ginger::Delta()
 	dx = x;
 }
 
-void Ginger::HitWall(int wx)
+void Ginger::WallJump(bool UP)
 {
-	x = wx;
+	//I figured out the reason this isn't working, but I'm going to bed: Your guy is actually past the wall when it does this check, because his x value hasn't been adjusted yet by Screen1() due to load order.
+	//This ^ only applies to the commented-out part
+	if (isWallJumping)
+	{
+		isJumping = false;
+		jh = JumpHeight;
+		if (HitWallLeft)
+		{
+			x += wjh;
+		}
+		else if (HitWallRight)
+		{
+			x -= wjh;
+		}
+		y -= wjh;
+		wjh -= 2;
+		if (wjh < 0)
+		{
+			wjh = WallJumpHeight;
+			isWallJumping = false;
+		}
+	}
+}
+
+void Ginger::HitWall(int wx, bool UP)
+{
+	//Setting it up so WallJump knows which way to alter your x value
+	if (x > wx)
+	{
+		HitWallRight = true;
+		HitWallLeft = false;
+	}
+	else if (x < wx)
+	{
+		HitWallLeft = true;
+		HitWallRight = false;
+	}
+	x = wx; //Stopping you from going through the wall
+
+	//Setting you up for WallJump
+	if (UP == false && y < dy) //If you are touching the wall (this is true because code is inside HitWall), and you have released the w key, and you are moving upwards, THEN you are ready to wall jump
+	{
+		WallJumpLock = false;
+	}
+	else if (y == dy) //Just making sure if you slide all the way down the wall to the ground, it will re-disable wall jump
+	{
+		WallJumpLock = true;
+	}
+
+	if (UP == true && WallJumpLock == false /*&& y < dy*/) //If you press w again, after having it off for at least 1 frame. (So you can't just hold w down, you have to time it)
+	{
+		isWallJumping = true;
+		fh = 1; //Resetting gravity
+		WallJumpLock = true;
+
+		wjh = WallJumpHeight; //Resetting it, so you can chain jumps along walls
+	}
 }
 
 void Ginger::HitCeiling(int py)

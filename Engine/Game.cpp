@@ -39,18 +39,19 @@ void Game::Go()
 }
 
 	//Fix:
+//Stop yourself from bouncing off a wall after a wall jump (basically find a way to stop/reset wall jump if you hit the other wall)
+//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom
+//Figure out why you can't chain your wall jumps (or at least, why it's near-impossible)
 //Clean up your all-over-the-place jump code
 
 	//Currently working on:
 //Wall jump
 
 	//Add:
-//Ceiling functionality
-//Colour code platforms based off of whether you can pass through the bottom or not. (or just draw them thicker). But then you gotta have them act as a wall too
 //Implement a wall hop (Should reset double-jump if pulled off?) Should throw you out at an angle, so it's difficult/impossible to climb a single wall
 //Implement a double-jump
-//Make your movement less effective when you're in the air
-// ?See how to call keyboard in other classes besides Game.
+//Make your movement less effective when you're in the air?
+//See how to call keyboard in other classes besides Game. NO WAY I FIGURED IT OUT. Okay, now implement it
 
 void Game::UserMovement()
 {
@@ -85,9 +86,9 @@ void Game::UserMovement()
 		gin[0].SetJumpLock(false);
 	}
 
-	if (wnd.kbd.KeyIsPressed(0x53)) //"s" //s only does something in Platform() function rn
-	{
-	}
+//	if (wnd.kbd.KeyIsPressed(0x53)) //"s" //s only does something in Platform() function rn
+//	{
+//	}
 }
 
 void Game::Ground(int x, int y, int w)
@@ -140,12 +141,12 @@ void Game::Wall(int x, int y, int h)
 			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
 				//you hit the wall on the left side
-				gin[i].HitWall(x - gin[i].GetW() - 1);
+				gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
 			}
 			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
 			{
 				//you hit the wall on the right side
-				gin[i].HitWall(x + 1);
+				gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
 			}
 		}
 	}
@@ -159,6 +160,8 @@ void Game::Screen1()
 	Wall(320, 450, 80); //The only fucking wall
 	Wall(500, 400, 40); //Nevermind, I added a test wall in the middle of everything, to see if it works on both sides.
 	Wall(410, 450, 0); //Setting it so you can't pass through the side of the ground (Right platform)
+	Wall(49, 450-200, 200);
+	Wall(109, 450 - 200, 200);
 	Platform(600, 375, 100);
 	Ground(0, 450, 320); //Left
 	Ground(320, 530, 799 - 320); //Low
@@ -170,9 +173,10 @@ void Game::UpdateModel()
 
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
-	gin[0].Movement();
+	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
 	gin[0].EyeLogic();
 	gin[0].Jump();
+	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Gravity(); //Keep 2nd last
 	Screen1(); //Keep last
 }
