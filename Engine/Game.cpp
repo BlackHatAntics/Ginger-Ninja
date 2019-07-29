@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd )
 //	gin[0](50, 450 - 21, 3)
 {
-	gin[0].Init(50, 450 - 21 -10, 3);
+	gin[0].Init(50, 450 - 21 - 10, 3);
 }
 
 void Game::Go()
@@ -39,14 +39,15 @@ void Game::Go()
 }
 
 	//Fix:
-//Stop yourself from being able to double-jump (or jump after walking off a ledge)
-//Figure out why you can get up onto the platform, even though it's above your jump height
+//Clean up your all-over-the-place jump code
 
 	//Add:
 //Ceiling functionality
-//Wall functionality
 //Colour code platforms based off of whether you can pass through the bottom or not. (or just draw them thicker). But then you gotta have them act as a wall too
-//?See how to call keyboard in other classes besides Game. Check the snake video
+//Implement a wall hop (Should reset double-jump if pulled off?) Should throw you out at an angle, so it's difficult/impossible to climb a single wall
+//Implement a double-jump 
+//Make your movement less effective when you're in the air
+// ?See how to call keyboard in other classes besides Game. Check the snake video
 
 void Game::UserMovement()
 {
@@ -70,7 +71,7 @@ void Game::UserMovement()
 	}
 
 	//Jump
-	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpLock() == false) //"w"
+	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpLock() == false && gin[0].GetY() <= gin[0].GetDY()) //"w" //If dy is greater than y it means he is moving upwards, if it's equal he's obviously standing. This prevents you from jumping while falling
 	{
 		gin[0].SetJumping(true);
 		gin[0].SetJumpLock(true); //Find a way to do this in Ginger.cpp? This is kinda shit code rn
@@ -97,20 +98,6 @@ void Game::Ground(int x, int y, int w)
 		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() <= y && gin[i].GetY() + gin[i].GetW() >= y)
 		{
 			gin[i].HitGround(y);
-			//Just temporarily writing it this way for testing purposes
-			//if (gin[i].GetX() + gin[i].GetW() > x)
-			//{
-			//	if (gin[i].GetX() < x + w)
-			//	{
-			//		if (gin[i].GetDY() + gin[i].GetW() <= y)
-			//		{
-			//			if (gin[i].GetY() + gin[i].GetW() >= y)
-			//			{
-			//				gin[i].HitGround(y);
-			//			}
-			//		}
-			//	}
-			//}
 		}
 	}
 }
@@ -125,15 +112,15 @@ void Game::Wall(int x, int y, int h)
 	{
 		if (gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y)
 		{
-			if (gin[i].GetDX() + gin[i].GetW() <= x && gin[i].GetX() + gin[i].GetW() > x)
+			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
 				//you hit the wall on the left side
-				gin[i].HitWall(x - gin[i].GetW());
+				gin[i].HitWall(x - gin[i].GetW() - 1);
 			}
-			else if (gin[i].GetDX() >= x && gin[i].GetX() < x)
+			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
 			{
 				//you hit the wall on the right side
-				gin[i].HitWall(x);
+				gin[i].HitWall(x + 1);
 			}
 		}
 	}

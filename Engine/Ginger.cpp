@@ -70,12 +70,17 @@ void Ginger::Jump()
 		y -= jh;
 		jh -= 2;
 
-		if (jh < 0)
+		if (jh == -1)
+		{
+			jh = 0;
+//			isFalling = true;
+		}
+		if (jh == -2) // I added this extra frame tick of nothing, so gravity has to wait 1 more frame, and doesn't immediately subtract the +1
 		{
 			jh = 17;
 			isJumping = false;
-//			isFalling = true;
 		}
+
 	}
 
 
