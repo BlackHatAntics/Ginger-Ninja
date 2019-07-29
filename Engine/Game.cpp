@@ -41,13 +41,16 @@ void Game::Go()
 	//Fix:
 //Clean up your all-over-the-place jump code
 
+	//Currently working on:
+//Wall jump
+
 	//Add:
 //Ceiling functionality
 //Colour code platforms based off of whether you can pass through the bottom or not. (or just draw them thicker). But then you gotta have them act as a wall too
 //Implement a wall hop (Should reset double-jump if pulled off?) Should throw you out at an angle, so it's difficult/impossible to climb a single wall
-//Implement a double-jump 
+//Implement a double-jump
 //Make your movement less effective when you're in the air
-// ?See how to call keyboard in other classes besides Game. Check the snake video
+// ?See how to call keyboard in other classes besides Game.
 
 void Game::UserMovement()
 {
@@ -82,7 +85,7 @@ void Game::UserMovement()
 		gin[0].SetJumpLock(false);
 	}
 
-	if (wnd.kbd.KeyIsPressed(0x53)) //"s"
+	if (wnd.kbd.KeyIsPressed(0x53)) //"s" //s only does something in Platform() function rn
 	{
 	}
 }
@@ -95,7 +98,29 @@ void Game::Ground(int x, int y, int w)
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() <= y && gin[i].GetY() + gin[i].GetW() >= y)
+		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)
+		{
+			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y)
+			{
+				gin[i].HitGround(y);
+			}
+			else if (gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y)
+			{
+				gin[i].HitCeiling(y);
+			}
+		}
+	}
+}
+
+void Game::Platform(int x, int y, int w)
+{
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		gfx.PutPixel(x + loopx, y, Colors::Gray);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() <= y && gin[i].GetY() + gin[i].GetW() >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
 		{
 			gin[i].HitGround(y);
 		}
@@ -128,13 +153,16 @@ void Game::Wall(int x, int y, int h)
 
 void Game::Screen1()
 {
-	//Maybe split this shit up into drawing code, and logic code
-	//Also, maybe have this shit as an array, so you can easily set it to "Screen[3]" and back
-	Ground(0, 450, 320); //Left
-	Ground(320, 530, 799-320); //Low
-	Ground(410, 450, 799 - 410); //Right
+	//Always load walls before ground. Otherwise you clip when trying to jump up the side
+	//Maybe split this shit up into drawing code, and logic code. //Also, maybe have this shit as an array, so you can easily set it to "Screen[3]" and back
+
 	Wall(320, 450, 80); //The only fucking wall
 	Wall(500, 400, 40); //Nevermind, I added a test wall in the middle of everything, to see if it works on both sides.
+	Wall(410, 450, 0); //Setting it so you can't pass through the side of the ground (Right platform)
+	Platform(600, 375, 100);
+	Ground(0, 450, 320); //Left
+	Ground(320, 530, 799 - 320); //Low
+	Ground(410, 450, 799 - 410); //Right
 }
 
 void Game::UpdateModel()

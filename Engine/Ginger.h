@@ -19,8 +19,9 @@ public:
 	void Jump();
 	void Gravity();
 	void HitGround(int py);
-	void Delta();
 	void HitWall(int wx);
+	void HitCeiling(int py);
+	void Delta();
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -42,7 +43,8 @@ private:
 	int w = 20;
 	int speed;
 	int eye = 15;
-	int jh = 17; //jump height
+	const int JumpHeight = 17;
+	int jh = JumpHeight; //jump height
 	int fh = 1; //fall height?
 	int dy; //Delta Y
 	int dx; //Delta X

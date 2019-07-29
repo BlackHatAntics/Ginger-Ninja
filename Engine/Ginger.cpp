@@ -77,7 +77,7 @@ void Ginger::Jump()
 		}
 		if (jh == -2) // I added this extra frame tick of nothing, so gravity has to wait 1 more frame, and doesn't immediately subtract the +1
 		{
-			jh = 17;
+			jh = JumpHeight;
 			isJumping = false;
 		}
 
@@ -118,6 +118,13 @@ void Ginger::Delta()
 void Ginger::HitWall(int wx)
 {
 	x = wx;
+}
+
+void Ginger::HitCeiling(int py)
+{
+	isJumping = false;
+	jh = JumpHeight;
+	y = py + 1;
 }
 
 void Ginger::SetMoveRight(bool z)

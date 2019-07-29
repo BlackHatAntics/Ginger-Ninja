@@ -39,6 +39,7 @@ private:
 	/*  User Functions              */
 	void UserMovement();
 	void Ground(int x, int y, int w);
+	void Platform(int x, int y, int w);
 	void Wall(int x, int y, int h);
 	void Screen1();
 	/********************************/
