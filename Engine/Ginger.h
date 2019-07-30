@@ -23,6 +23,8 @@ public:
 	void HitCeiling(int py);
 	void Delta();
 	void WallJump(bool UP);
+	void WallJump2(bool UP);
+	void HitWall2(int wx, bool UP);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -47,7 +49,8 @@ private:
 	const int JumpHeight = 17;
 	int jh = JumpHeight; //jump height
 	const int WallJumpHeight = JumpHeight /*/ 1.5*/; //Remember to make sure this works out to be an odd number
-	int wjh = WallJumpHeight;
+	int wjhY = WallJumpHeight;
+	int wjhX = WallJumpHeight;
 	int fh = 1; //fall height?
 	int dy; //Delta Y
 	int dx; //Delta X
@@ -56,9 +59,12 @@ private:
 	bool isJumping = false;
 	bool isFalling = false;
 	bool JumpLock = false;
-	bool WallJumpLock = true;
-	bool isWallJumping = false;
+//	bool WallJumpLock = true;
+	bool isWallJumpingY = false; //The reason I split these into 2, is so if you hit a ceiling, your y will stop, but your x will keep going. ...
+	bool isWallJumpingX = false; //This also helps you not bounce off walls, so you can chain wall jumps
 	bool HitWallLeft = false;
 	bool HitWallRight = false;
 //	bool OnWall = false;
+	int TempWallValue;
+	bool WallJumpisReady = false;
 };

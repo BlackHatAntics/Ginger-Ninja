@@ -42,16 +42,21 @@ void Game::Go()
 //Stop yourself from bouncing off a wall after a wall jump (basically find a way to stop/reset wall jump if you hit the other wall)
 //Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom
 //Figure out why you can't chain your wall jumps (or at least, why it's near-impossible)
+//Change it so you don't have to be moving upwards to wall jump, but rather just can't be moving downwards too quickly. (and not == 0, aka standing)
 //Clean up your all-over-the-place jump code
 
 	//Currently working on:
 //Wall jump
 
 	//Add:
+//I should really add an OnGround bool
 //Implement a wall hop (Should reset double-jump if pulled off?) Should throw you out at an angle, so it's difficult/impossible to climb a single wall
 //Implement a double-jump
 //Make your movement less effective when you're in the air?
 //See how to call keyboard in other classes besides Game. NO WAY I FIGURED IT OUT. Okay, now implement it
+
+	//Thoughts & Ideas
+//The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
 
 void Game::UserMovement()
 {
@@ -75,7 +80,7 @@ void Game::UserMovement()
 	}
 
 	//Jump
-	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpLock() == false && gin[0].GetY() <= gin[0].GetDY()) //"w" //If dy is greater than y it means he is moving upwards, if it's equal he's obviously standing. This prevents you from jumping while falling
+	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpLock() == false /*&& !(gin[0].GetY() > gin[0].GetDY())*/) //"w" //The !(y is greater than dy) prevents you from jumping while falling
 	{
 		gin[0].SetJumping(true);
 		gin[0].SetJumpLock(true); //Find a way to do this in Ginger.cpp? This is kinda shit code rn
@@ -141,12 +146,14 @@ void Game::Wall(int x, int y, int h)
 			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
 				//you hit the wall on the left side
-				gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
+				//gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
+				gin[i].HitWall2(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57));
 			}
 			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
 			{
 				//you hit the wall on the right side
-				gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
+				//gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
+				gin[i].HitWall2(x + 1, wnd.kbd.KeyIsPressed(0x57));
 			}
 		}
 	}
@@ -170,13 +177,13 @@ void Game::Screen1()
 
 void Game::UpdateModel()
 {
-
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
 	gin[0].EyeLogic();
 	gin[0].Jump();
-	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
+//	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
+	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Gravity(); //Keep 2nd last
 	Screen1(); //Keep last
 }
