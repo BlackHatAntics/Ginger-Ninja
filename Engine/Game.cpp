@@ -39,18 +39,15 @@ void Game::Go()
 }
 
 	//Fix:
-//Stop yourself from bouncing off a wall after a wall jump (basically find a way to stop/reset wall jump if you hit the other wall)
-//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom
-//Figure out why you can't chain your wall jumps (or at least, why it's near-impossible)
-//Change it so you don't have to be moving upwards to wall jump, but rather just can't be moving downwards too quickly. (and not == 0, aka standing)
-//Clean up your all-over-the-place jump code
+//Holy shit why is it glitching out like crazy if I wall jump off the single-pixel wall, or the short wall on the left? (causes you to warp back to that jump-peak location after following jumps)
+//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom (unsure if this still happens)
+//Clean up your inefficient WallJump code (or keep it fr readability?)
 
 	//Currently working on:
 //Wall jump
 
 	//Add:
-//I should really add an OnGround bool
-//Implement a wall hop (Should reset double-jump if pulled off?) Should throw you out at an angle, so it's difficult/impossible to climb a single wall
+//Don't let yourself wall hop if you're falling too quickly
 //Implement a double-jump
 //Make your movement less effective when you're in the air?
 //See how to call keyboard in other classes besides Game. NO WAY I FIGURED IT OUT. Okay, now implement it
@@ -86,7 +83,7 @@ void Game::UserMovement()
 		gin[0].SetJumpLock(true); //Find a way to do this in Ginger.cpp? This is kinda shit code rn
 	}
 	//Removing JumpLock
-	if (!wnd.kbd.KeyIsPressed(0x57) && gin[0].GetDY() == gin[0].GetY())
+	if (!wnd.kbd.KeyIsPressed(0x57) && gin[0].OnGround() == true)
 	{
 		gin[0].SetJumpLock(false);
 	}
@@ -108,7 +105,7 @@ void Game::Ground(int x, int y, int w)
 		{
 			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y)
 			{
-				gin[i].HitGround(y);
+				gin[i].HitGround(x, y, w);
 			}
 			else if (gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y)
 			{
@@ -128,7 +125,7 @@ void Game::Platform(int x, int y, int w)
 	{
 		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() <= y && gin[i].GetY() + gin[i].GetW() >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
 		{
-			gin[i].HitGround(y);
+			gin[i].HitGround(x, y, w);
 		}
 	}
 }
@@ -181,6 +178,7 @@ void Game::UpdateModel()
 	gin[0].Delta(); //Keep before Gravity && Movement
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
 	gin[0].EyeLogic();
+	gin[0].OnGround(); //Keep before jump, probably
 	gin[0].Jump();
 //	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));

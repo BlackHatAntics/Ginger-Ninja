@@ -69,7 +69,11 @@ void Ginger::Jump()
 {
 	if (isJumping)
 	{
-		JumpLock = true; //Find a way to not call this every time?
+		if (jh == JumpHeight) //Literally just doing this so it's only called once. Might even break the code, idk. Test it out
+		{
+//			OnGround = false; //Is there any other time you would leave the ground? I suppose if you walk off a ledge. Hmm...
+			JumpLock = true; //Find a way to not call this every time?
+		}
 
 		y -= jh;
 		jh -= 2;
@@ -101,11 +105,15 @@ void Ginger::Gravity()
 	}
 }
 
-void Ginger::HitGround(int py)
+void Ginger::HitGround(int px, int py, int pw)
 {
 	isFalling = false;
 	fh = 1;
 	y = py - w - 1;
+	
+	TempGroundValueX = px;
+	TempGroundValueY = py;
+	TempGroundValueW = pw;
 }
 
 void Ginger::Delta()
@@ -163,26 +171,31 @@ void Ginger::WallJump2(bool UP)
 	}
 
 	//Seeing if you are ready to wall jump (used to be in HitWall)
-//	if (UP == false && dy != y) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
+	if (UP == false && OnGround() == false) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
+	{
+		if (HitWallRight)
+		{
+			if (x >= TempWallValue)
+			{
+				WallJumpisReady = true;
+			}
+		}
+		else if (HitWallLeft)
+		{
+			if (x <= TempWallValue)
+			{
+				WallJumpisReady = true;
+			}
+		}
+	}
+	else if (OnGround() == true) //You can't wall jump from the ground, idiot
+	{
+		WallJumpisReady = false;
+	}
+
+//	if (WallJumpisReady)
 //	{
-//		if (HitWallRight)
-//		{
-//			if (x >= TempWallValue)
-//			{
-//				WallJumpisReady = true;
-//			}
-//		}
-//		else if (HitWallLeft)
-//		{
-//			if (x <= TempWallValue)
-//			{
-//				WallJumpisReady = true;
-//			}
-//		}
-//	}
-//	else if (dy == y) //You can't wall jump from the ground, idiot
-//	{
-//		WallJumpisReady = false;
+//		WallJumpisReady = true;
 //	}
 
 	//Assuming we are still on the wall, we can proceed to the button push
@@ -255,14 +268,14 @@ void Ginger::HitWall2(int wx, bool UP)
 		HitWallRight = false;
 	}
 
-	if (UP == false && dy != y) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
-	{
-		WallJumpisReady = true;
-	}
-	else if (dy == y) //You can't wall jump from the ground, idiot
-	{
-		WallJumpisReady = false;
-	}
+//	if (UP == false && dy != y) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
+//	{
+//		WallJumpisReady = true;
+//	}
+//	else if (dy == y) //You can't wall jump from the ground, idiot
+//	{
+//		WallJumpisReady = false;
+//	}
 
 	TempWallValue = wx; //This is now temporarily (until you hit another wall) the wall x value that will determine if you are still against the wall or not in WallJump()
 
@@ -272,6 +285,18 @@ void Ginger::HitWall2(int wx, bool UP)
 	}
 
 	x = wx; //Stopping you from going through the wall
+}
+
+bool Ginger::OnGround()
+{
+	if (y + w + 1 == TempGroundValueY && x + w >= TempGroundValueX && x <= TempGroundValueX + TempGroundValueW)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Ginger::HitWall(int wx, bool UP)

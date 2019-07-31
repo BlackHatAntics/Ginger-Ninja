@@ -18,13 +18,14 @@ public:
 	void Movement(bool kbdD);
 	void Jump();
 	void Gravity();
-	void HitGround(int py);
+	void HitGround(int px, int py, int pw);
 	void HitWall(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
 	void WallJump(bool UP);
 	void WallJump2(bool UP);
 	void HitWall2(int wx, bool UP);
+	bool OnGround();
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -59,12 +60,15 @@ private:
 	bool isJumping = false;
 	bool isFalling = false;
 	bool JumpLock = false;
-//	bool WallJumpLock = true;
+//	bool JumpisReady = false;
+	bool WallJumpisReady = false;
 	bool isWallJumpingY = false; //The reason I split these into 2, is so if you hit a ceiling, your y will stop, but your x will keep going. ...
 	bool isWallJumpingX = false; //This also helps you not bounce off walls, so you can chain wall jumps
 	bool HitWallLeft = false;
 	bool HitWallRight = false;
-//	bool OnWall = false;
+//	bool OnGround = false;
 	int TempWallValue;
-	bool WallJumpisReady = false;
+	int TempGroundValueX = 8; //Just initializing so everything doesn't brake at compile time.
+	int TempGroundValueY = 8;
+	int TempGroundValueW = 8;
 };
