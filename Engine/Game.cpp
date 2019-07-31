@@ -39,12 +39,11 @@ void Game::Go()
 }
 
 	//Fix:
-//Holy shit why is it glitching out like crazy if I wall jump off the single-pixel wall, or the short wall on the left? (causes you to warp back to that jump-peak location after following jumps)
-//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom (unsure if this still happens)
-//Clean up your inefficient WallJump code (or keep it fr readability?)
+//Figure out why your WallJump takes so much longer to activate now that you changed around the code.
+//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom? (unsure if this still happens. I've changed the code a lot since)
 
 	//Currently working on:
-//Wall jump
+//Stopping WallJump from being so delayed.
 
 	//Add:
 //Don't let yourself wall hop if you're falling too quickly
@@ -144,13 +143,13 @@ void Game::Wall(int x, int y, int h)
 			{
 				//you hit the wall on the left side
 				//gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
-				gin[i].HitWall2(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57));
+				gin[i].HitWall2(x - gin[i].GetW() - 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
 			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
 			{
 				//you hit the wall on the right side
 				//gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
-				gin[i].HitWall2(x + 1, wnd.kbd.KeyIsPressed(0x57));
+				gin[i].HitWall2(x + 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
 		}
 	}
@@ -179,6 +178,7 @@ void Game::UpdateModel()
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
 	gin[0].EyeLogic();
 	gin[0].OnGround(); //Keep before jump, probably
+	gin[0].OnWall();
 	gin[0].Jump();
 //	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));

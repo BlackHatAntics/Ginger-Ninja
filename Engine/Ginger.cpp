@@ -152,50 +152,59 @@ void Ginger::WallJump(bool UP)
 void Ginger::WallJump2(bool UP)
 {
 	//ISSUES:
-	//You can still clip through walls somehow if you spam that shit enough
+	//You can still clip through walls somehow if you spam that shit enough. (Is this still ongoing? I should find out)
 
 	//Seeing if you moved off the wall or not, and disabling WallJump if you have
-	if (HitWallRight)
-	{
-		if (x < TempWallValue)
-		{
-			WallJumpisReady = false; //This stops you from being able to jump if you move off the wall. If you succeed and do jump, this will still be disabled, as you are off the wall anyway.
-		}
-	}
-	else if (HitWallLeft)
-	{
-		if (x > TempWallValue)
-		{
-			WallJumpisReady = false; //This stops you from being able to jump if you move off the wall. If you succeed and do jump, this will still be disabled, as you are off the wall anyway.
-		}
-	}
+//	if (HitWallRight)
+//	{
+//		//Should probably change this code now that you have an OnWall function
+//		if (x < TempWallValueX)
+//		{
+//			WallJumpisReady = false; //This stops you from being able to jump if you move off the wall. If you succeed and do jump, this will still be disabled, as you are off the wall anyway.
+//		}
+//	}
+//	else if (HitWallLeft)
+//	{
+//		if (x > TempWallValueX)
+//		{
+//			WallJumpisReady = false; //This stops you from being able to jump if you move off the wall. If you succeed and do jump, this will still be disabled, as you are off the wall anyway.
+//		}
+//	}
 
-	//Seeing if you are ready to wall jump (used to be in HitWall)
-	if (UP == false && OnGround() == false) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
+	if (OnWall() && !OnGround())
 	{
-		if (HitWallRight)
+		if (UP == false)
 		{
-			if (x >= TempWallValue)
-			{
-				WallJumpisReady = true;
-			}
-		}
-		else if (HitWallLeft)
-		{
-			if (x <= TempWallValue)
-			{
-				WallJumpisReady = true;
-			}
+			WallJumpisReady = true;
 		}
 	}
-	else if (OnGround() == true) //You can't wall jump from the ground, idiot
+	else
 	{
 		WallJumpisReady = false;
 	}
 
-//	if (WallJumpisReady)
+	//Seeing if you are ready to wall jump (used to be in HitWall)
+//	if (UP == false && OnGround() == false) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
 //	{
-//		WallJumpisReady = true;
+//		//Should probably change this code now that you have an OnWall function
+//		if (HitWallRight)
+//		{
+//			if (x >= TempWallValueX)
+//			{
+//				WallJumpisReady = true;
+//			}
+//		}
+//		else if (HitWallLeft)
+//		{
+//			if (x <= TempWallValueX) //OKAY I FIGURED OUT THE ISSUE. You can't just be past/equal to the wall, you also can't be above or below it.
+//			{
+//				WallJumpisReady = true;
+//			}
+//		}
+//	}
+//	else if (OnGround() == true) //You can't wall jump from the ground, idiot
+//	{
+//		WallJumpisReady = false;
 //	}
 
 	//Assuming we are still on the wall, we can proceed to the button push
@@ -205,7 +214,7 @@ void Ginger::WallJump2(bool UP)
 		wjhX = WallJumpHeight; //Making sure you jump at full height
 		isWallJumpingY = true; //Launching off
 		isWallJumpingX = true; //Launching off
-		x = TempWallValue; //Making sure you start from the wall, not from inside of it. (HitWall is after this in load order, so you gotta do the job yourself sometimes eh)
+		x = TempWallValueX; //Making sure you start from the wall, not from inside of it. (HitWall is after this in load order, so you gotta do the job yourself sometimes eh) You might not actually have to, but I'm lazy. But you should probably check to make sure... 
 
 		isJumping = false; //Just so you don't get the added y values from both, creating a massive jump
 		jh = JumpHeight; //And of course remembering to reset your jump height, because this isn't in the "HitGround" function for whatever reason...
@@ -254,7 +263,7 @@ void Ginger::WallJump2(bool UP)
 	}
 }
 
-void Ginger::HitWall2(int wx, bool UP)
+void Ginger::HitWall2(int wx, int wy, int wh, bool UP)
 {
 	//Setting it up so WallJump knows which way to alter your x value
 	if (x > wx)
@@ -277,7 +286,9 @@ void Ginger::HitWall2(int wx, bool UP)
 //		WallJumpisReady = false;
 //	}
 
-	TempWallValue = wx; //This is now temporarily (until you hit another wall) the wall x value that will determine if you are still against the wall or not in WallJump()
+	TempWallValueX = wx; //This is now temporarily (until you hit another wall) the wall x value that will determine if you are still against the wall or not in WallJump() || OnWall()
+	TempWallValueY = wy;
+	TempWallValueH = wh;
 
 	if (isWallJumpingX) //Making sure you don't bounce off a wall, because otherwise the above code just switches which direction your x is moving
 	{
@@ -297,6 +308,26 @@ bool Ginger::OnGround()
 	{
 		return false;
 	}
+}
+
+bool Ginger::OnWall()
+{
+	//Just a reminder that wx isn't actually set to the wall's x value, but rather the x value of where you would be if you were up against it. Y and H *are* set to the real values though.
+	//The walls of course follow proper pixel formatting, starting from the top, and incrementing downwards. So if the height is 100, it's 100 pixels below the y.
+	if (y + w >= TempWallValueY && y <= TempWallValueY + TempWallValueH)
+	{
+		if (HitWallRight && x >= TempWallValueX)
+		{
+			return true;
+		}
+		else if (HitWallLeft && x <= TempWallValueX)
+		{
+			return true;
+		}
+	}
+	//Remember that if it "returns" something, it ends the function, so if it returns true up there, it will never see this line of code down here. 
+	//So don't worry about it always returning false at the end of the function. You don't need to hide it inside an "else" statement or anything.
+	return false;
 }
 
 void Ginger::HitWall(int wx, bool UP)

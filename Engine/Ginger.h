@@ -24,8 +24,9 @@ public:
 	void Delta();
 	void WallJump(bool UP);
 	void WallJump2(bool UP);
-	void HitWall2(int wx, bool UP);
+	void HitWall2(int wx, int wy, int wh, bool UP);
 	bool OnGround();
+	bool OnWall();
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -64,10 +65,12 @@ private:
 	bool WallJumpisReady = false;
 	bool isWallJumpingY = false; //The reason I split these into 2, is so if you hit a ceiling, your y will stop, but your x will keep going. ...
 	bool isWallJumpingX = false; //This also helps you not bounce off walls, so you can chain wall jumps
-	bool HitWallLeft = false;
-	bool HitWallRight = false;
+	bool HitWallLeft = false; //The last wall you made contact with, you hit on the left
+	bool HitWallRight = false; //The last wall you made contact with, you hit on your right side
 //	bool OnGround = false;
-	int TempWallValue;
+	int TempWallValueX = 0;
+	int TempWallValueY = 0;
+	int TempWallValueH = 0;
 	int TempGroundValueX = 8; //Just initializing so everything doesn't brake at compile time.
 	int TempGroundValueY = 8;
 	int TempGroundValueW = 8;
