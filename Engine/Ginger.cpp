@@ -49,8 +49,17 @@ void Ginger::EyeLogic()
 	}
 }
 
-void Ginger::Movement(bool kbdD)
+void Ginger::Movement(bool SHIFT)
 {
+	if (SHIFT)
+	{
+		speed = 5;
+	}
+	else
+	{
+		speed = 3;
+	}
+
 	if (MoveRight)
 	{
 		x += speed;
@@ -58,10 +67,6 @@ void Ginger::Movement(bool kbdD)
 	if (MoveLeft)
 	{
 		x -= speed;
-	}
-	if (kbdD)
-	{
-		y += speed;
 	}
 }
 
@@ -72,7 +77,7 @@ void Ginger::Jump()
 		if (jh == JumpHeight) //Literally just doing this so it's only called once. Might even break the code, idk. Test it out
 		{
 //			OnGround = false; //Is there any other time you would leave the ground? I suppose if you walk off a ledge. Hmm...
-			JumpLock = true; //Find a way to not call this every time?
+			JumpisReady = false; //Find a way to not call this every time?
 		}
 
 		y -= jh;
@@ -94,7 +99,7 @@ void Ginger::Jump()
 void Ginger::Gravity()
 {
 	//Maybe keep this last in load order?
-	if (isFalling && !isJumping && !isWallJumpingY)
+	if (isFalling && !isJumping && !isWallJumpingY && !cheating)
 	{
 		y += fh;
 		fh += 2;
@@ -181,6 +186,7 @@ void Ginger::WallJump2(bool UP)
 	else
 	{
 		WallJumpisReady = false;
+		ClearTempWall(); //If you don't do this, you can touch the wall then walk around to the other side and it will think you are inside the wall, and can wall jump. Oh hey, it also stopped me from being able to wall jump if I double tap jump when against a wall, without ever trying to lean into it. That's very nice.
 	}
 
 	//Seeing if you are ready to wall jump (used to be in HitWall)
@@ -314,13 +320,13 @@ bool Ginger::OnWall()
 {
 	//Just a reminder that wx isn't actually set to the wall's x value, but rather the x value of where you would be if you were up against it. Y and H *are* set to the real values though.
 	//The walls of course follow proper pixel formatting, starting from the top, and incrementing downwards. So if the height is 100, it's 100 pixels below the y.
-	if (y + w >= TempWallValueY && y <= TempWallValueY + TempWallValueH)
+	if (y + w >= TempWallValueY && y <= TempWallValueY + TempWallValueH) //If you are within the top&bottom of the wall
 	{
-		if (HitWallRight && x >= TempWallValueX)
+		if (HitWallRight && x >= TempWallValueX) //If you are against the wall or inside of it
 		{
 			return true;
 		}
-		else if (HitWallLeft && x <= TempWallValueX)
+		else if (HitWallLeft && x <= TempWallValueX) //If you are against the wall or inside of it
 		{
 			return true;
 		}
@@ -328,6 +334,52 @@ bool Ginger::OnWall()
 	//Remember that if it "returns" something, it ends the function, so if it returns true up there, it will never see this line of code down here. 
 	//So don't worry about it always returning false at the end of the function. You don't need to hide it inside an "else" statement or anything.
 	return false;
+}
+
+void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE)
+{
+	int FlySpeed = 1;
+	if (SPACE)
+	{
+		FlySpeed = 13;
+	}
+
+	if (!C)
+	{
+		CheatingLock = false;
+	}
+	if (C && CheatingLock == false) //turns on and off gravity, allowing you to slowly fly around.
+	{
+		cheating = !cheating;
+		CheatingLock = true; //This shit just stops you from accidentally switching the state of cheating many times by holding down the key for more than a single frame.
+	}
+
+	if (cheating)
+	{
+		if (UP)
+		{
+			y -= FlySpeed;
+		}
+		if (DOWN)
+		{
+			y += FlySpeed;
+		}
+		if (LEFT)
+		{
+			x -= FlySpeed;
+		}
+		if (RIGHT)
+		{
+			x += FlySpeed;
+		}
+	}
+}
+
+void Ginger::ClearTempWall()
+{
+	TempWallValueX = 0;
+	TempWallValueY = 0;
+	TempWallValueH = 0;
 }
 
 void Ginger::HitWall(int wx, bool UP)
@@ -398,14 +450,14 @@ void Ginger::SetFalling(bool z)
 {
 	isFalling = z;
 }
-void Ginger::SetJumpLock(bool z)
+void Ginger::SetJumpisReady(bool z)
 {
-	JumpLock = z;
+	JumpisReady = z;
 }
 
-bool Ginger::GetJumpLock()
+bool Ginger::GetJumpisReady()
 {
-	return JumpLock;
+	return JumpisReady;
 }
 int Ginger::GetW()
 {

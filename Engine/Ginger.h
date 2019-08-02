@@ -15,7 +15,7 @@ public:
 	void Init(int in_x, int in_y, int in_speed);
 	void Draw(Graphics& gfx, Color h, Color b);
 	void EyeLogic();
-	void Movement(bool kbdD);
+	void Movement(bool SHIFT);
 	void Jump();
 	void Gravity();
 	void HitGround(int px, int py, int pw);
@@ -27,13 +27,15 @@ public:
 	void HitWall2(int wx, int wy, int wh, bool UP);
 	bool OnGround();
 	bool OnWall();
+	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE);
+	void ClearTempWall();
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
 	void SetJumping(bool z);
 	void SetFalling(bool z);
-	void SetJumpLock(bool z);
-	bool GetJumpLock();
+	void SetJumpisReady(bool z);
+	bool GetJumpisReady();
 	int GetW();
 	//bool GetMoveRight();
 	//bool GetMoveLeft();
@@ -60,18 +62,19 @@ private:
 	bool MoveLeft = false;
 	bool isJumping = false;
 	bool isFalling = false;
-	bool JumpLock = false;
-//	bool JumpisReady = false;
+//	bool JumpLock = true;
+	bool JumpisReady = false;
 	bool WallJumpisReady = false;
 	bool isWallJumpingY = false; //The reason I split these into 2, is so if you hit a ceiling, your y will stop, but your x will keep going. ...
 	bool isWallJumpingX = false; //This also helps you not bounce off walls, so you can chain wall jumps
 	bool HitWallLeft = false; //The last wall you made contact with, you hit on the left
 	bool HitWallRight = false; //The last wall you made contact with, you hit on your right side
-//	bool OnGround = false;
 	int TempWallValueX = 0;
 	int TempWallValueY = 0;
 	int TempWallValueH = 0;
 	int TempGroundValueX = 8; //Just initializing so everything doesn't brake at compile time.
 	int TempGroundValueY = 8;
 	int TempGroundValueW = 8;
+	bool cheating = false;
+	bool CheatingLock = false;
 };

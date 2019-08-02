@@ -39,20 +39,26 @@ void Game::Go()
 }
 
 	//Fix:
-//Figure out why your WallJump takes so much longer to activate now that you changed around the code.
-//Figure out why sliding down a wall after wall jump sometimes let's you walk through the wall at the bottom? (unsure if this still happens. I've changed the code a lot since)
+//Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
+//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly. (Happens rarely if wall is loaded before ground, but still happens) Honestly, fuck it, I don't give enough shits.
 
 	//Currently working on:
-//Stopping WallJump from being so delayed.
+//Try out the unique jump mechanics
 
 	//Add:
 //Don't let yourself wall hop if you're falling too quickly
-//Implement a double-jump
-//Make your movement less effective when you're in the air?
-//See how to call keyboard in other classes besides Game. NO WAY I FIGURED IT OUT. Okay, now implement it
+//Add the locked post-jump velocity, and the multi-directional air-jump
+//Make switching directions delayed if in the air? (Honestly it's fancy and more realistic, but I kinda hate games that do this) 
+//Move all your movement code into Ginger?
+//You still haven't implemented screen borders
 
-	//Thoughts & Ideas
+	//Thoughts & Ideas:
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
+//Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
+//When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
+
+	//Remember:
+//Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
 
 void Game::UserMovement()
 {
@@ -76,15 +82,19 @@ void Game::UserMovement()
 	}
 
 	//Jump
-	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpLock() == false /*&& !(gin[0].GetY() > gin[0].GetDY())*/) //"w" //The !(y is greater than dy) prevents you from jumping while falling
+	if (wnd.kbd.KeyIsPressed(0x57) && gin[0].GetJumpisReady() == true && gin[0].OnGround()) //"w" //The !(y is greater than dy) prevents you from jumping while falling
 	{
 		gin[0].SetJumping(true);
-		gin[0].SetJumpLock(true); //Find a way to do this in Ginger.cpp? This is kinda shit code rn
+		gin[0].SetJumpisReady(false); //Find a way to do this in Ginger.cpp? This is kinda shit code rn
 	}
-	//Removing JumpLock
+	//Removing (and re-setting) JumpLock
 	if (!wnd.kbd.KeyIsPressed(0x57) && gin[0].OnGround() == true)
 	{
-		gin[0].SetJumpLock(false);
+		gin[0].SetJumpisReady(true);
+	}
+	else
+	{
+		gin[0].SetJumpisReady(false);
 	}
 
 //	if (wnd.kbd.KeyIsPressed(0x53)) //"s" //s only does something in Platform() function rn
@@ -122,7 +132,7 @@ void Game::Platform(int x, int y, int w)
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() <= y && gin[i].GetY() + gin[i].GetW() >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
+		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
 		{
 			gin[i].HitGround(x, y, w);
 		}
@@ -151,28 +161,49 @@ void Game::Wall(int x, int y, int h)
 				//gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
 				gin[i].HitWall2(x + 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
+
+			//TEST: Please delete
+//			if (gin[i].GetDX() + gin[i].GetW() <= x - 1)
+//			{
+//				gfx.PutPixel(355, 255, 255, 255, 255);
+//			}
+//			if (gin[i].GetX() + gin[i].GetW() > x - 1)
+//			{
+//				gfx.PutPixel(255, 255, 255, 255, 255);
+//			}
 		}
 	}
 }
 
 void Game::Screen1()
 {
-	//Always load walls before ground. Otherwise you clip when trying to jump up the side
-	//Maybe split this shit up into drawing code, and logic code. //Also, maybe have this shit as an array, so you can easily set it to "Screen[3]" and back
+	//**RULE** Always load ground before walls UNLESS the wall is at a corner. Then you load that wall before whichever ground it's moving down from.
+	//1.The reason for this is because if you are falling quickly, holding to one side, and the pixel values are well-timed, you can slip through the sides of walls at the base.
+	//2.The walls are set to push you back if you are within their y values. But you were moving so fast, that your y value is outside their range this frame
+	//3.You need ground to push you back into their y value, so wall can stop you from moving to the side.
+	//And the reason for loading Wall before Ground on corners is because you will bonk your head when jumping up against a wall connected to ground.
+	//The same issue is prevelant for if you land on ground at the right spot, and bonk your side at the edge of the wall... But it happens so rarely idgaf. If you have the option though, load the ground first here.
 
-	Wall(320, 450, 80); //The only fucking wall
-	Wall(500, 400, 40); //Nevermind, I added a test wall in the middle of everything, to see if it works on both sides.
-	Wall(410, 450, 0); //Setting it so you can't pass through the side of the ground (Right platform)
-	Wall(49, 450-200, 200);
-	Wall(109, 450 - 200, 200);
-	Platform(600, 375, 100);
-	Ground(0, 450, 320); //Left
+	//Remember not to do 1 pixel thick walls. This prevents load order issues, as well as the issue where you can jump up inside a wall then walljump.
+	//Maybe split this shit up into drawing code, and logic code. //Also, maybe have this shit as an array, so you can easily set it to "Screen[3]" and back. Screen[i].ImHorny i++;
+
+	Wall(410, 450, 0); //Setting it so you can't pass through the side of the ground (Right platform, single pixel)
 	Ground(320, 530, 799 - 320); //Low
+	Wall(320, 450, 80); //Lower
+	Ground(0, 450, 320); //Left
 	Ground(410, 450, 799 - 410); //Right
+	Ground(20, 450 - 400, 120); //Cap
+	Wall(320, 450, 80); //Lower
+	Wall(500, 400, 40); //Stumpy
+	Wall(20, 450 - 400, 400); //Left close
+	Wall(110, 450 - 300, 400 - 100 - 50); //Right close
+	//Wall(109, 450 - 400, 400);
+	Platform(600, 375, 100);
 }
 
 void Game::UpdateModel()
 {
+	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_SPACE));
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
