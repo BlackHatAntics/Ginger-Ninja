@@ -382,6 +382,26 @@ void Ginger::ClearTempWall()
 	TempWallValueH = 0;
 }
 
+void Ginger::ScreenSwitch()
+{
+	if (x < 0)
+	{
+		x = 799 - w;
+	}
+	if (x > 799 - w)
+	{
+		x = 0;
+	}
+	if (y < 0)
+	{
+		y = 599 - w;
+	}
+	if (y > 599 - w)
+	{
+		y = 0;
+	}
+}
+
 void Ginger::HitWall(int wx, bool UP)
 {
 	//if (isWallJumping) //Resetting, so you don't just bounce off a wall, but rather set up for another wall jump

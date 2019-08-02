@@ -41,7 +41,12 @@ private:
 	void Ground(int x, int y, int w);
 	void Platform(int x, int y, int w);
 	void Wall(int x, int y, int h);
+	void Screens();
+	void ScreenSwitch();
+	void Screen0();
 	void Screen1();
+	void Screen2();
+	//void Screen[6](); //I wish...
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -49,5 +54,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Ginger gin[2];
+	int screen = 0;
 	/********************************/
 };

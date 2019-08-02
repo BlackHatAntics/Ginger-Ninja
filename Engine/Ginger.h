@@ -29,6 +29,7 @@ public:
 	bool OnWall();
 	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE);
 	void ClearTempWall();
+	void ScreenSwitch();
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);

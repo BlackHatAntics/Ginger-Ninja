@@ -43,14 +43,15 @@ void Game::Go()
 //Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly. (Happens rarely if wall is loaded before ground, but still happens) Honestly, fuck it, I don't give enough shits.
 
 	//Currently working on:
-//Try out the unique jump mechanics
+//Switching screens
 
 	//Add:
 //Don't let yourself wall hop if you're falling too quickly
 //Add the locked post-jump velocity, and the multi-directional air-jump
-//Make switching directions delayed if in the air? (Honestly it's fancy and more realistic, but I kinda hate games that do this) 
+//Make switching directions delayed if in the air? (Honestly it's fancy and more realistic, but I kinda hate games that do this)
 //Move all your movement code into Ginger?
-//You still haven't implemented screen borders
+//Implement the loading the next screen
+//Add enemies
 
 	//Thoughts & Ideas:
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
@@ -175,7 +176,56 @@ void Game::Wall(int x, int y, int h)
 	}
 }
 
-void Game::Screen1()
+void Game::Screens()
+{
+	if (screen == 0)
+	{
+		Screen0();
+	}
+	else if (screen == 1)
+	{
+		Screen1();
+	}
+	else if (screen == 2)
+	{
+		Screen2();
+	}
+}
+
+void Game::ScreenSwitch()
+{
+	if (gin[0].GetX() < 0 || gin[0].GetX() > 799 - gin[0].GetW() || gin[0].GetY() < 0 || gin[0].GetY() > 599 - gin[0].GetW())
+	{
+		//If I had vectors, I could increment the y value as well, without it fucking up everything. Without them, I have to manually assign the value to something.
+		if (screen <= 10)
+		{
+			if (gin[0].GetX() < 0)
+			{
+				screen--;
+			}
+			else if (gin[0].GetX() > 799 - gin[0].GetW())
+			{
+				screen++;
+			}
+		}
+		else if (screen == 8000) //Make sure to keep the "else" for all additional screens
+		{
+			if (gin[0].GetX() < 0)
+			{
+				screen = 1;
+			}
+			else if (gin[0].GetX() > 799 - gin[0].GetW())
+			{
+				screen = 3;
+			}
+		}
+
+
+		gin[0].ScreenSwitch(); //Putting ginger on opposite side of screen. Keep at the end, so they can make their checks based off of his x/y value before this changes them
+	}
+}
+
+void Game::Screen0()
 {
 	//**RULE** Always load ground before walls UNLESS the wall is at a corner. Then you load that wall before whichever ground it's moving down from.
 	//1.The reason for this is because if you are falling quickly, holding to one side, and the pixel values are well-timed, you can slip through the sides of walls at the base.
@@ -201,6 +251,15 @@ void Game::Screen1()
 	Platform(600, 375, 100);
 }
 
+void Game::Screen1()
+{
+	Ground(0, 530, 799);
+}
+
+void Game::Screen2()
+{
+}
+
 void Game::UpdateModel()
 {
 	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_SPACE));
@@ -211,10 +270,12 @@ void Game::UpdateModel()
 	gin[0].OnGround(); //Keep before jump, probably
 	gin[0].OnWall();
 	gin[0].Jump();
-//	gin[0].WallJump(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Gravity(); //Keep 2nd last
-	Screen1(); //Keep last
+	//Keep last:
+	Screens();
+	ScreenSwitch(); //I keep this after Screens, so you don't accidentally activate a switch by jumping against a wall close to edge
+
 }
 
 void Game::ComposeFrame()
