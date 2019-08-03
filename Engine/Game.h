@@ -43,9 +43,19 @@ private:
 	void Wall(int x, int y, int h);
 	void Screens();
 	void ScreenSwitch();
+	void Screen100();
 	void Screen0();
 	void Screen1();
 	void Screen2();
+	void Screen3();
+	void Screen4();
+	void Screen5();
+	void Screen6();
+	void Screen7();
+	void Screen8();
+	void Screen9();
+	void Screen10();
+	void Screen11();
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -54,6 +64,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Ginger gin[2];
-	int screen = 0;
+	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
 	/********************************/
 };

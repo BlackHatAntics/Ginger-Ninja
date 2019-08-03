@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd )
 //	gin[0](50, 450 - 21, 3)
 {
-	gin[0].Init(50, 450 - 21 - 10, 3);
+	gin[0].Init(200, 585 - 21, 3);
 }
 
 void Game::Go()
@@ -40,18 +40,22 @@ void Game::Go()
 
 	//Fix:
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
-//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly. (Happens rarely if wall is loaded before ground, but still happens) Honestly, fuck it, I don't give enough shits.
+//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
 
 	//Currently working on:
-//Switching screens
+//Try out the unique jump mechanics on a new git branch. You need to see what your controls will be, before you know where to place your platforms.
+//Planning level layouts
 
 	//Add:
 //Don't let yourself wall hop if you're falling too quickly
 //Add the locked post-jump velocity, and the multi-directional air-jump
 //Make switching directions delayed if in the air? (Honestly it's fancy and more realistic, but I kinda hate games that do this)
 //Move all your movement code into Ginger?
-//Implement the loading the next screen
 //Add enemies
+//Add your dash attack
+//Plan out your world layout
+//Add burning via sun
+//Add health bar
 
 	//Thoughts & Ideas:
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
@@ -178,6 +182,7 @@ void Game::Wall(int x, int y, int h)
 
 void Game::Screens()
 {
+	//What a bunch of miserable code...
 	if (screen == 0)
 	{
 		Screen0();
@@ -190,14 +195,88 @@ void Game::Screens()
 	{
 		Screen2();
 	}
+	else if (screen == 3)
+	{
+		Screen3();
+	}
+	else if (screen == 4)
+	{
+		Screen4();
+	}
+	else if (screen == 5)
+	{
+		Screen5();
+	}
+	else if (screen == 6)
+	{
+		Screen6();
+	}
+	else if (screen == 7)
+	{
+		Screen7();
+	}
+	else if (screen == 8)
+	{
+		Screen8();
+	}
+	else if (screen == 9)
+	{
+		Screen9();
+	}
+	else if (screen == 10)
+	{
+		Screen10();
+	}
+	else if (screen == 11)
+	{
+		Screen11();
+	}
+	else if (screen == 100)
+	{
+		Screen100(); //My bullshit test screen
+	}
 }
 
 void Game::ScreenSwitch()
 {
-	if (gin[0].GetX() < 0 || gin[0].GetX() > 799 - gin[0].GetW() || gin[0].GetY() < 0 || gin[0].GetY() > 599 - gin[0].GetW())
+	//If I had vectors, I could increment the y value as well, without it fucking up everything. Without them, I have to manually assign the value to something.
+	if (gin[0].GetX() < 0 || gin[0].GetX() > 799 - gin[0].GetW() || gin[0].GetY() < 0 || gin[0].GetY() > 599 - gin[0].GetW()) //If you off the screen in any direction
 	{
-		//If I had vectors, I could increment the y value as well, without it fucking up everything. Without them, I have to manually assign the value to something.
-		if (screen <= 10)
+		//Going down
+		if (gin[0].GetY() > 599 - gin[0].GetW())
+		{
+			if (screen == 2)
+			{
+				screen = 0;
+			}
+			else if (screen == 3)
+			{
+				screen = 7;
+			}
+			else if (screen == 9)
+			{
+				screen = 10;
+			}
+		}
+		//Going up
+		if (gin[0].GetY() < 0)
+		{
+			if (screen == 0)
+			{
+				screen = 2;
+			}
+			else if (screen == 7)
+			{
+				screen = 3;
+			}
+			else if (screen == 10)
+			{
+				screen = 9;
+			}
+		}
+
+		//Left and right
+		if (screen <= 9)
 		{
 			if (gin[0].GetX() < 0)
 			{
@@ -208,24 +287,23 @@ void Game::ScreenSwitch()
 				screen++;
 			}
 		}
-		else if (screen == 8000) //Make sure to keep the "else" for all additional screens
+		else if (screen > 9)
 		{
 			if (gin[0].GetX() < 0)
 			{
-				screen = 1;
+				screen++;
 			}
 			else if (gin[0].GetX() > 799 - gin[0].GetW())
 			{
-				screen = 3;
+				screen--;
 			}
 		}
-
 
 		gin[0].ScreenSwitch(); //Putting ginger on opposite side of screen. Keep at the end, so they can make their checks based off of his x/y value before this changes them
 	}
 }
 
-void Game::Screen0()
+void Game::Screen100()
 {
 	//**RULE** Always load ground before walls UNLESS the wall is at a corner. Then you load that wall before whichever ground it's moving down from.
 	//1.The reason for this is because if you are falling quickly, holding to one side, and the pixel values are well-timed, you can slip through the sides of walls at the base.
@@ -251,12 +329,62 @@ void Game::Screen0()
 	Platform(600, 375, 100);
 }
 
+void Game::Screen0()
+{
+	Ground(85, 585, 785-85); //Floor
+	Ground(85, 310, 260 - 85); //Ceiling left
+	Ground(370, 280, 785 - 370); //Ceiling right
+	Wall(260, 310, 335-310); //Left tube
+	Wall(370, 280, 335-280); //Right tube
+	Wall(270, 0, 335); //Left tube inner
+	Wall(360, 0, 335); //Right tube inner
+	Wall(85, 310, 585-310); //Left wall
+	Wall(785, 280, 585-280); //Right wall
+	Ground(260, 335, 10); //Tube cap left
+	Ground(360, 335, 10); //Tube cap right
+}
+
 void Game::Screen1()
 {
-	Ground(0, 530, 799);
 }
 
 void Game::Screen2()
+{
+}
+
+void Game::Screen3()
+{
+}
+
+void Game::Screen4()
+{
+}
+
+void Game::Screen5()
+{
+}
+
+void Game::Screen6()
+{
+}
+
+void Game::Screen7()
+{
+}
+
+void Game::Screen8()
+{
+}
+
+void Game::Screen9()
+{
+}
+
+void Game::Screen10()
+{
+}
+
+void Game::Screen11()
 {
 }
 
