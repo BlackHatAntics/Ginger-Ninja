@@ -64,6 +64,6 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Ginger gin[2];
-	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 2; //Start this at 0, but it's 7 right now for testing purposes
 	/********************************/
 };

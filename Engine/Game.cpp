@@ -43,7 +43,6 @@ void Game::Go()
 //Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
 
 	//Currently working on:
-//Try out the unique jump mechanics on a new git branch. You need to see what your controls will be, before you know where to place your platforms.
 //Planning level layouts
 
 	//Add:
@@ -56,11 +55,13 @@ void Game::Go()
 //Plan out your world layout
 //Add burning via sun
 //Add health bar
+//Have your bed restore 1hp/frame
 
 	//Thoughts & Ideas:
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
 //Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
 //When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
+//I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
@@ -342,14 +343,71 @@ void Game::Screen0()
 	Wall(785, 280, 585-280); //Right wall
 	Ground(260, 335, 10); //Tube cap left
 	Ground(360, 335, 10); //Tube cap right
+	Platform(630, 500, 70); //Platform 1
+	Platform(520, 430, 70); //Platform 2
+	Platform(480, 370, 70); //Platform 3
+	Platform(360, 440, 70); //Platform 4
+	Platform(300, 400, 70); //Platform 5
+	Ground(695, 575, 745 - 695); //Bed platform
+	Wall(745, 555, 585 - 555); //Bed headboard left
+	Wall(748, 555, 585 - 555); //Bed headboard right
+	Ground(745, 555, 748 - 745); //Bed headboard cap
+	Wall(695, 575, 585 - 575); //Bed end
+	Platform(270, 335, 360 - 270); //Tube cover
 }
 
 void Game::Screen1()
 {
+	
 }
 
 void Game::Screen2()
 {
+	//Above ground
+	Wall(620, 430, 475 - 430); //Ground wall
+	Ground(0, 475, 620); //Ground
+	Ground(620, 430, 799 - 620); //Ground right
+
+	//Underground
+	Wall(270, 594, 599 - 594); //Left tube
+	Wall(360, 594, 599 - 594); //Right tube
+	Wall(195, 555, 594 - 555); //Left first wall
+	Ground(170, 555, 195 - 170); //Left first wall top
+	Ground(90, 550, 170 - 90); //Left blip top
+	Ground(20, 562, 90 - 20); //Left indent
+	Ground(0, 553, 20); //Left exit
+	Wall(90, 550, 12); //Left indent right
+	Wall(20, 553, 562-553); //Left indent left
+	Wall(170, 550, 5); //Left first blip
+	Ground(195, 594, 270 - 195); //Floor Left
+	Ground(360, 594, 505 - 360); //Floor Right
+	Platform(270, 594, 360 - 270); //Tube cover
+	Wall(220, 475, 495 - 475); //Left ceiling thing, close side
+	Ground(135, 495, 220 - 135); //Left ceiling thing
+	Wall(135, 495, 510 - 495); //Left ceiling thing, bottleneck right
+	Ground(97, 510, 135 - 97); //Left ceiling thing
+	Wall(97, 490, 510-490); //Left ceiling thing, bottleneck left
+	Ground(0, 490, 97); //Far left ceiling
+	Wall(250, 475, 525 - 475); //Middle ceiling thing, left side
+	Wall(415, 475, 490 - 475); //Middle ceiling thing, right side
+	Wall(345, 490, 525 - 490); //Middle ceiling thing, middle side
+	Ground(250, 525, 345 - 250); //Middle ceiling thing, bottom
+	Ground(345, 490, 415 - 345); //Middle ceiling thing, right
+	Wall(430, 475, 565 - 475); //Stalagmite left
+	Wall(455, 475, 565 - 475); //Stalagmite right
+	Ground(430, 565, 455 - 430); //Stalagmite bottom
+	Wall(505, 500, 594 - 500); //Right ground obstacle, left side outer
+	Ground(505, 500, 540 - 505); //Right ground obstacle, left side
+	Wall(540, 500, 10); //Right ground obstacle, left side inner
+	Ground(540, 510, 700 - 540); //Right ground obstacle long
+	Wall(700, 510, 8); //Right ground obstacle, divet left side
+	Ground(700, 518, 15); //Right ground obstacle divet
+	Wall(715, 475, 518 - 475); //Right ground obstacle, divet right side
+	Wall(755, 475, 540 - 475); //Right ground obstacle, right side
+	Ground(715, 475, 755 - 715); //Right ground obstacle right
+	Ground(755, 540, 799 - 755); //Right exit
+	Wall(790, 430, 495 - 430); //Right side barrier
+	Ground(790, 495, 799 - 790); //Right side barrier
 }
 
 void Game::Screen3()
@@ -408,5 +466,5 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	gin[0].Draw(gfx, Colors::Orange2, Colors::Burnt);
+	gin[0].Draw(gfx, Colors::Orange2, Colors::Pasty);
 }
