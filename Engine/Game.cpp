@@ -25,14 +25,14 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd )
-//	gin[0](50, 450 - 21, 3)
 {
-	gin[0].Init(200, 585 - 21, 3);
+//	gin[0].Init(200, 585 - 21, 3);
+	gin[0].Init(730, 60 - 21, 3);
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -44,6 +44,8 @@ void Game::Go()
 
 	//Currently working on:
 //Planning level layouts
+//Colour control
+//Dash
 
 	//Add:
 //Don't let yourself wall hop if you're falling too quickly
@@ -412,6 +414,9 @@ void Game::Screen2()
 
 void Game::Screen3()
 {
+	Ground(0, 540, 600);
+	Ground(600, 590, 680 - 600);
+	Wall(680, 590, 599 - 590);
 }
 
 void Game::Screen4()
@@ -428,6 +433,29 @@ void Game::Screen6()
 
 void Game::Screen7()
 {
+	Ground(110, 560, 799 - 110); //Ground
+	Ground(600, 60, 790 - 600); //Top platform
+	Wall(680, 0, 8); //Ceiling barrier
+	Ground(20, 8, 680 - 20); //Ceiling barrier
+	Ground(200, 130, 560 - 200); //2nd top platform
+	Wall(110, 400, 560 - 400); //Left barrier bottom
+	Ground(20, 400, 110 - 20); //Left barrier platform
+	Wall(20, 8, 400 - 8); //Left barrier top
+	Ground(300, 235, 460 - 300); //Left platform bottom
+	Wall(300, 205, 235 - 205); //Left platform
+	Ground(20, 205, 300 - 20); //Left platform top
+	Wall(580, 380, 440 - 380); //Bottom platform
+	Ground(195, 440, 580 - 195); //Bottom platform bottom
+	Ground(580, 380, 650 - 580); //Bottom platform top
+	Platform(270, 362, 110); //Lower platform
+	Platform(500, 310, 110); //Higher platform
+	Ground(650, 440, 790 - 650); //Right platform
+	Wall(790, 0, 500); //Right wall
+	Ground(790, 500, 799 - 790); //Right exit top barrier
+//	Wall(650, 500, 560 - 500); //Bottom tiny thing
+//	Ground(580, 500, 650 - 580); //Bottom tiny thing
+	Ground(480, 500, 70); //Bottom tiny divide right
+	Ground(280, 500, 70); //Bottom tiny divide left	
 }
 
 void Game::Screen8()
@@ -448,7 +476,7 @@ void Game::Screen11()
 
 void Game::UpdateModel()
 {
-	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_SPACE));
+	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_INSERT));
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
@@ -457,6 +485,7 @@ void Game::UpdateModel()
 	gin[0].OnWall();
 	gin[0].Jump();
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
+	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep 2nd last
 	//Keep last:
 	Screens();
@@ -466,5 +495,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	gin[0].Draw(gfx, Colors::Orange2, Colors::Pasty);
+	//Sleep(300);
+	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
+	gin[0].DrawDash(gfx); //Keep after Draw()
 }

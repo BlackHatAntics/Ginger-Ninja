@@ -7,33 +7,37 @@ void Ginger::Init(int in_x, int in_y, int in_speed)
 	speed = in_speed;
 }
 
-void Ginger::Draw(Graphics& gfx, Color h, Color b)
+void Ginger::Draw(Graphics& gfx, Color h/*, Color b*/)
 {
-	//hair
-	for (int loopx = 0; loopx <= w; loopx++)
+	if (!(DashStage > 0 && DashStage <= 4)) //You don't draw him if he's dashing (so it looks cool, and you just see the streak)
 	{
-		for (int loopy = 0; loopy < 6; loopy++)
+		//hair
+		for (int loopx = 0; loopx <= w; loopx++)
 		{
-			gfx.PutPixel(x + loopx, y + loopy, h);
+			for (int loopy = 0; loopy < 6; loopy++)
+			{
+				gfx.PutPixel(x + loopx, y + loopy, h);
+			}
 		}
-	}
-	//body
-	for (int loopx = 0; loopx <= w; loopx++)
-	{
-		for (int loopy = 0; loopy <= 14; loopy++)
+		//body
+		for (int loopx = 0; loopx <= w; loopx++)
 		{
-			gfx.PutPixel(x + loopx, y + 6 + loopy, b);
+			for (int loopy = 0; loopy <= 14; loopy++)
+			{
+				gfx.PutPixel(x + loopx, y + 6 + loopy, bR, bG, bB/*b*/);
+			}
+		}
+
+		//Eye
+		for (int loopx = 0; loopx <= 4; loopx++)
+		{
+			for (int loopy = 0; loopy <= 4; loopy++)
+			{
+				gfx.PutPixel(x + eye + loopx, y + (6 + 1) + loopy, Colors::Blue2);
+			}
 		}
 	}
 
-	//Eye
-	for (int loopx = 0; loopx <= 4; loopx++)
-	{
-		for (int loopy = 0; loopy <= 4; loopy++)
-		{
-			gfx.PutPixel(x + eye + loopx, y + (6 + 1) + loopy, Colors::Blue2);
-		}
-	}
 }
 
 void Ginger::EyeLogic()
@@ -99,7 +103,7 @@ void Ginger::Jump()
 void Ginger::Gravity()
 {
 	//Maybe keep this last in load order?
-	if (isFalling && !isJumping && !isWallJumpingY && !cheating)
+	if (isFalling && !isJumping && !isWallJumpingY && !isDashing && !cheating)
 	{
 		y += fh;
 		fh += 2;
@@ -336,12 +340,12 @@ bool Ginger::OnWall()
 	return false;
 }
 
-void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE)
+void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool INS)
 {
-	int FlySpeed = 1;
-	if (SPACE)
+	int FlySpeed = 11;
+	if (INS)
 	{
-		FlySpeed = 13;
+		FlySpeed = 1;
 	}
 
 	if (!C)
@@ -399,6 +403,107 @@ void Ginger::ScreenSwitch()
 	if (y > 599 - w)
 	{
 		y = 0;
+	}
+}
+
+void Ginger::Dash(bool SPACE)
+{
+	if (OnGround() && SPACE && DashisReady && x != dx) //Can't be standing still
+	{
+		isDashing = true;
+		DashStartPoint = x + w / 2;
+	}
+
+	if (isDashing)
+	{
+		if (x > dx)
+		{
+			//DashStartPoint = x + w;
+			x += DashLength;	
+		}
+		else if (x < dx)
+		{
+			//DashStartPoint = x;
+			x -= DashLength;
+		}
+		DashLength = DashLength / 2;
+		DashisReady = false;
+	}
+
+	if (!DashisReady)
+	{
+		DashStage++;
+	}
+
+	if (DashStage == 3)
+	{
+		isDashing = false;
+		//DashEndPoint = x + w / 2;
+	}
+
+	if (DashStage >= 50 && SPACE == false)
+	{
+		DashStage = 0;
+		DashLength = 40;
+		DashisReady = true;
+	}
+}
+
+void Ginger::DrawDash(Graphics& gfx)
+{
+	//Actually, instead of changing the values, I'm just gonna draw a square overtop of the guy. Same effect, but way less effort. (Still need to manually change the values for the burn though)
+
+//	if (In the sun)
+//	{
+//		burn;
+//	}
+//	if (take damage)
+//	{
+//		flash red;
+//	}
+//	if (dashing)
+//	{
+//		turn white;
+//	}
+	//Turning him white
+//	int GinRGB;
+//	int TrailRGB = 255;
+//	if (DashStage > 0 && DashStage <= 4)
+//	{
+//		GinRGB = 0;
+//	}
+
+
+	if (DashStage > 0 && DashStage <= 4) //He stays white for an extra frame after it ends. For dramatic effect, y'know?
+	{
+		//Turning him white
+//		for (int loopx = 0; loopx <= w; loopx++)
+//		{
+//			for (int loopy = 0; loopy <= w; loopy++)
+//			{
+//				gfx.PutPixel(x + loopx, y + loopy, GinRGB, GinRGB, GinRGB);
+//			}
+//		}
+		//Drawing the white trail
+		for (int loopy = 0; loopy <= 1; loopy++)
+		{
+			if (x > dx)
+			{
+				for (int loopx = 0; loopx <= x + w / 2 - DashStartPoint; loopx++)
+				{
+					//Also implement a fade
+					gfx.PutPixel(DashStartPoint + loopx, y + (w / 2) - 1 + loopy, Colors::White);
+				}
+			}
+			else if (x < dx)
+			{
+				for (int loopx = 0; loopx <= DashStartPoint - x - w / 2; loopx++)
+				{
+					//Also implement a fade
+					gfx.PutPixel(DashStartPoint - loopx, y + (w / 2) - 1 + loopy, Colors::White);
+				}
+			}
+		}
 	}
 }
 

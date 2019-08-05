@@ -6,14 +6,14 @@
 class Ginger
 {
 public:
-//	Ginger(int in_x, int in_y, int in_speed)
-//	{
-//		x = in_x;
-//		y = in_y;
-//		speed = in_speed;
-//	}
+	//	Ginger(int in_x, int in_y, int in_speed)
+	//	{
+	//		x = in_x;
+	//		y = in_y;
+	//		speed = in_speed;
+	//	}
 	void Init(int in_x, int in_y, int in_speed);
-	void Draw(Graphics& gfx, Color h, Color b);
+	void Draw(Graphics& gfx, Color h/*, Color b*/);
 	void EyeLogic();
 	void Movement(bool SHIFT);
 	void Jump();
@@ -30,6 +30,8 @@ public:
 	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE);
 	void ClearTempWall();
 	void ScreenSwitch();
+	void Dash(bool SPACE);
+	void DrawDash(Graphics& gfx);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -63,7 +65,7 @@ private:
 	bool MoveLeft = false;
 	bool isJumping = false;
 	bool isFalling = false;
-//	bool JumpLock = true;
+	//	bool JumpLock = true;
 	bool JumpisReady = false;
 	bool WallJumpisReady = false;
 	bool isWallJumpingY = false; //The reason I split these into 2, is so if you hit a ceiling, your y will stop, but your x will keep going. ...
@@ -78,4 +80,19 @@ private:
 	int TempGroundValueW = 8;
 	bool cheating = false;
 	bool CheatingLock = false;
+	int DashLength = 40;
+	int DashStage = 0;
+	bool DashisReady = true;
+	bool isDashing = false;
+	int DashStartPoint;
+	//int DashEndPoint;
+//	int hR = 255; //hair RGB
+//	int hG = 150;
+//	int hB = 9;
+	int bR = 255; //body RGB
+	int bG = 224;
+	int bB = 218;
+//	int eR = 23; //eye RGB
+//	int eG = 105;
+//	int eB = 255;
 };
