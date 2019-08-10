@@ -44,16 +44,16 @@ void Game::Go()
 
 	//Currently working on:
 //Planning level layouts
-//Colour control
-//Dash
+//Add basic enemies, so you can implement damage to dash
 
 	//Add:
+//Make enemies do damage
+//Add basic enemy movement
+//Make your dash do damage
+//Have a death animation for enemies
 //Don't let yourself wall hop if you're falling too quickly
-//Add the locked post-jump velocity, and the multi-directional air-jump
-//Make switching directions delayed if in the air? (Honestly it's fancy and more realistic, but I kinda hate games that do this)
 //Move all your movement code into Ginger?
-//Add enemies
-//Add your dash attack
+//Add the different ypes of enemies
 //Plan out your world layout
 //Add burning via sun
 //Add health bar
@@ -474,19 +474,88 @@ void Game::Screen11()
 {
 }
 
+void Game::UserCollision()
+{
+	UserisColliding = false; //Since there's many different things setting UserisColliding to true, you can't just have an "else {false}". So you set it to false every frame, and if it's colliding this frame in any of the mob functions it will be true.
+	mob.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+
+	if (UserisColliding && DamageLock == false) 
+	{ 
+		UserHealth--;
+		DamageLock = true; //This is just so you can't take damage every frame from just 1 hit. Gives you a small window of invulnerability.
+	}
+	if (DamageLock == true)
+	{
+		DamageLockCounter++;
+
+		if (DamageLockCounter > 15)
+		{
+			DamageLockCounter = 0;
+			DamageLock = false;
+		}
+	}
+}
+
+void Game::HealthBar()
+{
+	//Red is always underneathe
+	for (int loopx = 0; loopx < 60; loopx++)
+	{
+		for (int loopy = 0; loopy < 11; loopy++)
+		{
+			gfx.PutPixel(736 + loopx, 5 + loopy, Colors::Red);
+		}
+	}
+
+	//Green is dependant on how much health you have
+	if (UserHealth > 0)
+	{
+		for (int loopx = 0; loopx < 20; loopx++)
+		{
+			for (int loopy = 0; loopy < 11; loopy++)
+			{
+				gfx.PutPixel(736 + loopx, 5 + loopy, Colors::Green);
+			}
+		}
+	}
+	if (UserHealth > 1)
+	{
+		for (int loopx = 0; loopx < 20; loopx++)
+		{
+			for (int loopy = 0; loopy < 11; loopy++)
+			{
+				gfx.PutPixel(736 + 20 + loopx, 5 + loopy, Colors::Green);
+			}
+		}
+	}
+	if (UserHealth > 2)
+	{
+		for (int loopx = 0; loopx < 20; loopx++)
+		{
+			for (int loopy = 0; loopy < 11; loopy++)
+			{
+				gfx.PutPixel(736 + 40 + loopx, 5 + loopy, Colors::Green);
+			}
+		}
+	}
+}
+
 void Game::UpdateModel()
 {
+	//Keep first
 	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_INSERT));
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
+	//Keep middle?
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
 	gin[0].EyeLogic();
-	gin[0].OnGround(); //Keep before jump, probably
-	gin[0].OnWall();
+	gin[0].OnGround(); //Keep before Jump && Dash
+	gin[0].OnWall(); //Keep before WallJump
 	gin[0].Jump();
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
-	gin[0].Gravity(); //Keep 2nd last
+	gin[0].Gravity(); //Keep last in the movement functions
+	UserCollision(); //Keep after all movement functions
 	//Keep last:
 	Screens();
 	ScreenSwitch(); //I keep this after Screens, so you don't accidentally activate a switch by jumping against a wall close to edge
@@ -496,6 +565,8 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	//Sleep(300);
+	mob.Draw(gfx);
 	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
 	gin[0].DrawDash(gfx); //Keep after Draw()
+	HealthBar();
 }

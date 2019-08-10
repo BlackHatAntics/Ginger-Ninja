@@ -24,6 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Ginger.h"
+#include "Mob_Basic.h"
 
 class Game
 {
@@ -56,6 +57,8 @@ private:
 	void Screen9();
 	void Screen10();
 	void Screen11();
+	void UserCollision();
+	void HealthBar();
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -64,6 +67,11 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Ginger gin[2];
+	Mob mob;
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
+	bool UserisColliding = false;
+	int UserHealth = 3;
+	bool DamageLock = false;
+	int DamageLockCounter = 0;
 	/********************************/
 };
