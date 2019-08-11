@@ -616,4 +616,8 @@ int Ginger::GetDY()
 {
 	return dy;
 }
+int Ginger::GetDashStage()
+{
+	return DashStage;
+}
 

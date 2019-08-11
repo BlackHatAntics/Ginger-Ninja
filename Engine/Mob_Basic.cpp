@@ -11,10 +11,21 @@ void Mob::Draw(Graphics& gfx)
 	}
 }
 
+void Mob::Init(int in_x, int in_y) 
+{
+	x = in_x;
+	y = in_y;
+}
+
 void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 {
 	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1)
 	{
 		Colliding = true;
 	}
+}
+
+void Mob::Movement()
+{
+
 }

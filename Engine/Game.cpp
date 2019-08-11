@@ -28,6 +28,8 @@ Game::Game( MainWindow& wnd )
 {
 //	gin[0].Init(200, 585 - 21, 3);
 	gin[0].Init(730, 60 - 21, 3);
+	mob[0].Init(200, 195);
+	mob[1].Init(100, 195);
 }
 
 void Game::Go()
@@ -43,8 +45,8 @@ void Game::Go()
 //Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
 
 	//Currently working on:
+//Implement mob AI
 //Planning level layouts
-//Add basic enemies, so you can implement damage to dash
 
 	//Add:
 //Make enemies do damage
@@ -67,6 +69,8 @@ void Game::Go()
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
+//Call Init for all mobs when you die
+//You will be 1 frame late in determining when you stop colliding
 
 void Game::UserMovement()
 {
@@ -331,7 +335,6 @@ void Game::Screen100()
 	//Wall(109, 450 - 400, 400);
 	Platform(600, 375, 100);
 }
-
 void Game::Screen0()
 {
 	Ground(85, 585, 785-85); //Floor
@@ -357,12 +360,10 @@ void Game::Screen0()
 	Wall(695, 575, 585 - 575); //Bed end
 	Platform(270, 335, 360 - 270); //Tube cover
 }
-
 void Game::Screen1()
 {
 	
 }
-
 void Game::Screen2()
 {
 	//Above ground
@@ -411,26 +412,21 @@ void Game::Screen2()
 	Wall(790, 430, 495 - 430); //Right side barrier
 	Ground(790, 495, 799 - 790); //Right side barrier
 }
-
 void Game::Screen3()
 {
 	Ground(0, 540, 600);
 	Ground(600, 590, 680 - 600);
 	Wall(680, 590, 599 - 590);
 }
-
 void Game::Screen4()
 {
 }
-
 void Game::Screen5()
 {
 }
-
 void Game::Screen6()
 {
 }
-
 void Game::Screen7()
 {
 	Ground(110, 560, 799 - 110); //Ground
@@ -455,31 +451,39 @@ void Game::Screen7()
 //	Wall(650, 500, 560 - 500); //Bottom tiny thing
 //	Ground(580, 500, 650 - 580); //Bottom tiny thing
 	Ground(480, 500, 70); //Bottom tiny divide right
-	Ground(280, 500, 70); //Bottom tiny divide left	
-}
+	Ground(280, 500, 70); //Bottom tiny divide left
 
+	mob[0].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+	mob[1].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+	mob[0].Draw(gfx);
+	mob[1].Draw(gfx);
+}
 void Game::Screen8()
 {
 }
-
 void Game::Screen9()
 {
 }
-
 void Game::Screen10()
 {
 }
-
 void Game::Screen11()
 {
 }
 
 void Game::UserCollision()
 {
-	UserisColliding = false; //Since there's many different things setting UserisColliding to true, you can't just have an "else {false}". So you set it to false every frame, and if it's colliding this frame in any of the mob functions it will be true.
-	mob.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+	//UserisColliding = false; //Since there's many different things setting UserisColliding to true, you can't just have an "else {false}". So you set it to false every frame, and if it's colliding this frame in any of the mob functions it will be true.
+	//for (int i = 0; i <= BasicSize; i++)
+	//{
+	//	mob[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+	//}
+//	I had to remove this ^ and cause the 1 frame delay in recognizing when you are no longer colliding for 2 reasons:
+//	1. You have to make sure to put the collision test inside of Screens, or else you will be affected by every mob on every screen.
+//	2. If I want to fix that issue, I would need to move the other logic code inside of Screens.
+//	But I'd rather just keep everything in it's own function for simplicity, so I moved "UserisColliding = false" to the end of the function, and accepted the delay.
 
-	if (UserisColliding && DamageLock == false) 
+	if (UserisColliding && DamageLock == false && !(gin[0].GetDashStage() > 0 && gin[0].GetDashStage() <= 4)) //Must be touching enemy, not damaged in last ~14 frames, and not mid-dash
 	{ 
 		UserHealth--;
 		DamageLock = true; //This is just so you can't take damage every frame from just 1 hit. Gives you a small window of invulnerability.
@@ -494,6 +498,8 @@ void Game::UserCollision()
 			DamageLock = false;
 		}
 	}
+
+	UserisColliding = false; //Since there's many different things setting UserisColliding to true, you can't just have an "else {false}". So you set it to false every frame, and if it's colliding this frame in any of the mob functions it will be true.
 }
 
 void Game::HealthBar()
@@ -565,8 +571,7 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	//Sleep(300);
-	mob.Draw(gfx);
 	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
 	gin[0].DrawDash(gfx); //Keep after Draw()
-	HealthBar();
+	HealthBar(); //Keep last, just so it's always on top
 }

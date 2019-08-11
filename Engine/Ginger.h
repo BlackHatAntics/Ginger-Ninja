@@ -47,6 +47,7 @@ public:
 	int GetY();
 	int GetDX();
 	int GetDY();
+	int GetDashStage();
 private:
 	int x;
 	int y;

@@ -66,8 +66,10 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Ginger gin[2];
-	Mob mob;
+	static constexpr int GinSize = 2;
+	static constexpr int BasicSize = 2;
+	Ginger gin[GinSize];
+	Mob mob[BasicSize];
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
 	bool UserisColliding = false;
 	int UserHealth = 3;
