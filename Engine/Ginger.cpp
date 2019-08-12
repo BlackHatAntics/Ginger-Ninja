@@ -620,4 +620,8 @@ int Ginger::GetDashStage()
 {
 	return DashStage;
 }
+int Ginger::GetOnGroundValue()
+{
+	return OnGround();
+}
 

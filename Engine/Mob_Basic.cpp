@@ -27,8 +27,10 @@ void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 	}
 }
 
-void Mob::Movement(int Gx, int Gw)
+void Mob::Movement(int Gx, int Gy, int Gw, int Gog)
 {
+	Aggro(Gx, Gy, Gw, Gog); //I'm just calling Aggro here, so I need to do less copy-pasting later when writing up the Screen functions
+
 	if (aggro)
 	{
 		if (x + w / 2 > Gx + Gw / 2) //if midpoint of mob is to the right of midpoint of ginger, move left (in direction of ginger)
@@ -39,6 +41,16 @@ void Mob::Movement(int Gx, int Gw)
 		else if (x + w / 2 < Gx + Gw / 2)
 		{
 			MoveRight = true;
+			MoveLeft = false;
+		}
+
+		//Making sure they don't walk off the ledge
+		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
+		{
+			MoveRight = false;
+		}
+		else if (x - 2 < Px) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
+		{
 			MoveLeft = false;
 		}
 	}
@@ -72,7 +84,7 @@ void Mob::Movement(int Gx, int Gw)
 			}
 		}
 
-		//Making sure you don't walk off the edge
+		//Making sure they don't walk off the edge (if aggro'd it just stops movement. If here in idle it makes them move back the other way)
 		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
 		{
 			MoveLeft = true;
@@ -98,7 +110,18 @@ void Mob::Movement(int Gx, int Gw)
 	}
 }
 
-void Mob::Aggro()
+void Mob::Aggro(int Gx, int Gy, int Gw, int Gog)
 {
-	//Remember to set the speed here inside Aggro
+	if (Gx < x + w + 1 + 160 && Gx + Gw + 1 > x - 160 && Gy <= y + w && Gy + Gw >= y + w - 81 && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
+	{
+		aggro = true;
+		speed = 2;
+	}
+	else if (Gx > x + w + 1 + 160 + 100 || Gx + Gw + 1 < x - 160 - 100 || (Gog && Gy + Gw < y + w - 70) || Gy + Gw >= y + w + 50) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
+	{
+		//That 70 is a very critical number. That is the cutoff point between platforms taking you out of aggro, and leaving you in
+		//The 50 also dictactes how much lower you need to be
+		aggro = false;
+		speed = 1;
+	}
 }

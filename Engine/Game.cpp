@@ -32,6 +32,7 @@ Game::Game( MainWindow& wnd )
 	gin[0].Init(730, 60 - 21, 3);
 	mob[0].Init(200, 195, 20, 280);
 	mob[1].Init(100, 195, 20, 280);
+	mob[2].Init(700, 550, 110, 799 - 110);
 }
 
 void Game::Go()
@@ -45,7 +46,7 @@ void Game::Go()
 
 
 	//Currently working on:
-//Implement mob aggro AI
+//Implement a way to damage the mobs (is Dash method too easy?)
 //Planning level layouts
 
 	//Fix:
@@ -460,12 +461,15 @@ void Game::Screen7()
 	Ground(480, 500, 70); //Bottom tiny divide right
 	Ground(280, 500, 70); //Bottom tiny divide left
 
-	mob[0].Movement(gin[0].GetX(), gin[0].GetW());
-	mob[1].Movement(gin[0].GetX(), gin[0].GetW());
+	mob[0].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 	mob[0].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
-	mob[1].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
 	mob[0].Draw(gfx);
+	mob[1].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+	mob[1].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
 	mob[1].Draw(gfx);
+	mob[2].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+	mob[2].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
+	mob[2].Draw(gfx);
 }
 void Game::Screen8()
 {
@@ -579,8 +583,11 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	//Sleep(200);
 	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
 	gin[0].DrawDash(gfx); //Keep after Draw()
 	HealthBar(); //Keep last, just so it's always on top
+
+//Test bullshit:
+	//Sleep(200);
+	//gfx.PutPixel(gin[0].GetX() - 160, 255, 255, 255, 255);
 }
