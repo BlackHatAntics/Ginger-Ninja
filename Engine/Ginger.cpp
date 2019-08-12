@@ -133,7 +133,7 @@ void Ginger::Delta()
 	dx = x;
 }
 
-void Ginger::WallJump(bool UP)
+void Ginger::WallJumpOld(bool UP)
 {
 	//Pretty much all the logic is inside HitWall. This is just the physical lift-off
 	//if (isWallJumping)
@@ -507,7 +507,7 @@ void Ginger::DrawDash(Graphics& gfx)
 	}
 }
 
-void Ginger::HitWall(int wx, bool UP)
+void Ginger::HitWallOld(int wx, bool UP)
 {
 	//if (isWallJumping) //Resetting, so you don't just bounce off a wall, but rather set up for another wall jump
 	//{
@@ -623,5 +623,9 @@ int Ginger::GetDashStage()
 int Ginger::GetOnGroundValue()
 {
 	return OnGround();
+}
+int Ginger::GetStartPoint()
+{
+	return DashStartPoint;
 }
 

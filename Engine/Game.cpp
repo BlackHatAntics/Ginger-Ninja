@@ -30,9 +30,9 @@ Game::Game( MainWindow& wnd )
 	srand(time(NULL));
 //	gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
 	gin[0].Init(730, 60 - 21, 3);
-	mob[0].Init(200, 195, 20, 280);
-	mob[1].Init(100, 195, 20, 280);
-	mob[2].Init(700, 550, 110, 799 - 110);
+	mob[0].Init(200, 195, 20, 280, true);
+	mob[1].Init(100, 195, 20, 280, true);
+	mob[2].Init(700, 550, 110, 799 - 110, true);
 }
 
 void Game::Go()
@@ -46,16 +46,15 @@ void Game::Go()
 
 
 	//Currently working on:
-//Implement a way to damage the mobs (is Dash method too easy?)
+//
 //Planning level layouts
 
 	//Fix:
 //
 
 	//Add:
-//Make yourself respawn once you lose all health. (keep respawn as it's own function, so you can call it when you get heatstrke as well)
-//Add basic enemy movement
-//Make your dash do damage
+//Make yourself respawn once you lose all health. (keep respawn as it's own function, so you can call it when you get heatstroke as well)
+//Put Walls && Ground in their own class, so you can have moving platforms
 //Have a death animation for enemies
 //Don't let yourself wall hop if you're falling too quickly
 //Move all your movement code into Ginger?
@@ -67,6 +66,7 @@ void Game::Go()
 	//Thoughts & Ideas:
 //Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables.
 //Call Init for all mobs when you die
+//Is Dash method too easy? My prediction: if few mobs, too easy. if lots of mobs, really hard, and may force you to always corral the mobs. Which is anti-fun.
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
 //1. Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
 //2. When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
@@ -74,7 +74,7 @@ void Game::Go()
 
 	//Could fix, but honestly don't care:
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
-//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
+//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order) (honestly the solution is just to not use 1-pixel-thick walls)
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
@@ -461,15 +461,9 @@ void Game::Screen7()
 	Ground(480, 500, 70); //Bottom tiny divide right
 	Ground(280, 500, 70); //Bottom tiny divide left
 
-	mob[0].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-	mob[0].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
-	mob[0].Draw(gfx);
-	mob[1].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-	mob[1].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
-	mob[1].Draw(gfx);
-	mob[2].Movement(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-	mob[2].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
-	mob[2].Draw(gfx);
+	MobGroupBasic(0);
+	MobGroupBasic(1);
+	MobGroupBasic(2);
 }
 void Game::Screen8()
 {
@@ -479,9 +473,29 @@ void Game::Screen9()
 }
 void Game::Screen10()
 {
+	//Add some decoration?
+//	if (Level >= 2)
+//	{
+//		Show the DANGER warning;
+//	}
+	Ground(0, 445, 500); //Ground
+	Wall(500, 345, 100); //Right wall
+	Wall(355, 345, 410 - 345); //Left wall
+	Ground(0, 410, 355); //Top of left exit
+	Wall(440, 0, 345); //Tube left
+	Wall(485, 0, 345); //tube right
+	Ground(355, 345, 440 - 355); //Ceiling left
+	Ground(485, 345, 500 - 485); //Ceiling right
 }
 void Game::Screen11()
 {
+	if (Level <= 1)
+	{
+		Ground(0, 445, 799); //Ground
+		Wall(0, 0, 445); //Left wall
+		Wall(799, 0, 410); //Right wall
+		Ground(799, 410, 0); //1 pixel at base of right wall, to stop you from clipping
+	}
 }
 
 void Game::UserCollision()
@@ -556,6 +570,19 @@ void Game::HealthBar()
 				gfx.PutPixel(736 + 40 + loopx, 5 + loopy, Colors::Green);
 			}
 		}
+	}
+}
+
+void Game::MobGroupBasic(int i)
+{
+	//This does nothing at all, other than make your Screen functions look more clean
+	if (mob[i].GetAlive())
+	{
+		mob[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		mob[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
+		mob[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		mob[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		mob[i].Draw(gfx);
 	}
 }
 

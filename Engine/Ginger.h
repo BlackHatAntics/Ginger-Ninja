@@ -19,10 +19,10 @@ public:
 	void Jump();
 	void Gravity();
 	void HitGround(int px, int py, int pw);
-	void HitWall(int wx, bool UP);
+	void HitWallOld(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
-	void WallJump(bool UP);
+	void WallJumpOld(bool UP);
 	void WallJump2(bool UP);
 	void HitWall2(int wx, int wy, int wh, bool UP);
 	bool OnGround();
@@ -49,6 +49,7 @@ public:
 	int GetDY();
 	int GetDashStage();
 	int GetOnGroundValue();
+	int GetStartPoint();
 private:
 	int x;
 	int y;

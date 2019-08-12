@@ -59,6 +59,7 @@ private:
 	void Screen11();
 	void UserCollision();
 	void HealthBar();
+	void MobGroupBasic(int i);
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -71,6 +72,7 @@ private:
 	Ginger gin[GinSize];
 	Mob mob[BasicSize];
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
+	int Level = 0;
 	bool UserisColliding = false;
 	int UserHealth = 3;
 	bool DamageLock = false;

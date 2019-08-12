@@ -11,12 +11,13 @@ void Mob::Draw(Graphics& gfx)
 	}
 }
 
-void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw)
+void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw, bool in_alive)
 {
 	x = in_x;
 	y = in_y;
 	Px = in_Px;
 	Pw = in_Pw;
+	alive = in_alive;
 }
 
 void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
@@ -27,10 +28,8 @@ void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 	}
 }
 
-void Mob::Movement(int Gx, int Gy, int Gw, int Gog)
+void Mob::Movement(int Gx, int Gw)
 {
-	Aggro(Gx, Gy, Gw, Gog); //I'm just calling Aggro here, so I need to do less copy-pasting later when writing up the Screen functions
-
 	if (aggro)
 	{
 		if (x + w / 2 > Gx + Gw / 2) //if midpoint of mob is to the right of midpoint of ginger, move left (in direction of ginger)
@@ -124,4 +123,21 @@ void Mob::Aggro(int Gx, int Gy, int Gw, int Gog)
 		aggro = false;
 		speed = 1;
 	}
+}
+
+void Mob::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
+{
+	if (Gds > 0 && Gds <= 4) //If dashing
+	{
+		if ((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their rgith, or started on right and are now to the left
+		{
+			alive = false;
+		}
+	}
+}
+
+
+bool Mob::GetAlive()
+{
+	return alive;
 }
