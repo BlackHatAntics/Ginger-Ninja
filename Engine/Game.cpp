@@ -20,16 +20,18 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "time.h"
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd )
 {
-//	gin[0].Init(200, 585 - 21, 3);
+	srand(time(NULL));
+//	gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
 	gin[0].Init(730, 60 - 21, 3);
-	mob[0].Init(200, 195);
-	mob[1].Init(100, 195);
+	mob[0].Init(200, 195, 20, 280);
+	mob[1].Init(100, 195, 20, 280);
 }
 
 void Game::Go()
@@ -40,36 +42,41 @@ void Game::Go()
 	gfx.EndFrame();
 }
 
-	//Fix:
-//Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
-//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
+
 
 	//Currently working on:
-//Implement mob AI
+//Implement mob aggro AI
 //Planning level layouts
 
+	//Fix:
+//
+
 	//Add:
-//Make enemies do damage
+//Make yourself respawn once you lose all health. (keep respawn as it's own function, so you can call it when you get heatstrke as well)
 //Add basic enemy movement
 //Make your dash do damage
 //Have a death animation for enemies
 //Don't let yourself wall hop if you're falling too quickly
 //Move all your movement code into Ginger?
-//Add the different ypes of enemies
+//Add the different types of enemies
 //Plan out your world layout
 //Add burning via sun
-//Add health bar
 //Have your bed restore 1hp/frame
 
 	//Thoughts & Ideas:
+//Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables.
+//Call Init for all mobs when you die
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
-//Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
-//When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
-//I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
+//1. Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
+//2. When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
+//3. I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
+
+	//Could fix, but honestly don't care:
+//Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
+//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order)
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
-//Call Init for all mobs when you die
 //You will be 1 frame late in determining when you stop colliding
 
 void Game::UserMovement()
@@ -120,7 +127,7 @@ void Game::Ground(int x, int y, int w)
 	{
 		gfx.PutPixel(x + loopx, y, Colors::White);
 	}
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < GinSize; i++)
 	{
 		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)
 		{
@@ -142,7 +149,7 @@ void Game::Platform(int x, int y, int w)
 	{
 		gfx.PutPixel(x + loopx, y, Colors::Gray);
 	}
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < GinSize; i++)
 	{
 		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
 		{
@@ -157,7 +164,7 @@ void Game::Wall(int x, int y, int h)
 	{
 		gfx.PutPixel(x, y + loopy, Colors::White);
 	}
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < GinSize; i++)
 	{
 		if (gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y)
 		{
@@ -453,6 +460,8 @@ void Game::Screen7()
 	Ground(480, 500, 70); //Bottom tiny divide right
 	Ground(280, 500, 70); //Bottom tiny divide left
 
+	mob[0].Movement(gin[0].GetX(), gin[0].GetW());
+	mob[1].Movement(gin[0].GetX(), gin[0].GetW());
 	mob[0].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
 	mob[1].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding);
 	mob[0].Draw(gfx);
@@ -570,7 +579,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	//Sleep(300);
+	//Sleep(200);
 	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
 	gin[0].DrawDash(gfx); //Keep after Draw()
 	HealthBar(); //Keep last, just so it's always on top
