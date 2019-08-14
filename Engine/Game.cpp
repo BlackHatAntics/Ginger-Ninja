@@ -30,9 +30,14 @@ Game::Game( MainWindow& wnd )
 	srand(time(NULL));
 //	gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
 	gin[0].Init(730, 60 - 21, 3);
-	mob[0].Init(200, 195, 20, 280, true);
-	mob[1].Init(100, 195, 20, 280, true);
-	mob[2].Init(700, 550, 110, 799 - 110, true);
+	mob[0].Init(200, 195, 20, 280);
+	mob[1].Init(100, 195, 20, 280);
+	mob[2].Init(700, 550, 110, 799 - 110);
+
+	for (int i = 0; i >= BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
+	{
+		mob[i].StartPoint();
+	}
 }
 
 void Game::Go()
@@ -46,13 +51,14 @@ void Game::Go()
 
 
 	//Currently working on:
-//
-//Planning level layouts
+//Death animation
+//Planning && drawing level layouts
 
 	//Fix:
 //
 
 	//Add:
+//Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //Make yourself respawn once you lose all health. (keep respawn as it's own function, so you can call it when you get heatstroke as well)
 //Put Walls && Ground in their own class, so you can have moving platforms
 //Have a death animation for enemies
@@ -586,6 +592,42 @@ void Game::MobGroupBasic(int i)
 	}
 }
 
+void Game::UserRespawn()
+{
+	//This is always active, and is just determining which place you will respawn
+	if (screen >= 3) //Yeah this will needlessly be called a shit-ton and isn't optimal code, but idc, it's clean.
+	{
+		RespawnInBed = true;
+	}
+	else if (screen == 10) //Just choosing if you respawn at screen - or screen 10. Basically if you make it to one side, of the mobs, you will respawn on that side.
+	{
+		RespawnInBed = false;
+	}
+
+	//if you die, reset health, reset the mobs, and then respawn
+	if (UserHealth == 0)
+	{
+		UserHealth = 3;
+
+		for (int i = 0; i < BasicSize; i++)
+		{
+			mob[i].Respawn();
+		}
+
+		if (RespawnInBed)
+		{
+			screen = 0;
+			gin[0].Respawn(715, 575 - 21);
+		}
+		else
+		{
+			screen = 10;
+			gin[0].Respawn(420, 445 - 21);
+		}
+
+	}
+}
+
 void Game::UpdateModel()
 {
 	//Keep first
@@ -602,6 +644,7 @@ void Game::UpdateModel()
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
 	UserCollision(); //Keep after all movement functions
+	UserRespawn();
 	//Keep last:
 	Screens();
 	ScreenSwitch(); //I keep this after Screens, so you don't accidentally activate a switch by jumping against a wall close to edge

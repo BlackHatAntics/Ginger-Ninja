@@ -60,6 +60,7 @@ private:
 	void UserCollision();
 	void HealthBar();
 	void MobGroupBasic(int i);
+	void UserRespawn();
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -77,5 +78,6 @@ private:
 	int UserHealth = 3;
 	bool DamageLock = false;
 	int DamageLockCounter = 0;
+	bool RespawnInBed = true;
 	/********************************/
 };

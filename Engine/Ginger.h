@@ -32,6 +32,7 @@ public:
 	void ScreenSwitch();
 	void Dash(bool SPACE);
 	void DrawDash(Graphics& gfx);
+	void Respawn(int X, int Y);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);

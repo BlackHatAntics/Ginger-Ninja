@@ -11,13 +11,12 @@ void Mob::Draw(Graphics& gfx)
 	}
 }
 
-void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw, bool in_alive)
+void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw)
 {
 	x = in_x;
 	y = in_y;
 	Px = in_Px;
 	Pw = in_Pw;
-	alive = in_alive;
 }
 
 void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
@@ -136,7 +135,27 @@ void Mob::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 	}
 }
 
+void Mob::StartPoint()
+{
+	StartPointX = x;
+	StartPointY = y;
+}
 
+void Mob::Respawn()
+{
+	alive = true;
+	x = StartPointX;
+	y = StartPointY;
+}
+
+int Mob::GetStartPointX()
+{
+	return StartPointX;
+}
+int Mob::GetStartPointY()
+{
+	return StartPointY;
+}
 bool Mob::GetAlive()
 {
 	return alive;

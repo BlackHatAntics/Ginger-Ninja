@@ -507,6 +507,14 @@ void Ginger::DrawDash(Graphics& gfx)
 	}
 }
 
+void Ginger::Respawn(int X, int Y)
+{
+	x = X;
+	dx = X; //So the Wall function doesn't pull you back
+	y = Y;
+	dy = Y; //So the Ground function doesn't pull you back
+}
+
 void Ginger::HitWallOld(int wx, bool UP)
 {
 	//if (isWallJumping) //Resetting, so you don't just bounce off a wall, but rather set up for another wall jump
