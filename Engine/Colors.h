@@ -117,4 +117,6 @@ namespace Colors
 	static constexpr Color Blue1 = MakeRGB(23u, 121u, 255u);
 	static constexpr Color Blue2 = MakeRGB(23u, 105u, 255u);
 	static constexpr Color Red2 = MakeRGB(206u, 28u, 28u);
+	static constexpr Color Green2 = MakeRGB(100u, 255u, 60u);
+	static constexpr Color Green3 = MakeRGB(200u, 255u, 60u);
 }

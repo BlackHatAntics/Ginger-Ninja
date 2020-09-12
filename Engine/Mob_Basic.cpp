@@ -1,6 +1,6 @@
 #include "Mob_Basic.h"
 
-void Mob::Draw(Graphics& gfx)
+void Basic::Draw(Graphics& gfx)
 {
 	for (int loopx = 0; loopx <= w; loopx++)
 	{
@@ -11,7 +11,7 @@ void Mob::Draw(Graphics& gfx)
 	}
 }
 
-void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw)
+void Basic::Init(int in_x, int in_y, int in_Px, int in_Pw)
 {
 	x = in_x;
 	y = in_y;
@@ -19,7 +19,7 @@ void Mob::Init(int in_x, int in_y, int in_Px, int in_Pw)
 	Pw = in_Pw;
 }
 
-void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
+void Basic::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 {
 	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1)
 	{
@@ -27,7 +27,7 @@ void Mob::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 	}
 }
 
-void Mob::Movement(int Gx, int Gw)
+void Basic::Movement(int Gx, int Gw)
 {
 	if (aggro)
 	{
@@ -108,7 +108,7 @@ void Mob::Movement(int Gx, int Gw)
 	}
 }
 
-void Mob::Aggro(int Gx, int Gy, int Gw, int Gog)
+void Basic::Aggro(int Gx, int Gy, int Gw, int Gog)
 {
 	if (Gx < x + w + 1 + 160 && Gx + Gw + 1 > x - 160 && Gy <= y + w && Gy + Gw >= y + w - 81 && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
 	{
@@ -124,39 +124,40 @@ void Mob::Aggro(int Gx, int Gy, int Gw, int Gog)
 	}
 }
 
-void Mob::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
+void Basic::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 {
 	if (Gds > 0 && Gds <= 4) //If dashing
 	{
-		if ((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their rgith, or started on right and are now to the left
+		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
+			&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
 		{
 			alive = false;
 		}
 	}
 }
 
-void Mob::StartPoint()
+void Basic::StartPoint()
 {
 	StartPointX = x;
 	StartPointY = y;
 }
 
-void Mob::Respawn()
+void Basic::Respawn()
 {
 	alive = true;
 	x = StartPointX;
 	y = StartPointY;
 }
 
-int Mob::GetStartPointX()
+int Basic::GetStartPointX()
 {
 	return StartPointX;
 }
-int Mob::GetStartPointY()
+int Basic::GetStartPointY()
 {
 	return StartPointY;
 }
-bool Mob::GetAlive()
+bool Basic::GetAlive()
 {
 	return alive;
 }

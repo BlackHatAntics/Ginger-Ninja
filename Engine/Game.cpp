@@ -28,15 +28,22 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd )
 {
 	srand(time(NULL));
-//	gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
+	//gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
 	gin[0].Init(730, 60 - 21, 3);
-	mob[0].Init(200, 195, 20, 280);
-	mob[1].Init(100, 195, 20, 280);
-	mob[2].Init(700, 550, 110, 799 - 110);
+	bas[0].Init(200, 195, 20, 280);
+	bas[1].Init(100, 195, 20, 280);
+	bas[2].Init(700, 550, 110, 799 - 110);
+	jum[0].Init(70, 193);
+//	jum[1].Init(0, 0);
+//	jum[2].Init(0, 0);
 
-	for (int i = 0; i >= BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
+	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
-		mob[i].StartPoint();
+		bas[i].StartPoint();
+	}
+	for (int i = 0; i < JumperSize; i++)
+	{
+		jum[i].StartPoint();
 	}
 }
 
@@ -51,15 +58,14 @@ void Game::Go()
 
 
 	//Currently working on:
-//Death animation
 //Planning && drawing level layouts
 
 	//Fix:
-//
+//Test if the jump is activating too late? Feels like you can push jump and still walk off a ledge without jumping.
 
 	//Add:
+//Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
-//Make yourself respawn once you lose all health. (keep respawn as it's own function, so you can call it when you get heatstroke as well)
 //Put Walls && Ground in their own class, so you can have moving platforms
 //Have a death animation for enemies
 //Don't let yourself wall hop if you're falling too quickly
@@ -67,13 +73,14 @@ void Game::Go()
 //Add the different types of enemies
 //Plan out your world layout
 //Add burning via sun
-//Have your bed restore 1hp/frame
+//Have your bed restore 1hp/frame?
 
 	//Thoughts & Ideas:
-//Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables.
+//In screen4, as part of platforming test, have a portal that lets you warp from bottom to top of screen (don't need to add new code, just let yourself fall and you auto move to top) Just draw some bs
+//Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables..... Nevermind. It would benefit me if I had tons of mobs, but I only have ~6 so it's more inconvenient.
 //Call Init for all mobs when you die
 //Is Dash method too easy? My prediction: if few mobs, too easy. if lots of mobs, really hard, and may force you to always corral the mobs. Which is anti-fun.
-//The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same vlues. Try to put all of the same shit into the same function
+//The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same values. Try to put all of the same shit into the same function
 //1. Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
 //2. When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
 //3. I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
@@ -84,7 +91,7 @@ void Game::Go()
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
-//You will be 1 frame late in determining when you stop colliding
+//You will be 1 frame late in determining when you stop colliding with a mob
 
 void Game::UserMovement()
 {
@@ -470,6 +477,8 @@ void Game::Screen7()
 	MobGroupBasic(0);
 	MobGroupBasic(1);
 	MobGroupBasic(2);
+
+	MobGroupJumper(0);
 }
 void Game::Screen8()
 {
@@ -582,26 +591,46 @@ void Game::HealthBar()
 void Game::MobGroupBasic(int i)
 {
 	//This does nothing at all, other than make your Screen functions look more clean
-	if (mob[i].GetAlive())
+	if (bas[i].GetAlive())
 	{
-		mob[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-		mob[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
-		mob[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
-		mob[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
-		mob[i].Draw(gfx);
+		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
+		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		bas[i].Draw(gfx);
+
+		//mob.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding, + i, bas[0].GetX(), bas[0].GetY(), etc. )
+		//Honestly idk if I'm gonna do this/have a centralized "mob" class to pull functions from. I understand it would benefit me if I have 1000 types of mobs, but since I'm only have ~6, it's more inconvenient. 
 	}
+}
+
+void Game::MobGroupJumper(int i)
+{
+//	if (jum[i].GetAlive())
+//	{
+//		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+//		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
+//		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+//		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		jum[i].Draw(gfx);
+//	}
 }
 
 void Game::UserRespawn()
 {
 	//This is always active, and is just determining which place you will respawn
-	if (screen >= 3) //Yeah this will needlessly be called a shit-ton and isn't optimal code, but idc, it's clean.
+	if (screen <= 3) //Yeah this will needlessly be called a shit-ton and isn't optimal code, but idc, it's clean.
 	{
 		RespawnInBed = true;
 	}
-	else if (screen == 10) //Just choosing if you respawn at screen - or screen 10. Basically if you make it to one side, of the mobs, you will respawn on that side.
+	else if (screen == 10) //Just choosing if you respawn at screen 0 or screen 10. Basically if you make it to one side of the mobs, you will respawn on that side.
 	{
 		RespawnInBed = false;
+	}
+
+	if (wnd.kbd.KeyIsPressed(0x52)) //"R" key allows manual reset; so you don't have to actually die to respawn
+	{
+		UserHealth = 0;
 	}
 
 	//if you die, reset health, reset the mobs, and then respawn
@@ -611,7 +640,7 @@ void Game::UserRespawn()
 
 		for (int i = 0; i < BasicSize; i++)
 		{
-			mob[i].Respawn();
+			bas[i].Respawn();
 		}
 
 		if (RespawnInBed)
@@ -624,7 +653,6 @@ void Game::UserRespawn()
 			screen = 10;
 			gin[0].Respawn(420, 445 - 21);
 		}
-
 	}
 }
 

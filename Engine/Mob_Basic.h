@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
 
-class Mob
+class Basic
 {
 public:
 	void Draw(Graphics& gfx);
@@ -20,8 +20,8 @@ public:
 private:
 	int StartPointX;
 	int StartPointY;
-	int x = StartPointX;
-	int y = StartPointY;
+	int x /*= StartPointX*/;
+	int y /*= StartPointY*/;
 	int w = 9;
 	int speed = 1;
 	bool aggro = false;
