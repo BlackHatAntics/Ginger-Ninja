@@ -10,7 +10,8 @@ public:
 	void Death(int Gx, int Gy, int Gw, int Gds, int Gsp);
 	void StartPoint();
 	void Respawn();
-	void Movement(int Gx, int Gw);
+	void Movement(int Gx, int Gw/*, int Gdx*/);
+	//void Aggro(int Gx, int Gy, int Gw, int Gog);
 
 	bool GetAlive();
 private:
@@ -26,5 +27,6 @@ private:
 	int jh = sjh; //jump height
 	int RandStage = 0;
 	bool isJumping = false;
-	int test0 = 0;
+	int JumpX = 0;
+	bool aggro = false;
 };

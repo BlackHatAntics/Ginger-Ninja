@@ -63,8 +63,8 @@ private:
 	int wjhY = WallJumpHeight;
 	int wjhX = WallJumpHeight;
 	int fh = 1; //fall height?
-	int dy; //Delta Y
-	int dx; //Delta X
+	int dy; //Delta Y (Where y was the previous frame)
+	int dx; //Delta X (Where x was the previous frame)
 	bool MoveRight = false;
 	bool MoveLeft = false;
 	bool isJumping = false;

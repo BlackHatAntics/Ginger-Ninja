@@ -611,8 +611,8 @@ void Game::MobGroupJumper(int i)
 {
 	if (jum[i].GetAlive())
 	{
-//		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-		jum[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
+		//jum[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		jum[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		jum[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		jum[i].Draw(gfx);
