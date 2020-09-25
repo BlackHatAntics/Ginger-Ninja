@@ -7,11 +7,11 @@ public:
 	void Draw(Graphics& gfx);
 	void Init(int in_x, int in_y, int in_Px, int in_Pw);
 	void Collision(int Gx, int Gy, int Gw, bool &Colliding);
-	void Movement(int Gx, int Gw);
-	void Aggro(int Gx, int Gy, int Gw, int Gog);
 	void Death(int Gx, int Gy, int Gw, int Gds, int Gsp);
 	void StartPoint(); //Just called once in the Game initializer
 	void Respawn();
+	void Movement(int Gx, int Gw);
+	void Aggro(int Gx, int Gy, int Gw, int Gog);
 
 	int GetStartPointX();
 	int GetStartPointY();

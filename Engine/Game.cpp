@@ -33,8 +33,8 @@ Game::Game( MainWindow& wnd )
 	bas[0].Init(200, 195, 20, 280);
 	bas[1].Init(100, 195, 20, 280);
 	bas[2].Init(700, 550, 110, 799 - 110);
-	jum[0].Init(70, 193);
-//	jum[1].Init(0, 0);
+	jum[0].Init(70, 193, 20, 280);
+	jum[1].Init(300, 548, 110, 799 - 110);
 //	jum[2].Init(0, 0);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
@@ -58,10 +58,12 @@ void Game::Go()
 
 
 	//Currently working on:
+//Implementing platform borders for Jumper (Make it so he can still jump, but only if he picks a number that won't put him off edge)
+//Implementing aggro for Jumper. (Have him try to jump where the player will end up; not just a fixed distance)
 //Planning && drawing level layouts
 
 	//Fix:
-//Test if the jump is activating too late? Feels like you can push jump and still walk off a ledge without jumping.
+//Jumper currently can not jump all the way to the right side of a platform
 
 	//Add:
 //Implement the level switcher
@@ -479,6 +481,7 @@ void Game::Screen7()
 	MobGroupBasic(2);
 
 	MobGroupJumper(0);
+	MobGroupJumper(1);
 }
 void Game::Screen8()
 {
@@ -606,14 +609,14 @@ void Game::MobGroupBasic(int i)
 
 void Game::MobGroupJumper(int i)
 {
-//	if (jum[i].GetAlive())
-//	{
+	if (jum[i].GetAlive())
+	{
 //		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-//		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
-//		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
-//		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		jum[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
+		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		jum[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		jum[i].Draw(gfx);
-//	}
+	}
 }
 
 void Game::UserRespawn()
@@ -641,6 +644,10 @@ void Game::UserRespawn()
 		for (int i = 0; i < BasicSize; i++)
 		{
 			bas[i].Respawn();
+		}
+		for (int i = 0; i < JumperSize; i++)
+		{
+			jum[i].Respawn();
 		}
 
 		if (RespawnInBed)

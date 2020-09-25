@@ -27,6 +27,18 @@ void Basic::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 	}
 }
 
+void Basic::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
+{
+	if (Gds > 0 && Gds <= 4) //If dashing
+	{
+		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
+			&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
+		{
+			alive = false;
+		}
+	}
+}
+
 void Basic::Movement(int Gx, int Gw)
 {
 	if (aggro)
@@ -121,18 +133,6 @@ void Basic::Aggro(int Gx, int Gy, int Gw, int Gog)
 		//The 50 also dictactes how much lower you need to be
 		aggro = false;
 		speed = 1;
-	}
-}
-
-void Basic::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
-{
-	if (Gds > 0 && Gds <= 4) //If dashing
-	{
-		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
-			&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
-		{
-			alive = false;
-		}
 	}
 }
 

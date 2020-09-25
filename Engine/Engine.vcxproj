@@ -160,6 +160,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="Mob.cpp" />
     <ClCompile Include="Mob_Basic.cpp" />
     <ClCompile Include="Mob_Jumper.cpp" />
     <ClCompile Include="Mouse.cpp" />

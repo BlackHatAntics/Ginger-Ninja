@@ -95,6 +95,9 @@
     <ClCompile Include="Mob_Jumper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
