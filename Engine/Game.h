@@ -26,6 +26,7 @@
 #include "Ginger.h"
 #include "Mob_Basic.h"
 #include "Mob_Jumper.h"
+#include "Mob_Charger.h"
 
 class Game
 {
@@ -62,6 +63,7 @@ private:
 	void HealthBar();
 	void MobGroupBasic(int i);
 	void MobGroupJumper(int i);
+	void MobGroupCharger(int i);
 	void UserRespawn();
 	//void Screen[6](); //I wish...
 	/********************************/
@@ -73,9 +75,11 @@ private:
 	static constexpr int GinSize = 2;
 	static constexpr int BasicSize = 3;
 	static constexpr int JumperSize = 3;
+	static constexpr int ChargerSize = 3;
 	Ginger gin[GinSize];
 	Basic bas[BasicSize];
 	Jumper jum[JumperSize];
+	Charger cha[ChargerSize];
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
 	int Level = 0;
 	bool UserisColliding = false;

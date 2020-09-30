@@ -36,6 +36,8 @@ Game::Game( MainWindow& wnd )
 	jum[0].Init(70, 193, 20, 280);
 	jum[1].Init(300, 548, 110, 799 - 110);
 //	jum[2].Init(0, 0);
+	cha[0].Init(70, 189, 20, 280);
+	cha[1].Init(170, 544, 110, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -44,6 +46,10 @@ Game::Game( MainWindow& wnd )
 	for (int i = 0; i < JumperSize; i++)
 	{
 		jum[i].StartPoint();
+	}
+	for (int i = 0; i < ChargerSize; i++)
+	{
+		cha[i].StartPoint();
 	}
 }
 
@@ -63,7 +69,7 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
-//Jumper currently can not jump all the way to the right side of a platform
+//
 
 	//Add:
 //Implement the level switcher
@@ -482,6 +488,9 @@ void Game::Screen7()
 
 	MobGroupJumper(0);
 	MobGroupJumper(1);
+
+	MobGroupCharger(0);
+	MobGroupCharger(1);
 }
 void Game::Screen8()
 {
@@ -598,7 +607,7 @@ void Game::MobGroupBasic(int i)
 	{
 		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
-		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+	//	bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		bas[i].Draw(gfx);
 
@@ -613,9 +622,21 @@ void Game::MobGroupJumper(int i)
 	{
 		//jum[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		jum[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		//jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		jum[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		jum[i].Draw(gfx);
+	}
+}
+
+void Game::MobGroupCharger(int i)
+{
+	if (cha[i].GetAlive())
+	{
+		cha[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		cha[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		//cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		cha[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		cha[i].Draw(gfx);
 	}
 }
 
@@ -648,6 +669,10 @@ void Game::UserRespawn()
 		for (int i = 0; i < JumperSize; i++)
 		{
 			jum[i].Respawn();
+		}
+		for (int i = 0; i < ChargerSize; i++)
+		{
+			cha[i].Respawn();
 		}
 
 		if (RespawnInBed)
@@ -693,6 +718,9 @@ void Game::ComposeFrame()
 	HealthBar(); //Keep last, just so it's always on top
 
 //Test bullshit:
-	//Sleep(200);
+	if (wnd.kbd.KeyIsPressed(VK_RETURN))
+	{
+		Sleep(200);
+	}
 	//gfx.PutPixel(gin[0].GetX() - 160, 255, 255, 255, 255);
 }

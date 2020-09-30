@@ -168,7 +168,6 @@ void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
 //void Jumper::Aggro(int Gx, int Gy, int Gw, int Gog)
 //{
 	//I removed aggro functionality, because it made it too fucking impossible. Even if you COULD manage to kill them, it was anti-fun
-
 //	if (Gx < x + w + 1 + 160 && Gx + Gw + 1 > x - 160 && Gy <= y + w && Gy + Gw >= y + w - 81 && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
 //	{
 // 		aggro = true;
