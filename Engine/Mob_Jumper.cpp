@@ -32,17 +32,24 @@ void Jumper::Draw(Graphics& gfx)
 		gfx.PutPixel(x + w, y + loopy, Colors::Green3);
 	}
 
-	//ears
-	for (int loopx = 0; loopx <= 3; loopx++)
-	{
-		for (int loopy = 0; loopy <= 1; loopy++)
-		{ 
-			//left
-			gfx.PutPixel(x + 1 + loopx, y - 1 + loopy, Colors::Green2);
-			//right
-			gfx.PutPixel(x + w - 1 - 3 + loopx, y - 1 + loopy, Colors::Green2);
-		}
-	}
+	//ears/eyes
+//	for (int loopx = 0; loopx <= 3; loopx++)
+//	{
+//		for (int loopy = 0; loopy <= 1; loopy++)
+//		{ 
+//			if (EyeDirection < 0)
+//			{
+//				//left
+//				gfx.PutPixel(x /*+ 1*/ + loopx, y - 1 + loopy, Colors::Green2);
+//			}
+//			else if (EyeDirection > 0)
+//			{
+//				//right
+//				gfx.PutPixel(x + w /*- 1*/ - 3 + loopx, y - 1 + loopy, Colors::Green2);
+//			}
+//			
+//		}
+//	}
 }
 
 void Jumper::Init(int in_x, int in_y, int in_Px, int in_Pw)
@@ -141,6 +148,7 @@ void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
 			if (JumpX <= 6)
 			{
 				isJumping = true;
+				//EyeDirection = JumpX;
 			}
 			RandStage = 0;
 		}

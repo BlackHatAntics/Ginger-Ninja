@@ -38,6 +38,7 @@ Game::Game( MainWindow& wnd )
 //	jum[2].Init(0, 0);
 	cha[0].Init(70, 189, 20, 280);
 	cha[1].Init(170, 544, 110, 799 - 110);
+	ran[0].Init(220, 544, 110, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -50,6 +51,10 @@ Game::Game( MainWindow& wnd )
 	for (int i = 0; i < ChargerSize; i++)
 	{
 		cha[i].StartPoint();
+	}
+	for (int i = 0; i < RangerSize; i++)
+	{
+		ran[i].StartPoint();
 	}
 }
 
@@ -64,14 +69,15 @@ void Game::Go()
 
 
 	//Currently working on:
-//Implementing platform borders for Jumper (Make it so he can still jump, but only if he picks a number that won't put him off edge)
-//Implementing aggro for Jumper. (Have him try to jump where the player will end up; not just a fixed distance)
+//Figuring out how to have Ranger's pellets appear. Should I put them in their own class? 
 //Planning && drawing level layouts
 
 	//Fix:
-//
+//Mobs vibrating when underneath you && aggro
 
 	//Add:
+//For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
+//For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //Put Walls && Ground in their own class, so you can have moving platforms
@@ -491,6 +497,8 @@ void Game::Screen7()
 
 	MobGroupCharger(0);
 	MobGroupCharger(1);
+
+	MobGroupRanger(0);
 }
 void Game::Screen8()
 {
@@ -615,7 +623,6 @@ void Game::MobGroupBasic(int i)
 		//Honestly idk if I'm gonna do this/have a centralized "mob" class to pull functions from. I understand it would benefit me if I have 1000 types of mobs, but since I'm only have ~6, it's more inconvenient. 
 	}
 }
-
 void Game::MobGroupJumper(int i)
 {
 	if (jum[i].GetAlive())
@@ -627,7 +634,6 @@ void Game::MobGroupJumper(int i)
 		jum[i].Draw(gfx);
 	}
 }
-
 void Game::MobGroupCharger(int i)
 {
 	if (cha[i].GetAlive())
@@ -637,6 +643,29 @@ void Game::MobGroupCharger(int i)
 		//cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		cha[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		cha[i].Draw(gfx);
+	}
+}
+void Game::MobGroupRanger(int i)
+{
+	if (ran[i].GetAlive())
+	{
+		ran[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		//ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
+		pel[Pi].Spawning(PelletSize, Pi);
+		//ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+
+		for (int Pii = 0; Pii < PelletSize; Pii++)
+		{
+			if (pel[Pii].GetActive() == true)
+			{
+				pel[Pii].Draw(gfx);
+				pel[Pii].ShootyShootyPowPow();
+			}
+		}
+
+		ran[i].Draw(gfx);
 	}
 }
 

@@ -121,4 +121,6 @@ namespace Colors
 	static constexpr Color Green3 = MakeRGB(200u, 255u, 60u);
 	static constexpr Color White1 = MakeRGB(222u, 222u, 222u);
 	static constexpr Color Black2 = MakeRGB(120u, 0u, 0u);
+	static constexpr Color Brown = MakeRGB(120u, 77u, 8u); //Ranger body
+	static constexpr Color Brown1 = MakeRGB(147u, 100u, 35u); //Ranger projectile
 }

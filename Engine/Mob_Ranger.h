@@ -1,7 +1,8 @@
 #pragma once
 #include "Graphics.h"
+#include "Mob_Ranger_Pellet.h"
 
-class Jumper
+class Ranger
 {
 public:
 	void Draw(Graphics& gfx);
@@ -11,23 +12,29 @@ public:
 	void StartPoint();
 	void Respawn();
 	void Movement(int Gx, int Gw/*, int Gdx*/);
-	//void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void Shoot(int Gx, int Gy, int Gw);
 
 	bool GetAlive();
+	//int GetPelletSize();
 private:
+	//static constexpr int PelletSize = 3;
+	//Pellet pel[PelletSize];
+
 	int StartPointX;
 	int StartPointY;
-	int x = StartPointX;
-	int y = StartPointY;
+	int x;
+	int y;
 	int w = 11;
-	int Px; //Platform x (of the platform it is standing on. This is manually determined in the Init function)
-	int Pw;	//Platform width
-	bool alive = true;
-	int sjh = 13; //starting jump height
-	int jh = sjh; //jump height
-	int RandStage = 0;
-	bool isJumping = false;
-	int JumpX = 0;
+	int h = 15;
+	int speed = 1;
 	bool aggro = false;
-//	int EyeDirection = 1; //Determined once in Movement()
+	bool MoveRight = false;
+	bool MoveLeft = false;
+	int RandStage = 0;
+	int Px; //Platform x (of the platform it is standing on. This is manually determined in the Init function)
+	int Pw; //Platform width
+	bool alive = true;
+	//int PelletNumber = 0;
+	//int PelletStage = 0;
 };
