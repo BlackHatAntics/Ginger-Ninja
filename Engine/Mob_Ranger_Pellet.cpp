@@ -19,6 +19,7 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 		x = Rx + Rw / 2 - w / 2; //Spawning pellets in middle of his body
 		y = Ry + Rh / 2 - w / 2; //Spawning pellets in middle of his body
 
+		//Determining the flight path
 		if (Gx + Gw / 2 > Rx + Rw / 2) //If Ginger is to the right of Ranger
 		{
 			Direction = 1; //Make pellets fly to the right
@@ -27,8 +28,12 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 		{
 			Direction = -1; //Make pellets fly to the left
 		}
+
+
+
 	}
 
+	//resetting to next pellet
 	if (PelletStage == 100)
 	{
 		PelletStage = 0;
@@ -40,7 +45,7 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 		}
 	}
 
-	if (aggro)
+	if (aggro) //incrementing pellet stage, only if he's aggro / actually firing
 	{
 		PelletStage++;
 	}
@@ -52,11 +57,14 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 
 void Pellet::ShootyShootyPowPow(/*int Rx, int Ry, int Rw, int Gx, int Gy, int Gw, int Gdx, int Gdy*/)
 {
-	x += Speed * Direction; //Moving the pellet along x value
-	if (x > 770 || x < 0)
+	x += SpeedX * Direction; //Moving the pellet along x value
+	y += SpeedY/* + */; //Moving the pellet along y value
+	SpeedY += 2; //Constant gravity
+	if (x > 799 - w || x < 0 || y > 599 - w || y < 0) //borders
 	{
 		active = false;
-		x = 0;
+		//x = 0;
+		//y = 0;
 	}
 }
 

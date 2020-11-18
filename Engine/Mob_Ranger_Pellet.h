@@ -14,7 +14,8 @@ private:
 	int x = 0;
 	int y = 100;
 	int w = 5;
-	int Speed = 2;
+	int SpeedX = 10;
+	int SpeedY = 0;
 	bool active = false;
 	//int PelletNumber = 0;
 	int PelletStage = 0;
