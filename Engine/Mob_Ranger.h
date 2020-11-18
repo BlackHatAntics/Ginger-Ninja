@@ -16,6 +16,11 @@ public:
 	void Shoot(int Gx, int Gy, int Gw);
 
 	bool GetAlive();
+	bool GetAggro();
+	int GetX();
+	int GetY();
+	int GetW();
+	int GetH();
 	//int GetPelletSize();
 private:
 	//static constexpr int PelletSize = 3;

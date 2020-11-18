@@ -179,6 +179,28 @@ bool Ranger::GetAlive()
 	return alive;
 }
 
+bool Ranger::GetAggro()
+{
+	return aggro;
+}
+
+int Ranger::GetX()
+{
+	return x;
+}
+int Ranger::GetY()
+{
+	return y;
+}
+int Ranger::GetW()
+{
+	return w;
+}
+int Ranger::GetH()
+{
+	return h;
+}
+
 //int Ranger::GetPelletSize()
 //{
 //	return PelletSize;

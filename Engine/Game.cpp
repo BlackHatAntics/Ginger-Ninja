@@ -69,7 +69,8 @@ void Game::Go()
 
 
 	//Currently working on:
-//Figuring out how to have Ranger's pellets appear. Should I put them in their own class? 
+//Making pellets spawn from Ranger
+//Giving the pellets a proper flight path
 //Planning && drawing level layouts
 
 	//Fix:
@@ -652,7 +653,7 @@ void Game::MobGroupRanger(int i)
 		ran[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 		//ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
-		pel[Pi].Spawning(PelletSize, Pi);
+		pel[Pi].Spawning(PelletSize, Pi, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
 		//ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 
@@ -661,7 +662,7 @@ void Game::MobGroupRanger(int i)
 			if (pel[Pii].GetActive() == true)
 			{
 				pel[Pii].Draw(gfx);
-				pel[Pii].ShootyShootyPowPow();
+				pel[Pii].ShootyShootyPowPow(/*ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY()*/);
 			}
 		}
 
