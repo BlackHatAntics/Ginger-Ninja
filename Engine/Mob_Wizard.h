@@ -1,8 +1,8 @@
 #pragma once
 #include "Graphics.h"
-//#include "Mob_Ranger_Pellet.h"
+//#include "Mob_Wizard_Orb.h"
 
-class Ranger
+class Wizard
 {
 public:
 	void Draw(Graphics& gfx);

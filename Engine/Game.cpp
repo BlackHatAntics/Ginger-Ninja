@@ -39,6 +39,7 @@ Game::Game( MainWindow& wnd )
 	cha[0].Init(70, 189, 20, 280);
 	cha[1].Init(170, 544, 110, 799 - 110);
 	ran[0].Init(220, 545, 110, 799 - 110);
+	wiz[0].Init(220, 545, 110, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -56,6 +57,10 @@ Game::Game( MainWindow& wnd )
 	{
 		ran[i].StartPoint();
 	}
+	for (int i = 0; i < WizardSize; i++)
+	{
+		wiz[i].StartPoint();
+	}
 }
 
 void Game::Go()
@@ -69,8 +74,8 @@ void Game::Go()
 
 
 	//Currently working on:
-//Making pellets spawn from Ranger
-//Giving the pellets a proper flight path
+//Making pellets shoot at the player
+//Making orb not sudenly move sometimes, if player happens to juke near time orb is about to hit OrbCounter
 //Planning && drawing level layouts
 
 	//Fix:
@@ -500,6 +505,8 @@ void Game::Screen7()
 	MobGroupCharger(1);
 
 	MobGroupRanger(0);
+
+	MobGroupWizard(0);
 }
 void Game::Screen8()
 {
@@ -667,6 +674,30 @@ void Game::MobGroupRanger(int i)
 		}
 
 		ran[i].Draw(gfx);
+	}
+}
+
+void Game::MobGroupWizard(int i)
+{
+	if (wiz[i].GetAlive())
+	{
+		wiz[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		//wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
+		orb.Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
+		//wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+
+		if (orb.GetActive() == true)
+		{
+			if (!(orb.GetX() > 799 - orb.GetW() || orb.GetX() < 0 || orb.GetY() > 599 - orb.GetW() || orb.GetY() < 0)) //if not out of bounds, draw the orb
+			{
+				orb.Draw(gfx);
+			}
+			orb.ShootyShootyPowPow(/*wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(),*/ gin[0].GetX(), gin[0].GetY(), gin[0].GetW()/*, gin[i].GetDX(), gin[i].GetDY()*/);
+		}
+
+		wiz[i].Draw(gfx);
 	}
 }
 

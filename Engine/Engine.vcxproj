@@ -151,6 +151,8 @@
     <ClInclude Include="Mob_Jumper.h" />
     <ClInclude Include="Mob_Ranger.h" />
     <ClInclude Include="Mob_Ranger_Pellet.h" />
+    <ClInclude Include="Mob_Wizard.h" />
+    <ClInclude Include="Mob_Wizard_Orb.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Screen.h" />
@@ -169,6 +171,8 @@
     <ClCompile Include="Mob_Jumper.cpp" />
     <ClCompile Include="Mob_Ranger.cpp" />
     <ClCompile Include="Mob_Ranger_Pellet.cpp" />
+    <ClCompile Include="Mob_Wizard.cpp" />
+    <ClCompile Include="Mob_Wizard_Orb.cpp" />
     <ClCompile Include="Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>

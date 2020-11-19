@@ -29,6 +29,8 @@
 #include "Mob_Charger.h"
 #include "Mob_Ranger.h"
 #include "Mob_Ranger_Pellet.h"
+#include "Mob_Wizard.h"
+#include "Mob_Wizard_Orb.h"
 
 class Game
 {
@@ -67,6 +69,7 @@ private:
 	void MobGroupJumper(int i);
 	void MobGroupCharger(int i);
 	void MobGroupRanger(int i);
+	void MobGroupWizard(int i);
 	void UserRespawn();
 	//void Screen[6](); //I wish...
 	/********************************/
@@ -81,12 +84,15 @@ private:
 	static constexpr int ChargerSize = 3;
 	static constexpr int RangerSize = 3;
 	static constexpr int PelletSize = 8;
+	static constexpr int WizardSize = 3;
 	Ginger gin[GinSize];
 	Basic bas[BasicSize];
 	Jumper jum[JumperSize];
 	Charger cha[ChargerSize];
 	Ranger ran[RangerSize];
 	Pellet pel[PelletSize];
+	Wizard wiz[WizardSize];
+	Orb orb;
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
 	int Level = 0;
 	bool UserisColliding = false;
@@ -95,5 +101,6 @@ private:
 	int DamageLockCounter = 0;
 	bool RespawnInBed = true;
 	int Pi = 0; // looping through pellet index
+	int Oi = 0; // looping through orb index
 	/********************************/
 };

@@ -66,18 +66,18 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 
 		//now calculate so that the same amount of force is generated at each angle, and you adjust x speed accordingly...
 
-		//a projectile should travel 6 times further than the height it reaches, assuming 45 degrees. so figure out what height a projectile should be reaching, aka, determine how much SpeedY takes away from SpeedX
+		//a projectile should travel 4 times further than the height it reaches, assuming 45 degrees. so figure out what height a projectile should be reaching, aka, determine how much SpeedY takes away from SpeedX
 		//with 
 
 
-		SpeedY = -25;
+		SpeedY = -14;
 		//SpeedX = PotentialSpeed + SpeedY * 1.5;
 		//int NumberOfFrames = (-1 * (SpeedY / 2) + 1);
 		//SpeedX = PotentialSpeed/4;
-		int NumberOfFrames = (-1 * SpeedY) + 1;
-		int Height = (-1 * SpeedY) * ((-1 * SpeedY) * 0.25 + 0.5);
+		int NumberOfFrames = (-1 * SpeedY) + 1; //Number of frames it takes for pellet to travel up, and back down to original y value
+		int Height = (-1 * SpeedY) * ((-1 * SpeedY) * 0.25 + 0.5); //How high the peak of parabola is
 	//	int XFactor = 4 * 
-		SpeedX = Height * 4 / NumberOfFrames; //* 4 = exactly 45 degrees. Should be maximal distance. Need to adjust the multiplier based off the percentage that SpeedY is of PotentialSpeed
+		SpeedX = Height * 4/*XFactor*/ / NumberOfFrames; //* 4 = exactly 45 degrees. Should be maximal distance. Need to adjust the multiplier based off the percentage that SpeedY is of PotentialSpeed........... Nah nevermind. Fuck it, I'll keep it simple. Always shoot in 45 degrees
 
 
 

@@ -72,6 +72,12 @@
     <ClInclude Include="Mob_Ranger_Pellet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mob_Wizard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mob_Wizard_Orb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -114,6 +120,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mob_Ranger_Pellet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mob_Wizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mob_Wizard_Orb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
