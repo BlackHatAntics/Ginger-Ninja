@@ -29,6 +29,58 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 			Direction = -1; //Make pellets fly to the left
 		}
 
+//		Distance = Rx + Rw / 2 - Gx + Gw / 2;
+
+//		amount of frames it takes to hit ground with 0 SpeedY: (Rh / 2 - w / 2) / 2   (5)
+//		Distance pellet will travel till ground with 0 SpeedY: PotentialSpeed * AmountOfFrames (50)
+
+//		amount of frames it will take to hit y peak with 0 SpeedY: 1
+//		distance pellet will travel till YPeak: Potentialspeed * 1 (20)
+		//with SpeedY of 1: Potentialspeed * 1.5 (30)
+		//2: Potentialspeed * 2		(40)
+		//3: Potentialspeed * 2.5	(50)
+		//4: Potentialspeed * 3		(60)
+		//5: Potentialspeed * 3.5	(70)
+		//6: Potentialspeed * 4		(80)
+		//7: Potentialspeed * 4.5	(90)
+		//8: Potentialspeed * 5		(100)
+	//	(divide by 2 and add 1) for number of frames
+		//In order to get number of frames for distance till it gets back to the starting y value, just do SpeedY + 1
+
+		//calculate how high each pellet gets
+		//with SpeedY of 1:
+		//2: 2		1
+		//3: 4		1.3333333333333
+		//4: 6		1.5
+		//5: 9		1.8
+		//6: 12		2
+		//7: 16		2.2857142857142
+		//8: 20		2.5
+		//9: 25 
+		//10: 30	3
+		//11: 36
+		//12: 42	3.5
+		//13: 49
+		//14: 56	4
+		//so approximately add 0.25 each time
+
+		//now calculate so that the same amount of force is generated at each angle, and you adjust x speed accordingly...
+
+		//a projectile should travel 6 times further than the height it reaches, assuming 45 degrees. so figure out what height a projectile should be reaching, aka, determine how much SpeedY takes away from SpeedX
+		//with 
+
+
+		SpeedY = -25;
+		//SpeedX = PotentialSpeed + SpeedY * 1.5;
+		//int NumberOfFrames = (-1 * (SpeedY / 2) + 1);
+		//SpeedX = PotentialSpeed/4;
+		int NumberOfFrames = (-1 * SpeedY) + 1;
+		int Height = (-1 * SpeedY) * ((-1 * SpeedY) * 0.25 + 0.5);
+	//	int XFactor = 4 * 
+		SpeedX = Height * 4 / NumberOfFrames; //* 4 = exactly 45 degrees. Should be maximal distance. Need to adjust the multiplier based off the percentage that SpeedY is of PotentialSpeed
+
+
+
 
 
 	}

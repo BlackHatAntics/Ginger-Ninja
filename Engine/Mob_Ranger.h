@@ -30,8 +30,8 @@ private:
 	int StartPointY;
 	int x;
 	int y;
-	int w = 11;
-	int h = 15;
+	int w = 10;
+	int h = 14;
 	int speed = 1;
 	bool aggro = false;
 	bool MoveRight = false;

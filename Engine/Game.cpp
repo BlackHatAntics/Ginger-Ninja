@@ -38,7 +38,7 @@ Game::Game( MainWindow& wnd )
 //	jum[2].Init(0, 0);
 	cha[0].Init(70, 189, 20, 280);
 	cha[1].Init(170, 544, 110, 799 - 110);
-	ran[0].Init(220, 544, 110, 799 - 110);
+	ran[0].Init(220, 545, 110, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -752,5 +752,5 @@ void Game::ComposeFrame()
 	{
 		Sleep(200);
 	}
-	//gfx.PutPixel(gin[0].GetX() - 160, 255, 255, 255, 255);
+//	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
 }
