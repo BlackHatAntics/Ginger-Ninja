@@ -32,7 +32,7 @@ void Wizard::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 	if (Gds > 0 && Gds <= 4) //If dashing
 	{
 		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
-			&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
+			&& Gy + Gw > y && Gy < y + h) //Gotta be at the same height level
 		{
 			alive = false;
 		}
@@ -150,29 +150,29 @@ void Wizard::Aggro(int Gx, int Gy, int Gw, int Gog)
 	}
 }
 
-void Wizard::Shoot(int Gx, int Gy, int Gw)
-{
-	if (aggro)
-	{
-		//if (PelletStage == 10) //short delay before he starts firing
-		//{
-		//	pel[PelletNumber].SetActive(true); //this is saying: okay, now you can load up the pel.Shoot() function, and Pellet[PelletNumber] will be drawn in Game.cpp
-		//}
-		//
-		//if (PelletStage == 100)
-		//{
-		//	PelletNumber++;
-		//	PelletStage = 0;
-		//
-		//	if (PelletNumber > PelletSize)
-		//	{
-		//		PelletNumber = 0;
-		//	}
-		//}
-		//
-		//PelletStage++;
-	}
-}
+//void Wizard::Shoot(int Gx, int Gy, int Gw)
+//{
+//	if (aggro)
+//	{
+//		//if (PelletStage == 10) //short delay before he starts firing
+//		//{
+//		//	pel[PelletNumber].SetActive(true); //this is saying: okay, now you can load up the pel.Shoot() function, and Pellet[PelletNumber] will be drawn in Game.cpp
+//		//}
+//		//
+//		//if (PelletStage == 100)
+//		//{
+//		//	PelletNumber++;
+//		//	PelletStage = 0;
+//		//
+//		//	if (PelletNumber > PelletSize)
+//		//	{
+//		//		PelletNumber = 0;
+//		//	}
+//		//}
+//		//
+//		//PelletStage++;
+//	}
+//}
 
 bool Wizard::GetAlive()
 {

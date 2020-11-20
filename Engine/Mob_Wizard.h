@@ -13,7 +13,7 @@ public:
 	void Respawn();
 	void Movement(int Gx, int Gw/*, int Gdx*/);
 	void Aggro(int Gx, int Gy, int Gw, int Gog);
-	void Shoot(int Gx, int Gy, int Gw);
+	//void Shoot(int Gx, int Gy, int Gw);
 
 	bool GetAlive();
 	bool GetAggro();

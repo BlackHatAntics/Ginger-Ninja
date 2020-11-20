@@ -70,6 +70,7 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 		//with 
 
 
+		//This is where you should put code that makes the projectile fire at the player (this note is if you don't code for another month and come back) - delete
 		SpeedY = -14;
 		//SpeedX = PotentialSpeed + SpeedY * 1.5;
 		//int NumberOfFrames = (-1 * (SpeedY / 2) + 1);

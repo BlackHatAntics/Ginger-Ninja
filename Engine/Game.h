@@ -101,6 +101,6 @@ private:
 	int DamageLockCounter = 0;
 	bool RespawnInBed = true;
 	int Pi = 0; // looping through pellet index
-	int Oi = 0; // looping through orb index
+//	int Oi = 0; // looping through orb index
 	/********************************/
 };

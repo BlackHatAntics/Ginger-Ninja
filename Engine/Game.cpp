@@ -39,7 +39,9 @@ Game::Game( MainWindow& wnd )
 	cha[0].Init(70, 189, 20, 280);
 	cha[1].Init(170, 544, 110, 799 - 110);
 	ran[0].Init(220, 545, 110, 799 - 110);
+	ran[1].Init(320, 545, 110, 799 - 110);
 	wiz[0].Init(220, 545, 110, 799 - 110);
+	wiz[1].Init(420, 545, 110, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -79,9 +81,12 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
+//You can only have one wizard / ranger. They don't have independent projectiles
+//Orbs sudenly move sometimes, if player happens to juke near time orb is about to hit OrbCounter
 //Mobs vibrating when underneath you && aggro
 
 	//Add:
+//Make it so the orb moves straight at the player, not just on 45 degree angles
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Implement the level switcher
@@ -505,8 +510,10 @@ void Game::Screen7()
 	MobGroupCharger(1);
 
 	MobGroupRanger(0);
+//	MobGroupRanger(1);
 
 	MobGroupWizard(0);
+//	MobGroupWizard(1);
 }
 void Game::Screen8()
 {
@@ -659,7 +666,7 @@ void Game::MobGroupRanger(int i)
 	{
 		ran[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		//ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
+//		ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 		pel[Pi].Spawning(PelletSize, Pi, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
 		//ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
@@ -683,10 +690,12 @@ void Game::MobGroupWizard(int i)
 	{
 		wiz[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		//wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
+//		wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 		orb.Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
 		//wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		//orb.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		orb.Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 
 		if (orb.GetActive() == true)
 		{
