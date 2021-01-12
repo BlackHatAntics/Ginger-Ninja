@@ -92,7 +92,7 @@ private:
 	Ranger ran[RangerSize];
 	Pellet pel[PelletSize];
 	Wizard wiz[WizardSize];
-	Orb orb;
+	Orb orb[WizardSize];
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
 	int Level = 0;
 	bool UserisColliding = false;

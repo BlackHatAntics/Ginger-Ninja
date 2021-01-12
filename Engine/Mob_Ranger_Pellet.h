@@ -13,7 +13,7 @@ public:
 private:
 	int x = 0;
 	int y = 100;
-	int w = 4;
+	static const int w = 4;
 	int SpeedX = 10;
 	int SpeedY = 0;
 	bool active = false;

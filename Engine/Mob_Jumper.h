@@ -19,11 +19,11 @@ private:
 	int StartPointY;
 	int x = StartPointX;
 	int y = StartPointY;
-	int w = 11;
+	static const int w = 11;
 	int Px; //Platform x (of the platform it is standing on. This is manually determined in the Init function)
 	int Pw;	//Platform width
 	bool alive = true;
-	int sjh = 13; //starting jump height
+	static const int sjh = 13; //starting jump height
 	int jh = sjh; //jump height
 	int RandStage = 0;
 	bool isJumping = false;

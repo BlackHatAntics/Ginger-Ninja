@@ -20,7 +20,7 @@ private:
 	int StartPointY;
 	int x;
 	int y;
-	int w = 15;
+	static const int w = 15;
 	int speed = 1;
 	bool aggro = false;
 	bool MoveRight = false;

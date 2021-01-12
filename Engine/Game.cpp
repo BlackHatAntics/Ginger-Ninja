@@ -77,12 +77,10 @@ void Game::Go()
 
 	//Currently working on:
 //Making pellets shoot at the player
-//Making orb not sudenly move sometimes, if player happens to juke near time orb is about to hit OrbCounter
 //Planning && drawing level layouts
 
 	//Fix:
 //You can only have one wizard / ranger. They don't have independent projectiles
-//Orbs sudenly move sometimes, if player happens to juke near time orb is about to hit OrbCounter
 //Mobs vibrating when underneath you && aggro
 
 	//Add:
@@ -513,7 +511,7 @@ void Game::Screen7()
 //	MobGroupRanger(1);
 
 	MobGroupWizard(0);
-//	MobGroupWizard(1);
+	MobGroupWizard(1);
 }
 void Game::Screen8()
 {
@@ -691,19 +689,19 @@ void Game::MobGroupWizard(int i)
 		wiz[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 //		wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
-		orb.Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
+		orb[i].Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
 		//wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
-		//orb.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		//orb[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
-		orb.Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		orb[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 
-		if (orb.GetActive() == true)
+		if (orb[i].GetActive() == true)
 		{
-			if (!(orb.GetX() > 799 - orb.GetW() || orb.GetX() < 0 || orb.GetY() > 599 - orb.GetW() || orb.GetY() < 0)) //if not out of bounds, draw the orb
+			if (!(orb[i].GetX() > 799 - orb[i].GetW() || orb[i].GetX() < 0 || orb[i].GetY() > 599 - orb[i].GetW() || orb[i].GetY() < 0)) //if not out of bounds, draw the orb
 			{
-				orb.Draw(gfx);
+				orb[i].Draw(gfx);
 			}
-			orb.ShootyShootyPowPow(/*wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(),*/ gin[0].GetX(), gin[0].GetY(), gin[0].GetW()/*, gin[i].GetDX(), gin[i].GetDY()*/);
+			orb[i].ShootyShootyPowPow(/*wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(),*/ gin[0].GetX(), gin[0].GetY(), gin[0].GetW()/*, gin[i].GetDX(), gin[i].GetDY()*/);
 		}
 
 		wiz[i].Draw(gfx);
