@@ -402,6 +402,14 @@ void Orb::ShootyShootyPowPow(/*int Wx, int Wy, int Ww,*/ int Gx, int Gy, int Gw/
 	y += YValue/*UpValue + DownValue*/; //Moving the orb along y value
 }
 
+void Orb::Respawn()
+{
+	OrbStage = 0;
+	active = false;
+	XValue = 0;
+	YValue = 0;
+}
+
 //void Orb::SetActive(bool Active)
 //{
 //	active = Active;

@@ -9,6 +9,7 @@ public:
 	void Death(int Gx, int Gy, int Gw, int Gds, int Gsp);
 	void Spawning(int Rx, int Ry, int Rw, int Rh);
 	void ShootyShootyPowPow(/*int Rx, int Ry, int Rw,*/ int Gx, int Gy, int Gw/*, int Gdx, int Gdy*/);
+	void Respawn();
 
 	//void SetActive(bool Active);
 	bool GetActive();

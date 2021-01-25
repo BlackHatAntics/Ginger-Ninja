@@ -50,6 +50,9 @@ void Wizard::Respawn()
 	alive = true;
 	x = StartPointX;
 	y = StartPointY;
+	aggro = false;
+	//speed = 1;
+	RandStage = 0;
 }
 
 void Wizard::Movement(int Gx, int Gw)

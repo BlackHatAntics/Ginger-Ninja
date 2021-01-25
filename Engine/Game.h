@@ -90,7 +90,7 @@ private:
 	Jumper jum[JumperSize];
 	Charger cha[ChargerSize];
 	Ranger ran[RangerSize];
-	Pellet pel[PelletSize];
+	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
 	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
@@ -100,7 +100,7 @@ private:
 	bool DamageLock = false;
 	int DamageLockCounter = 0;
 	bool RespawnInBed = true;
-	int Pi = 0; // looping through pellet index
+//	int Pi = 0; // looping through pellet index
 //	int Oi = 0; // looping through orb index
 	/********************************/
 };

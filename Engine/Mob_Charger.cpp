@@ -235,6 +235,8 @@ void Charger::Respawn()
 	y = StartPointY;
 	ChargeStage = 0;
 	RandStage = 0;
+	aggro = false;
+	speed = 1;
 }
 
 bool Charger::GetAlive()

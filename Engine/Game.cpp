@@ -80,37 +80,34 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
-//You can only have one wizard / ranger. They don't have independent projectiles
 //Mobs vibrating when underneath you && aggro
 
 	//Add:
-//Make it so the orb moves straight at the player, not just on 45 degree angles
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
-//Put Walls && Ground in their own class, so you can have moving platforms
 //Have a death animation for enemies
-//Don't let yourself wall hop if you're falling too quickly
-//Move all your movement code into Ginger?
-//Add the different types of enemies
-//Plan out your world layout
-//Add burning via sun
-//Have your bed restore 1hp/frame?
+//Add more enemy types
+//Plan out level layouts
+//?Put Walls && Ground in their own class, so you can have moving platforms
+//?Don't let yourself wall hop if you're falling too quickly
+//?Move all your movement code into Ginger
+//?Add burning via sun
+//?Have your bed restore 1hp/frame
 
 	//Thoughts & Ideas:
 //In screen4, as part of platforming test, have a portal that lets you warp from bottom to top of screen (don't need to add new code, just let yourself fall and you auto move to top) Just draw some bs
-//Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables..... Nevermind. It would benefit me if I had tons of mobs, but I only have ~6 so it's more inconvenient.
-//Call Init for all mobs when you die
+//?Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables..... Nevermind. It would benefit me if I had tons of mobs, but I only have ~6 so it's more inconvenient.
 //Is Dash method too easy? My prediction: if few mobs, too easy. if lots of mobs, really hard, and may force you to always corral the mobs. Which is anti-fun.
 //The reason your game is so finnicky and able to break is because it's incredibly dependant on load order. Everything is calling the same values. Try to put all of the same shit into the same function
 //1. Idea! You could have really unique controls, where you are locked into your previous velocity after jumping, but you have a double jump which can adjust you either up down left or right. So you get the one correction in flight path. I actually really like this idea. We'll see how it plays out in practice though.
-//2. When you lock the velocity of the jump, if your velocity is greater than your running speed, you will lower speed by 2 until it is equal. This way if you are going super fast for whatever reason (maybe enemies will knock you back, idk) then your jump won't just make you some super-saiyan cross-map jumper. ... actually, maybe don't do this. This will go against the game's physics for a normal jump at running speed. Don't only SOMETIMES have air resistance; that's dumb.
-//3. I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
+//2. I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
 
 	//Could fix, but honestly don't care:
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
 //Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order) (honestly the solution is just to not use 1-pixel-thick walls)
+//Clean up orb code
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
@@ -508,7 +505,7 @@ void Game::Screen7()
 	MobGroupCharger(1);
 
 	MobGroupRanger(0);
-//	MobGroupRanger(1);
+	MobGroupRanger(1);
 
 	MobGroupWizard(0);
 	MobGroupWizard(1);
@@ -663,22 +660,27 @@ void Game::MobGroupRanger(int i)
 	if (ran[i].GetAlive())
 	{
 		ran[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-		ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		//ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 //		ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
-		pel[Pi].Spawning(PelletSize, Pi, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
+//		for (int Piii = 0; Piii < RangerSize; Piii++)
+//		{
+//			int P = i * PelletSize + Pi;
+//			pel[P].Spawning(PelletSize, Pi, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
+//		}
+		pel[ran[i].PelletNumber + i * PelletSize].Spawning(PelletSize, ran[i].PelletNumber, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
+
 		//ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
-
-		for (int Pii = 0; Pii < PelletSize; Pii++)
-		{
-			if (pel[Pii].GetActive() == true)
-			{
-				pel[Pii].Draw(gfx);
-				pel[Pii].ShootyShootyPowPow(/*ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY()*/);
-			}
-		}
-
 		ran[i].Draw(gfx);
+	}
+
+	for (int Pi = 0; Pi < PelletSize; Pi++) //this is outside of GetAlive {} bracket so that a pellet in motion will keep falling after it's ranger dies
+	{
+		pel[i * PelletSize + Pi].ShootyShootyPowPow(/*ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY()*/);
+		if (pel[i * PelletSize + Pi].GetActive() == true) //so basically this is saying each ranger has his own set of pellets, and it will only loop through his ones. ex: ranger 0 has pellets 0-7. ranger 1 has pellets 8-15, etc. 
+		{
+			pel[i * PelletSize + Pi].Draw(gfx); //i(ranger) * PelletSize(however many pellets are assigned to each ranger) + Pi(whatever pellet it's currently looping through here)
+		}
 	}
 }
 
@@ -697,11 +699,11 @@ void Game::MobGroupWizard(int i)
 
 		if (orb[i].GetActive() == true)
 		{
+			orb[i].ShootyShootyPowPow(/*wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(),*/ gin[0].GetX(), gin[0].GetY(), gin[0].GetW()/*, gin[i].GetDX(), gin[i].GetDY()*/);
 			if (!(orb[i].GetX() > 799 - orb[i].GetW() || orb[i].GetX() < 0 || orb[i].GetY() > 599 - orb[i].GetW() || orb[i].GetY() < 0)) //if not out of bounds, draw the orb
 			{
 				orb[i].Draw(gfx);
 			}
-			orb[i].ShootyShootyPowPow(/*wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(),*/ gin[0].GetX(), gin[0].GetY(), gin[0].GetW()/*, gin[i].GetDX(), gin[i].GetDY()*/);
 		}
 
 		wiz[i].Draw(gfx);
@@ -741,6 +743,22 @@ void Game::UserRespawn()
 		for (int i = 0; i < ChargerSize; i++)
 		{
 			cha[i].Respawn();
+		}
+		for (int i = 0; i < RangerSize; i++)
+		{
+			ran[i].Respawn();
+		}
+		for (int i = 0; i < PelletSize * RangerSize; i++)
+		{
+			pel[i].Respawn();
+		}
+		for (int i = 0; i < WizardSize; i++)
+		{
+			wiz[i].Respawn();
+		}
+		for (int i = 0; i < WizardSize; i++)
+		{
+			orb[i].Respawn();
 		}
 
 		if (RespawnInBed)

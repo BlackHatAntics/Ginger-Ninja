@@ -22,6 +22,9 @@ public:
 	int GetW();
 	int GetH();
 	//int GetPelletSize();
+	//int GetPelletNumber();
+
+	int PelletNumber = 0; //This is here instead of Mob_Ranger_Pellet, so each Ranger has a separate set of pellets. (Also public so I can change it in Mob_Ranger_Pellet. Too lazy to re-code)
 private:
 	//static constexpr int PelletSize = 3;
 	//Pellet pel[PelletSize];
@@ -40,6 +43,5 @@ private:
 	int Px; //Platform x (of the platform it is standing on. This is manually determined in the Init function)
 	int Pw; //Platform width
 	bool alive = true;
-	//int PelletNumber = 0;
-	//int PelletStage = 0;
+	
 };

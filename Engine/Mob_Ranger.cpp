@@ -50,6 +50,9 @@ void Ranger::Respawn()
 	alive = true;
 	x = StartPointX;
 	y = StartPointY;
+	aggro = false;
+	//speed = 1;
+	RandStage = 0;
 }
 
 void Ranger::Movement(int Gx, int Gw)
@@ -200,6 +203,11 @@ int Ranger::GetH()
 {
 	return h;
 }
+
+//int Ranger::GetPelletNumber()
+//{
+//	return PelletNumber;
+//}
 
 //int Ranger::GetPelletSize()
 //{

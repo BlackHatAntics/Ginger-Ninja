@@ -110,15 +110,24 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 
 void Pellet::ShootyShootyPowPow(/*int Rx, int Ry, int Rw, int Gx, int Gy, int Gw, int Gdx, int Gdy*/)
 {
-	x += SpeedX * Direction; //Moving the pellet along x value
-	y += SpeedY/* + */; //Moving the pellet along y value
-	SpeedY += 2; //Constant gravity
-	if (x > 799 - w || x < 0 || y > 599 - w || y < 0) //borders
+	if (active)
 	{
-		active = false;
-		//x = 0;
-		//y = 0;
+		x += SpeedX * Direction; //Moving the pellet along x value
+		y += SpeedY/* + */; //Moving the pellet along y value
+		SpeedY += 2; //Constant gravity
+		if (x > 799 - w || x < 0 || y > 599 - w || y < 0) //borders
+		{
+			active = false;
+			//x = 0;
+			//y = 0;
+		}
 	}
+}
+
+void Pellet::Respawn()
+{
+	PelletStage = 0;
+	active = false;
 }
 
 //void Pellet::SetActive(bool Active)
