@@ -11,10 +11,10 @@ void Basic::Draw(Graphics& gfx)
 	}
 }
 
-void Basic::Init(int in_x, int in_y, int in_Px, int in_Pw)
+void Basic::Init(int in_x, int in_Px, int in_y, int in_Pw)
 {
 	x = in_x;
-	y = in_y;
+	y = in_y - w - 1; //so he properly sits ontop of the platform without having to type extra bs. Saves me time. I can just copy-paste values from the Ground() function that he's being placed on
 	Px = in_Px;
 	Pw = in_Pw;
 }

@@ -49,10 +49,10 @@ void Charger::Draw(Graphics& gfx)
 	}
 }
 
-void Charger::Init(int in_x, int in_y, int in_Px, int in_Pw)
+void Charger::Init(int in_x, int in_Px, int in_y, int in_Pw)
 {
 	x = in_x;
-	y = in_y;
+	y = in_y - w - 1;
 	Px = in_Px;
 	Pw = in_Pw;
 }

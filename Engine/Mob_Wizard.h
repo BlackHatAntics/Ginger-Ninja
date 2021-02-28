@@ -6,7 +6,7 @@ class Wizard
 {
 public:
 	void Draw(Graphics& gfx);
-	void Init(int in_x, int in_y, int in_Px, int in_Pw);
+	void Init(int in_x, int in_Px, int in_y, int in_Pw);
 	void Collision(int Gx, int Gy, int Gw, bool &Colliding);
 	void Death(int Gx, int Gy, int Gw, int Gds, int Gsp);
 	void StartPoint();

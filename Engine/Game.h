@@ -51,6 +51,7 @@ private:
 	void Screens();
 	void ScreenSwitch();
 	void Screen100();
+	void Screen00();
 	void Screen0();
 	void Screen1();
 	void Screen2();
@@ -79,12 +80,12 @@ private:
 	/********************************/
 	/*  User Variables              */
 	static constexpr int GinSize = 2;
-	static constexpr int BasicSize = 3;
-	static constexpr int JumperSize = 3;
-	static constexpr int ChargerSize = 3;
-	static constexpr int RangerSize = 3;
+	static constexpr int BasicSize = 60;
+	static constexpr int JumperSize = 60;
+	static constexpr int ChargerSize = 20;
+	static constexpr int RangerSize = 20;
 	static constexpr int PelletSize = 8;
-	static constexpr int WizardSize = 3;
+	static constexpr int WizardSize = 20;
 	Ginger gin[GinSize];
 	Basic bas[BasicSize];
 	Jumper jum[JumperSize];
@@ -93,7 +94,7 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 7; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 3; //Start this at 0, but it's 7 right now for testing purposes
 	int Level = 0;
 	bool UserisColliding = false;
 	int UserHealth = 3;

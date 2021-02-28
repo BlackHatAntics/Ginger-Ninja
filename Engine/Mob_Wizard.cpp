@@ -11,10 +11,10 @@ void Wizard::Draw(Graphics & gfx)
 	}
 }
 
-void Wizard::Init(int in_x, int in_y, int in_Px, int in_Pw)
+void Wizard::Init(int in_x, int in_Px, int in_y, int in_Pw)
 {
 	x = in_x;
-	y = in_y;
+	y = in_y - h - 1;
 	Px = in_Px;
 	Pw = in_Pw;
 }

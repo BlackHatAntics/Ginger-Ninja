@@ -28,6 +28,8 @@ void Orb::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 		{
 			active = false; //Killing the orb
 			OrbStage = 0; //Making it so it can spawn again
+			XValue = 0; //resetting velocity so it doesn't spawn already going in a direction
+			YValue = 0;
 		}
 	}
 }

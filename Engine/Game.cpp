@@ -29,19 +29,43 @@ Game::Game( MainWindow& wnd )
 {
 	srand(time(NULL));
 	//gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
-	gin[0].Init(730, 60 - 21, 3);
-	bas[0].Init(200, 195, 20, 280);
-	bas[1].Init(100, 195, 20, 280);
-	bas[2].Init(700, 550, 110, 799 - 110);
-	jum[0].Init(70, 193, 20, 280);
-	jum[1].Init(300, 548, 110, 799 - 110);
-//	jum[2].Init(0, 0);
-	cha[0].Init(70, 189, 20, 280);
-	cha[1].Init(170, 544, 110, 799 - 110);
-	ran[0].Init(220, 545, 110, 799 - 110);
-	ran[1].Init(320, 545, 110, 799 - 110);
-	wiz[0].Init(220, 545, 110, 799 - 110);
-	wiz[1].Init(420, 545, 110, 799 - 110);
+	gin[0].Init(45, 60 - 21, 3);
+	//gin[0].Init(705, 60 - 21, 3);
+	//screen 0
+	bas[7].Init(640, 420, 500, 799 - 420);
+	//screen 1
+	bas[8].Init(370, 0, 500, 610);
+	bas[9].Init(500, 0, 500, 610);
+	bas[10].Init(550, 290, 280, 383);
+	jum[5].Init(300, 130, 370, 380);
+	jum[6].Init(400, 290, 280, 383);
+	jum[7].Init(600, 290, 280, 383);
+	//screen 2
+	bas[11].Init(250, 220, 260, 65);
+	bas[12].Init(148, 110, 360, 90);
+	bas[13].Init(249, 230, 460, 90);
+	bas[14].Init(140, 100, 520, 153);
+	jum[8].Init(200, 100, 520, 153);
+	//screen 7
+	bas[0].Init(200, 20, 205, 280);
+	bas[1].Init(100, 20, 205, 280);
+	bas[2].Init(700, 110, 560, 799 - 110);
+	bas[3].Init(440, 200, 130, 360);
+	bas[4].Init(230, 195, 440, 580 - 195);
+	bas[5].Init(500, 195, 440, 580 - 195);
+	bas[6].Init(710, 650, 440, 790 - 650);
+	jum[0].Init(70, 20, 205, 280);
+	jum[1].Init(300, 110, 560, 799 - 110);
+	jum[2].Init(350, 110, 560, 799 - 110);
+	jum[3].Init(480, 110, 560, 799 - 110);
+	jum[4].Init(270, 20, 205, 280);
+	cha[0].Init(270, 200, 130, 360);
+	cha[1].Init(500, 110, 560, 799 - 110);
+	ran[0].Init(320, 110, 560, 799 - 110);
+	ran[1].Init(430, 195, 440, 580 - 195);
+	//ran[2].Init(220, 110, 545, 799 - 110);
+	wiz[0].Init(40, 20, 400, 90);
+	//wiz[1].Init(420, 110, 545, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -74,7 +98,6 @@ void Game::Go()
 }
 
 
-
 	//Currently working on:
 //Making pellets shoot at the player
 //Planning && drawing level layouts
@@ -85,6 +108,7 @@ void Game::Go()
 	//Add:
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
+//Implement a visual, so user knows when dash is currently on cooldown
 //Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //Have a death animation for enemies
@@ -97,6 +121,7 @@ void Game::Go()
 //?Have your bed restore 1hp/frame
 
 	//Thoughts & Ideas:
+//Your Dash feels really lame to use. Keep it, but let the player have another way to kill enemies.
 //In screen4, as part of platforming test, have a portal that lets you warp from bottom to top of screen (don't need to add new code, just let yourself fall and you auto move to top) Just draw some bs
 //?Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables..... Nevermind. It would benefit me if I had tons of mobs, but I only have ~6 so it's more inconvenient.
 //Is Dash method too easy? My prediction: if few mobs, too easy. if lots of mobs, really hard, and may force you to always corral the mobs. Which is anti-fun.
@@ -173,6 +198,7 @@ void Game::Ground(int x, int y, int w)
 			{
 				gin[i].HitCeiling(y);
 			}
+
 		}
 	}
 }
@@ -214,16 +240,6 @@ void Game::Wall(int x, int y, int h)
 				//gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
 				gin[i].HitWall2(x + 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
-
-			//TEST: Please delete
-//			if (gin[i].GetDX() + gin[i].GetW() <= x - 1)
-//			{
-//				gfx.PutPixel(355, 255, 255, 255, 255);
-//			}
-//			if (gin[i].GetX() + gin[i].GetW() > x - 1)
-//			{
-//				gfx.PutPixel(255, 255, 255, 255, 255);
-//			}
 		}
 	}
 }
@@ -287,9 +303,60 @@ void Game::Screens()
 
 void Game::ScreenSwitch()
 {
+	
 	//If I had vectors, I could increment the y value as well, without it fucking up everything. Without them, I have to manually assign the value to something.
 	if (gin[0].GetX() < 0 || gin[0].GetX() > 799 - gin[0].GetW() || gin[0].GetY() < 0 || gin[0].GetY() > 599 - gin[0].GetW()) //If you off the screen in any direction
 	{
+		//Going down
+		if (gin[0].GetY() > 599 - gin[0].GetW())
+		{
+			if (screen == 2)
+			{
+				screen++;
+			}
+			else if (screen == 9)
+			{
+				screen = 10;
+			}
+		}
+		//Going up
+		if (gin[0].GetY() < 0)
+		{
+			if (screen == 3)
+			{
+				screen--;
+			}
+			else if (screen == 10)
+			{
+				screen = 9;
+			}
+		}
+
+		//Left and right
+		if (screen <= 9)
+		{
+			if (gin[0].GetX() < 0)
+			{
+				screen--;
+			}
+			else if (gin[0].GetX() > 799 - gin[0].GetW())
+			{
+				screen++;
+			}
+		}
+		else if (screen > 9)
+		{
+			if (gin[0].GetX() < 0)
+			{
+				screen++;
+			}
+			else if (gin[0].GetX() > 799 - gin[0].GetW())
+			{
+				screen--;
+			}
+		}
+
+		/* //All this shit down here is from before, when I had a different world layout
 		//Going down
 		if (gin[0].GetY() > 599 - gin[0].GetW())
 		{
@@ -346,6 +413,7 @@ void Game::ScreenSwitch()
 				screen--;
 			}
 		}
+		*/
 
 		gin[0].ScreenSwitch(); //Putting ginger on opposite side of screen. Keep at the end, so they can make their checks based off of his x/y value before this changes them
 	}
@@ -376,8 +444,9 @@ void Game::Screen100()
 	//Wall(109, 450 - 400, 400);
 	Platform(600, 375, 100);
 }
-void Game::Screen0()
+void Game::Screen00()
 {
+	//Ginger HQ hospital & bed
 	Ground(85, 585, 785-85); //Floor
 	Ground(85, 310, 260 - 85); //Ceiling left
 	Ground(370, 280, 785 - 370); //Ceiling right
@@ -401,11 +470,96 @@ void Game::Screen0()
 	Wall(695, 575, 585 - 575); //Bed end
 	Platform(270, 335, 360 - 270); //Tube cover
 }
+void Game::Screen0()
+{
+	Wall(0, 0, 500); //wall left
+	Ground(0, 500, 220); //ground left
+	Wall(220, 500 - 70, 70); //left platform wall
+	Wall(420, 500 - 70, 70); //right platform wall
+	Ground(220, 500 - 70, 200); //platform top
+	Ground(420, 500, 799-420); //right ground
+
+	MobGroupBasic(7);
+}
 void Game::Screen1()
 {
-	
+	Ground(0, 500, 610); //floor
+	Wall(610, 500 - 220, 220); //floor wall right
+	Ground(130, 370, 380); //2nd platform
+	Wall(130, 200, 370 - 200); //2nd platform wall left
+	Ground(290, 280, 383); //top platform
+	Wall(290+383, 220, 60); //first step
+	Ground(290 + 383, 220, 63); //first step
+	Wall(736, 220-60, 60); //2nd step
+	Ground(736, 160, 63); //2nd step
+
+	MobGroupBasic(8);
+	MobGroupBasic(9);
+	MobGroupBasic(10);
+
+	MobGroupJumper(5);
+	MobGroupJumper(6);
+	MobGroupJumper(7);
 }
 void Game::Screen2()
+{
+	Ground(0, 160, 220); //top
+	Wall(0, 160, 599-160); //left border
+	Ground(220, 260, 100); //platform top right
+	Wall(285, 60, 200); //platform top right
+	Ground(205, 60, 80); //platform top right ceiling
+	Ground(110, 360, 94); //platform middle left
+	Wall(110, 160, 200); //platform middle left
+	Ground(230, 460, 90); //platform middle right
+	Wall(320, 260, 200); //platform middle right
+	Ground(100, 520, 153); //platform bottom
+	Wall(253, 460, 60); //platform bottom
+	Wall(100, 520, 599-520); //tube bottom right
+
+//	Wall(220, 0, 599); //test measuring line
+	
+	MobGroupBasic(11);
+	MobGroupBasic(12);
+	MobGroupBasic(13);
+	MobGroupBasic(14);
+
+	MobGroupJumper(8);
+}
+void Game::Screen3()
+{
+	if (gin[0].GetX() < 400 || gin[0].GetY() + gin[0].GetW() > 385)
+	{
+		gfx.PutPixel(255, 255, 255, 255, 255);
+	}
+
+	Ground(0, 485, 500); //bottom
+	Wall(0, 0, 485); //border left
+	Wall(100, 0, 385); //left tube, right side
+	Ground(400, 30, 799-400); //top tube, ceiling
+	
+	//for (int i = 0; i <= 1; i++) //do this for any corners you could fall on with a high velocity (aka, preventing you from clipping through the wall) //nevermind it doesn't work. figure this out
+	//{
+		Ground(100, 385, 300); //bottom tube, ceiling
+		Wall(400, 30, 385 - 30); //right tube, left side
+		//Ground(100, 385, 300); //bottom tube, ceiling
+		//Wall(400, 30, 385 - 30); //right tube, left side
+	//}
+
+	Wall(500, 360, 485 - 360); //right tube, right side, bottom
+	Wall(500, 130, 130); //right tube, right side, top
+	Ground(500, 130, 299); //top tube, floor
+	Ground(500, 260, 299); //middle tube, ceiling
+	Ground(500, 360, 299); //middle tube, floor
+
+//	MobGroupCharger(2);
+}
+void Game::Screen4()
+{
+}
+void Game::Screen5()
+{
+}
+void Game::Screen6()
 {
 	//Above ground
 	Wall(620, 430, 475 - 430); //Ground wall
@@ -421,7 +575,7 @@ void Game::Screen2()
 	Ground(20, 562, 90 - 20); //Left indent
 	Ground(0, 553, 20); //Left exit
 	Wall(90, 550, 12); //Left indent right
-	Wall(20, 553, 562-553); //Left indent left
+	Wall(20, 553, 562 - 553); //Left indent left
 	Wall(170, 550, 5); //Left first blip
 	Ground(195, 594, 270 - 195); //Floor Left
 	Ground(360, 594, 505 - 360); //Floor Right
@@ -430,7 +584,7 @@ void Game::Screen2()
 	Ground(135, 495, 220 - 135); //Left ceiling thing
 	Wall(135, 495, 510 - 495); //Left ceiling thing, bottleneck right
 	Ground(97, 510, 135 - 97); //Left ceiling thing
-	Wall(97, 490, 510-490); //Left ceiling thing, bottleneck left
+	Wall(97, 490, 510 - 490); //Left ceiling thing, bottleneck left
 	Ground(0, 490, 97); //Far left ceiling
 	Wall(250, 475, 525 - 475); //Middle ceiling thing, left side
 	Wall(415, 475, 490 - 475); //Middle ceiling thing, right side
@@ -452,21 +606,6 @@ void Game::Screen2()
 	Ground(755, 540, 799 - 755); //Right exit
 	Wall(790, 430, 495 - 430); //Right side barrier
 	Ground(790, 495, 799 - 790); //Right side barrier
-}
-void Game::Screen3()
-{
-	Ground(0, 540, 600);
-	Ground(600, 590, 680 - 600);
-	Wall(680, 590, 599 - 590);
-}
-void Game::Screen4()
-{
-}
-void Game::Screen5()
-{
-}
-void Game::Screen6()
-{
 }
 void Game::Screen7()
 {
@@ -497,18 +636,26 @@ void Game::Screen7()
 	MobGroupBasic(0);
 	MobGroupBasic(1);
 	MobGroupBasic(2);
+	MobGroupBasic(3);
+	MobGroupBasic(4);
+	MobGroupBasic(5);
+	MobGroupBasic(6);
 
 	MobGroupJumper(0);
 	MobGroupJumper(1);
+	MobGroupJumper(2);
+	MobGroupJumper(3);
+	MobGroupJumper(4);
 
 	MobGroupCharger(0);
 	MobGroupCharger(1);
 
 	MobGroupRanger(0);
 	MobGroupRanger(1);
+	//MobGroupRanger(2);
 
 	MobGroupWizard(0);
-	MobGroupWizard(1);
+	//MobGroupWizard(1);
 }
 void Game::Screen8()
 {
@@ -555,7 +702,7 @@ void Game::UserCollision()
 //	2. If I want to fix that issue, I would need to move the other logic code inside of Screens.
 //	But I'd rather just keep everything in it's own function for simplicity, so I moved "UserisColliding = false" to the end of the function, and accepted the delay.
 
-	if (UserisColliding && DamageLock == false && !(gin[0].GetDashStage() > 0 && gin[0].GetDashStage() <= 4)) //Must be touching enemy, not damaged in last ~14 frames, and not mid-dash
+	if (UserisColliding && DamageLock == false && !(gin[0].GetDashStage() > 0 && gin[0].GetDashStage() <= 4) && gin[0].GetCheating() == false) //Must be touching enemy, not damaged in last ~14 frames, and not mid-dash (and not cheating)
 	{ 
 		UserHealth--;
 		DamageLock = true; //This is just so you can't take damage every frame from just 1 hit. Gives you a small window of invulnerability.
@@ -625,7 +772,7 @@ void Game::MobGroupBasic(int i)
 	{
 		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
-	//	bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		bas[i].Draw(gfx);
 
@@ -637,9 +784,9 @@ void Game::MobGroupJumper(int i)
 {
 	if (jum[i].GetAlive())
 	{
-		//jum[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
+//		jum[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		jum[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		//jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		jum[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		jum[i].Draw(gfx);
 	}
@@ -650,7 +797,7 @@ void Game::MobGroupCharger(int i)
 	{
 		cha[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		cha[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		//cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		cha[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		cha[i].Draw(gfx);
 	}
@@ -660,7 +807,7 @@ void Game::MobGroupRanger(int i)
 	if (ran[i].GetAlive())
 	{
 		ran[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
-		//ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		ran[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 //		ran[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 //		for (int Piii = 0; Piii < RangerSize; Piii++)
 //		{
@@ -669,7 +816,7 @@ void Game::MobGroupRanger(int i)
 //		}
 		pel[ran[i].PelletNumber + i * PelletSize].Spawning(PelletSize, ran[i].PelletNumber, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
 
-		//ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		ran[i].Draw(gfx);
 	}
@@ -683,7 +830,6 @@ void Game::MobGroupRanger(int i)
 		}
 	}
 }
-
 void Game::MobGroupWizard(int i)
 {
 	if (wiz[i].GetAlive())
@@ -692,8 +838,8 @@ void Game::MobGroupWizard(int i)
 		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 //		wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 		orb[i].Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
-		//wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
-		//orb[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
+		orb[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		orb[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 
@@ -789,6 +935,7 @@ void Game::UpdateModel()
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
+	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value)
 	UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:
@@ -806,7 +953,7 @@ void Game::ComposeFrame()
 //Test bullshit:
 	if (wnd.kbd.KeyIsPressed(VK_RETURN))
 	{
-		Sleep(200);
+		Sleep(400);
 	}
 //	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
 }

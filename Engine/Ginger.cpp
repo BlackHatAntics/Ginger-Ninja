@@ -133,6 +133,14 @@ void Ginger::Delta()
 	dx = x;
 }
 
+void Ginger::TheoreticalValue()
+{
+	//this is keeping track of your x/y values, so that when you adjust your value via walls/ground, you can still test for the un-altered y value with whatver came 2nd in load order. (ex: ground bumps you up, but walls still wants to test from where you would have been if Ground function didn't touch you yet)
+	ty = y;
+	tx = x;
+	// ...nevermind I think this was pointless. Delete this function. (after you fix walls of course, and confirm you don't need this)
+}
+
 void Ginger::WallJumpOld(bool UP)
 {
 	//Pretty much all the logic is inside HitWall. This is just the physical lift-off
@@ -635,5 +643,10 @@ int Ginger::GetOnGroundValue()
 int Ginger::GetStartPoint()
 {
 	return DashStartPoint;
+}
+
+bool Ginger::GetCheating()
+{
+	return cheating;
 }
 
