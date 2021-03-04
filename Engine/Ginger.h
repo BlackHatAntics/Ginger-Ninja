@@ -22,10 +22,13 @@ public:
 	void HitWallOld(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
-	void TheoreticalValue(); //I think this is a pointless function. check, and delete
+	//void TheoreticalValue(); //I think this is a pointless function. check, and delete
 	void WallJumpOld(bool UP);
 	void WallJump2(bool UP);
 	void HitWall2(int wx, int wy, int wh, bool UP);
+	void HitGroundPre(int py);
+	void HitWallPre(int wx);
+	void HitCeilingPre(int py);
 	bool OnGround();
 	bool OnWall();
 	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE);
@@ -49,6 +52,8 @@ public:
 	int GetY();
 	int GetDX();
 	int GetDY();
+	int GetTX();
+	int GetTY();
 	int GetDashStage();
 	int GetOnGroundValue();
 	int GetStartPoint();
@@ -67,8 +72,8 @@ private:
 	int fh = 1; //fall height?
 	int dy; //Delta Y (Where y was the previous frame)
 	int dx; //Delta X (Where x was the previous frame)
-	int ty; //Theoretical Y (where y is this frame -- before being edited by the platforms n shit)
-	int tx; //Theoretical X (where x is this frame -- before being edited by the walls n shit)
+	int ty; //Theoretical Y (where y is this frame -- before being edited by the platforms n shit) //all theoritical shit is done in Game
+	int tx; //Theoretical X (where x is this frame -- before being edited by the walls n shit) //all theoritical shit is done in Game
 	bool MoveRight = false;
 	bool MoveLeft = false;
 	bool isJumping = false;

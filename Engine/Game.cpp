@@ -188,17 +188,27 @@ void Game::Ground(int x, int y, int w)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)
+		if (tHitWall && gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x && tHitGround)
 		{
-			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y)
+			if (gin[i].GetTY() + gin[i].GetW() + 1 == y)
 			{
 				gin[i].HitGround(x, y, w);
 			}
-			else if (gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y)
+			else if (gin[i].GetTY() - 1 == y)
 			{
 				gin[i].HitCeiling(y);
 			}
-
+		}
+		else if (tHitWall == false && gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && tHitGround) //if you've hit a wall you test via theoretical value, and if you haven't you test via the actual value
+		{
+			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetTY() + gin[i].GetW() + 1 >= y)
+			{
+				gin[i].HitGround(x, y, w);
+			}
+			else if (gin[i].GetDY() - 1 >= y && gin[i].GetTY() - 1 <= y)
+			{
+				gin[i].HitCeiling(y);
+			}
 		}
 	}
 }
@@ -211,7 +221,7 @@ void Game::Platform(int x, int y, int w)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
+		if (((tHitWall && gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x) || (tHitWall == false && gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)) && gin[i].GetTY() + gin[i].GetW() + 1 == y && tHitGround)
 		{
 			gin[i].HitGround(x, y, w);
 		}
@@ -226,12 +236,25 @@ void Game::Wall(int x, int y, int h)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y)
+		if (tHitGround && gin[i].GetTY() < y + h && gin[i].GetTY() + gin[i].GetW() > y && tHitWall)
+		{
+			if (/*(gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1) ||*/ (gin[i].GetTX() + gin[i].GetW() == x - 1)) //original wall test, or it can be right beside it and have theoretically already hit it
+			{
+				//you hit the wall on the left side
+				//gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); 
+				gin[i].HitWall2(x - gin[i].GetW() - 1, y, h, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
+			}
+			else if (/*(gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1) ||*/ (gin[i].GetTX() == x + 1))
+			{
+				//you hit the wall on the right side
+				//gin[i].HitWall(x + 1, wnd.kbd.KeyIsPressed(0x57));
+				gin[i].HitWall2(x + 1, y, h, wnd.kbd.KeyIsPressed(0x57));
+			}
+		}
+		else if (tHitGround == false && gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y && tHitWall)
 		{
 			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
-				//you hit the wall on the left side
-				//gin[i].HitWall(x - gin[i].GetW() - 1, wnd.kbd.KeyIsPressed(0x57)); //HitWall needs to pass the value to WallJump, that's why you reference "w" key
 				gin[i].HitWall2(x - gin[i].GetW() - 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
 			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
@@ -244,8 +267,67 @@ void Game::Wall(int x, int y, int h)
 	}
 }
 
+void Game::GroundPre(int x, int y, int w)
+{
+	for (int i = 0; i < GinSize; i++)
+	{
+		if ((gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x) || (gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x))
+		{
+			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y)
+			{
+				gin[i].HitGroundPre(y);
+				tHitGround = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+			}
+			else if (gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y)
+			{
+				gin[i].HitCeilingPre(y);
+				tHitGround = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+			}
+		}
+	}
+}
+
+void Game::WallPre(int x, int y, int h)
+{
+	for (int i = 0; i < GinSize; i++)
+	{
+		if ((gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y) || (gin[i].GetTY() < y + h && gin[i].GetTY() + gin[i].GetW() > y))
+		{
+			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
+			{
+				//you hit the wall on the left side
+				gin[i].HitWallPre(x - gin[i].GetW() - 1);
+				tHitWall = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+			}
+			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
+			{
+				//you hit the wall on the right side
+				gin[i].HitWallPre(x + 1);
+				tHitWall = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+			}
+		}
+	}
+}
+
+void Game::PlatformPre(int x, int y, int w)
+{
+	for (int i = 0; i < GinSize; i++)
+	{
+		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
+		{
+			gin[i].HitGroundPre(y);
+			tHitGround = true;
+		}
+	}
+}
+
 void Game::Screens()
 {
+	//resetting all the GroundPre and WallPre interactions for next frame
+	tHitWall = false; //theoretically hit a wall
+	tHitGround = false; //theoretically hit the ground
+//	tHitCeiling = false; //theoretically hit the ceiling
+
 	//What a bunch of miserable code...
 	if (screen == 0)
 	{
@@ -472,6 +554,13 @@ void Game::Screen00()
 }
 void Game::Screen0()
 {
+	WallPre(0, 0, 500); //wall left
+	GroundPre(0, 500, 220); //ground left
+	WallPre(220, 500 - 70, 70); //left platform wall
+	WallPre(420, 500 - 70, 70); //right platform wall
+	GroundPre(220, 500 - 70, 200); //platform top
+	GroundPre(420, 500, 799 - 420); //right ground
+
 	Wall(0, 0, 500); //wall left
 	Ground(0, 500, 220); //ground left
 	Wall(220, 500 - 70, 70); //left platform wall
@@ -483,6 +572,16 @@ void Game::Screen0()
 }
 void Game::Screen1()
 {
+	GroundPre(0, 500, 610); //floor
+	WallPre(610, 500 - 220, 220); //floor wall right
+	GroundPre(130, 370, 380); //2nd platform
+	WallPre(130, 200, 370 - 200); //2nd platform wall left
+	GroundPre(290, 280, 383); //top platform
+	WallPre(290 + 383, 220, 60); //first step
+	GroundPre(290 + 383, 220, 63); //first step
+	WallPre(736, 220 - 60, 60); //2nd step
+	GroundPre(736, 160, 63); //2nd step
+
 	Ground(0, 500, 610); //floor
 	Wall(610, 500 - 220, 220); //floor wall right
 	Ground(130, 370, 380); //2nd platform
@@ -503,6 +602,19 @@ void Game::Screen1()
 }
 void Game::Screen2()
 {
+	GroundPre(0, 160, 220); //top
+	WallPre(0, 160, 599 - 160); //left border
+	GroundPre(220, 260, 100); //platform top right
+	WallPre(285, 60, 200); //platform top right
+	GroundPre(205, 60, 80); //platform top right ceiling
+	GroundPre(110, 360, 94); //platform middle left
+	WallPre(110, 160, 200); //platform middle left
+	GroundPre(230, 460, 90); //platform middle right
+	WallPre(320, 260, 200); //platform middle right
+	GroundPre(100, 520, 153); //platform bottom
+	WallPre(253, 460, 60); //platform bottom
+	WallPre(100, 520, 599 - 520); //tube bottom right
+
 	Ground(0, 160, 220); //top
 	Wall(0, 160, 599-160); //left border
 	Ground(220, 260, 100); //platform top right
@@ -527,11 +639,20 @@ void Game::Screen2()
 }
 void Game::Screen3()
 {
-	if (gin[0].GetX() < 400 || gin[0].GetY() + gin[0].GetW() > 385)
-	{
-		gfx.PutPixel(255, 255, 255, 255, 255);
-	}
+	PlatformPre(400, 360, 20); //platform, right tube
+	GroundPre(0, 485, 500); //bottom
+	GroundPre(400, 30, 799 - 400); //top tube, ceiling
+	GroundPre(100, 385, 300); //bottom tube, ceiling
+	GroundPre(500, 130, 299); //top tube, floor
+	GroundPre(500, 260, 299); //middle tube, ceiling
+	GroundPre(500, 360, 299); //middle tube, floor
+	WallPre(0, 0, 485); //border left
+	WallPre(100, 0, 385); //left tube, right side
+	WallPre(400, 30, 385 - 30); //right tube, left side
+	WallPre(500, 360, 485 - 360); //right tube, right side, bottom
+	WallPre(500, 130, 130); //right tube, right side, top
 
+	Platform(400, 360, 20); //platform, right tube
 	Ground(0, 485, 500); //bottom
 	Wall(0, 0, 485); //border left
 	Wall(100, 0, 385); //left tube, right side
@@ -539,8 +660,9 @@ void Game::Screen3()
 	
 	//for (int i = 0; i <= 1; i++) //do this for any corners you could fall on with a high velocity (aka, preventing you from clipping through the wall) //nevermind it doesn't work. figure this out
 	//{
-		Ground(100, 385, 300); //bottom tube, ceiling
 		Wall(400, 30, 385 - 30); //right tube, left side
+		Ground(100, 385, 300); //bottom tube, ceiling
+		
 		//Ground(100, 385, 300); //bottom tube, ceiling
 		//Wall(400, 30, 385 - 30); //right tube, left side
 	//}
@@ -935,7 +1057,7 @@ void Game::UpdateModel()
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
-	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value)
+//	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value)
 	UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:

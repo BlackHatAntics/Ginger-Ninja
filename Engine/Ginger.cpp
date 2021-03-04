@@ -133,13 +133,13 @@ void Ginger::Delta()
 	dx = x;
 }
 
-void Ginger::TheoreticalValue()
-{
-	//this is keeping track of your x/y values, so that when you adjust your value via walls/ground, you can still test for the un-altered y value with whatver came 2nd in load order. (ex: ground bumps you up, but walls still wants to test from where you would have been if Ground function didn't touch you yet)
-	ty = y;
-	tx = x;
-	// ...nevermind I think this was pointless. Delete this function. (after you fix walls of course, and confirm you don't need this)
-}
+//void Ginger::TheoreticalValue()
+//{
+//	//this is keeping track of your x/y values, so that when you adjust your value via walls/ground, you can still test for the un-altered y value with whatver came 2nd in load order. (ex: ground bumps you up, but walls still wants to test from where you would have been if Ground function didn't touch you yet)
+//	ty = y;
+//	tx = x;
+//	// ...nevermind I think this was pointless. Delete this function. (after you fix walls of course, and confirm you don't need this)
+//}
 
 void Ginger::WallJumpOld(bool UP)
 {
@@ -314,6 +314,19 @@ void Ginger::HitWall2(int wx, int wy, int wh, bool UP)
 	}
 
 	x = wx; //Stopping you from going through the wall
+}
+
+void Ginger::HitGroundPre(int py)
+{
+	ty = py - w - 1;
+}
+void Ginger::HitWallPre(int wx)
+{
+	tx = wx;
+}
+void Ginger::HitCeilingPre(int py)
+{
+	ty = py + 1;
 }
 
 bool Ginger::OnGround()
@@ -631,6 +644,14 @@ int Ginger::GetDX()
 int Ginger::GetDY()
 {
 	return dy;
+}
+int Ginger::GetTX()
+{
+	return tx;
+}
+int Ginger::GetTY()
+{
+	return ty;
 }
 int Ginger::GetDashStage()
 {

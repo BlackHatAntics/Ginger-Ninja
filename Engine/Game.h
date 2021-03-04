@@ -48,6 +48,12 @@ private:
 	void Ground(int x, int y, int w);
 	void Platform(int x, int y, int w);
 	void Wall(int x, int y, int h);
+	void GroundPre(int x, int y, int w);
+	void WallPre(int x, int y, int h);
+	void PlatformPre(int x, int y, int w);
+	bool tHitWall = false; //theoretically hit a wall
+	bool tHitGround = false; //theoretically hit the ground
+//	bool tHitCeiling = false; //theoretically hit the ceiling
 	void Screens();
 	void ScreenSwitch();
 	void Screen100();
