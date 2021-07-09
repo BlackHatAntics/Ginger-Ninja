@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "MainWindow.h"
 #include "Keyboard.h"
+//#include "Colors.h"
 
 class Ginger
 {
@@ -13,7 +14,7 @@ public:
 	//		speed = in_speed;
 	//	}
 	void Init(int in_x, int in_y, int in_speed);
-	void Draw(Graphics& gfx, Color h/*, Color b*/);
+	void Draw(Graphics& gfx/*, Color h, Color b*/);
 	void EyeLogic();
 	void Movement(bool SHIFT);
 	void Jump();
@@ -31,7 +32,7 @@ public:
 	void HitCeilingPre(int py);
 	bool OnGround();
 	bool OnWall();
-	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool SPACE);
+	void Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool CTRL);
 	void ClearTempWall();
 	void ScreenSwitch();
 	void Dash(bool SPACE);
@@ -58,6 +59,7 @@ public:
 	int GetOnGroundValue();
 	int GetStartPoint();
 	bool GetCheating();
+	bool GetHitWall();
 private:
 	int x;
 	int y;
@@ -85,6 +87,7 @@ private:
 	bool isWallJumpingX = false; //This also helps you not bounce off walls, so you can chain wall jumps
 	bool HitWallLeft = false; //The last wall you made contact with, you hit on the left
 	bool HitWallRight = false; //The last wall you made contact with, you hit on your right side
+	bool HitWall = false; //Whether or not you hit a wall THIS FRAME. (Used in Ground() to prevent you clpping through walls if you hit a corner)
 	int TempWallValueX = 0;
 	int TempWallValueY = 0;
 	int TempWallValueH = 0;

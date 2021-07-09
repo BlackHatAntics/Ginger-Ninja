@@ -46,6 +46,10 @@ Game::Game( MainWindow& wnd )
 	bas[13].Init(249, 230, 460, 90);
 	bas[14].Init(140, 100, 520, 153);
 	jum[8].Init(200, 100, 520, 153);
+	//screen 3
+	cha[2].Init(340, 0, 485, 500);
+	//screen 4
+
 	//screen 7
 	bas[0].Init(200, 20, 205, 280);
 	bas[1].Init(100, 20, 205, 280);
@@ -103,12 +107,16 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
+//If you make contact with a wall at the exact moment you hit the ground, you will pass through the ground (or platform)
 //Mobs vibrating when underneath you && aggro
 
 	//Add:
+//Be able to use Dash in the air
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Implement a visual, so user knows when dash is currently on cooldown
+//Be able to hold down spacebar to change the length of the dash
+//Add checkpoints/med kit spots to heal throughout the levels
 //Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //Have a death animation for enemies
@@ -188,7 +196,8 @@ void Game::Ground(int x, int y, int w)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (tHitWall && gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x && tHitGround)
+		if ( (tHitWall && gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x && tHitGround)
+		|| (gin[i].GetHitWall() == false && gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x && tHitGround) )
 		{
 			if (gin[i].GetTY() + gin[i].GetW() + 1 == y)
 			{
@@ -199,7 +208,7 @@ void Game::Ground(int x, int y, int w)
 				gin[i].HitCeiling(y);
 			}
 		}
-		else if (tHitWall == false && gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && tHitGround) //if you've hit a wall you test via theoretical value, and if you haven't you test via the actual value
+		/*else if (tHitWall == false && gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x && tHitGround) //if you've hit a wall you test via theoretical value, and if you haven't you test via the actual value
 		{
 			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetTY() + gin[i].GetW() + 1 >= y)
 			{
@@ -208,8 +217,16 @@ void Game::Ground(int x, int y, int w)
 			else if (gin[i].GetDY() - 1 >= y && gin[i].GetTY() - 1 <= y)
 			{
 				gin[i].HitCeiling(y);
+			} 
+			*/ /*if (gin[i].GetTY() + gin[i].GetW() + 1 == y)
+			{
+				gin[i].HitGround(x, y, w);
 			}
-		}
+			else if (gin[i].GetTY() - 1 == y)
+			{
+				gin[i].HitCeiling(y);
+			}
+		}*/
 	}
 }
 
@@ -221,10 +238,29 @@ void Game::Platform(int x, int y, int w)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (((tHitWall && gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x) || (tHitWall == false && gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)) && gin[i].GetTY() + gin[i].GetW() + 1 == y && tHitGround)
+		//The old Platform() code
+		//if (((tHitWall && gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x) || (gin[i].OnWall() == false && gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x)) && gin[i].GetTY() + gin[i].GetW() + 1 == y && tHitGround)
+		//{
+		//	gin[i].HitGround(x, y, w);
+		//}
+
+		if ( ((tHitWall && gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x && tHitGround)
+			|| (gin[i].GetHitWall() == false && gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x && tHitGround))
+			&& (gin[i].GetTY() + gin[i].GetW() + 1 == y) 
+			&& !wnd.kbd.KeyIsPressed(0x53) )
 		{
 			gin[i].HitGround(x, y, w);
 		}
+
+		//This is the exact code in Ground(). Only here for testing purposes
+		//if ((tHitWall && gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x && tHitGround)
+		//	|| (gin[i].GetHitWall() == false && gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x && tHitGround))
+		//{
+		//	if (gin[i].GetTY() + gin[i].GetW() + 1 == y)
+		//	{
+		//		gin[i].HitGround(x, y, w);
+		//	}
+		//}
 	}
 }
 
@@ -236,7 +272,7 @@ void Game::Wall(int x, int y, int h)
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (tHitGround && gin[i].GetTY() < y + h && gin[i].GetTY() + gin[i].GetW() > y && tHitWall)
+		if (tHitGround && gin[i].GetTY() <= y + h && gin[i].GetTY() + gin[i].GetW() >= y && tHitWall)
 		{
 			if (/*(gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1) ||*/ (gin[i].GetTX() + gin[i].GetW() == x - 1)) //original wall test, or it can be right beside it and have theoretically already hit it
 			{
@@ -251,7 +287,7 @@ void Game::Wall(int x, int y, int h)
 				gin[i].HitWall2(x + 1, y, h, wnd.kbd.KeyIsPressed(0x57));
 			}
 		}
-		else if (tHitGround == false && gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y && tHitWall)
+		else if (tHitGround == false && gin[i].GetY() <= y + h && gin[i].GetY() + gin[i].GetW() >= y && tHitWall)
 		{
 			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
@@ -271,17 +307,18 @@ void Game::GroundPre(int x, int y, int w)
 {
 	for (int i = 0; i < GinSize; i++)
 	{
-		if ((gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x) || (gin[i].GetTX() < x + w && gin[i].GetTX() + gin[i].GetW() > x))
+		if ((gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x) || (gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x)) //within left/right bounds of the platform. TX is for if you hit a wall already this frame and it adjusted your position.
 		{
-			if (gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y)
+			//have crossed past the platform && either haven't already hit a ground yet this frame, or you have hit one and this one is closer. (So if you travel through multiple, you will hit the one on top. and load order won't matter)
+			if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && /*y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY()*/ y < gin[i].GetTY() )))
 			{
 				gin[i].HitGroundPre(y);
-				tHitGround = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+				tHitGround = true; //reset to false each frame in Screens()
 			}
-			else if (gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y)
+			else if ((gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y) && (tHitGround == false || (tHitGround == true && /*gin[i].GetDY() - y < gin[i].GetDY() - gin[i].GetTY()*/ y > gin[i].GetTY() )))
 			{
 				gin[i].HitCeilingPre(y);
-				tHitGround = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+				tHitGround = true;
 			}
 		}
 	}
@@ -291,19 +328,19 @@ void Game::WallPre(int x, int y, int h)
 {
 	for (int i = 0; i < GinSize; i++)
 	{
-		if ((gin[i].GetY() < y + h && gin[i].GetY() + gin[i].GetW() > y) || (gin[i].GetTY() < y + h && gin[i].GetTY() + gin[i].GetW() > y))
+		if ((gin[i].GetY() <= y + h && gin[i].GetY() + gin[i].GetW() >= y) || (gin[i].GetTY() <= y + h && gin[i].GetTY() + gin[i].GetW() >= y))
 		{
 			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
 			{
 				//you hit the wall on the left side
 				gin[i].HitWallPre(x - gin[i].GetW() - 1);
-				tHitWall = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+				tHitWall = true;
 			}
 			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
 			{
 				//you hit the wall on the right side
 				gin[i].HitWallPre(x + 1);
-				tHitWall = true; //test if this shit is necessary. my theory is it's not. But I'm playing it safe rn, while I figure out if this whole Pre thing works
+				tHitWall = true;
 			}
 		}
 	}
@@ -313,11 +350,33 @@ void Game::PlatformPre(int x, int y, int w)
 {
 	for (int i = 0; i < GinSize; i++)
 	{
-		if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53)) //pressing s lets you fall through platforms
+		//This is the old code for PlatformPre
+		//if (gin[i].GetX() < x + w && gin[i].GetX() + gin[i].GetW() > x && gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y && !wnd.kbd.KeyIsPressed(0x53) //pressing s lets you fall through platforms
+		//	&& (tHitGround == false || (tHitGround == true && y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY() )))
+		//{
+		//	gin[i].HitGroundPre(y);
+		//	tHitGround = true;
+		//}
+
+		if ( ((gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x) || (gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x))
+			&& ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && y < gin[i].GetTY())))
+			&& !wnd.kbd.KeyIsPressed(0x53) )
 		{
 			gin[i].HitGroundPre(y);
 			tHitGround = true;
 		}
+
+		//this is exact code in GroundPre(). Put here only for testing purposes
+		//if ((gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x) || (gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x)) //within left/right bounds of the platform. TX is for if you hit a wall already this frame and it adjusted your position.
+		//{
+		//	//have crossed past the platform && either haven't already hit a ground yet this frame, or you have hit one and this one is closer. (So if you travel through multiple, you will hit the one on top. and load order won't matter)
+		//	if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && /*y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY()*/ y < gin[i].GetTY())))
+		//	{
+		//		gin[i].HitGroundPre(y);
+		//		tHitGround = true; //reset to false each frame in Screens()
+		//	}
+		//}
+
 	}
 }
 
@@ -562,9 +621,9 @@ void Game::Screen0()
 	GroundPre(420, 500, 799 - 420); //right ground
 
 	Wall(0, 0, 500); //wall left
-	Ground(0, 500, 220); //ground left
 	Wall(220, 500 - 70, 70); //left platform wall
 	Wall(420, 500 - 70, 70); //right platform wall
+	Ground(0, 500, 220); //ground left
 	Ground(220, 500 - 70, 200); //platform top
 	Ground(420, 500, 799-420); //right ground
 
@@ -582,14 +641,14 @@ void Game::Screen1()
 	WallPre(736, 220 - 60, 60); //2nd step
 	GroundPre(736, 160, 63); //2nd step
 
-	Ground(0, 500, 610); //floor
 	Wall(610, 500 - 220, 220); //floor wall right
-	Ground(130, 370, 380); //2nd platform
 	Wall(130, 200, 370 - 200); //2nd platform wall left
+	Wall(290 + 383, 220, 60); //first step
+	Wall(736, 220 - 60, 60); //2nd step
+	Ground(0, 500, 610); //floor
+	Ground(130, 370, 380); //2nd platform
 	Ground(290, 280, 383); //top platform
-	Wall(290+383, 220, 60); //first step
 	Ground(290 + 383, 220, 63); //first step
-	Wall(736, 220-60, 60); //2nd step
 	Ground(736, 160, 63); //2nd step
 
 	MobGroupBasic(8);
@@ -615,18 +674,18 @@ void Game::Screen2()
 	WallPre(253, 460, 60); //platform bottom
 	WallPre(100, 520, 599 - 520); //tube bottom right
 
-	Ground(0, 160, 220); //top
-	Wall(0, 160, 599-160); //left border
-	Ground(220, 260, 100); //platform top right
+	Wall(0, 160, 599 - 160); //left border
 	Wall(285, 60, 200); //platform top right
+	Wall(110, 160, 200); //platform middle left
+	Wall(320, 260, 200); //platform middle right
+	Wall(253, 460, 60); //platform bottom
+	Wall(100, 520, 599 - 520); //tube bottom right
+	Ground(0, 160, 220); //top
+	Ground(220, 260, 100); //platform top right
 	Ground(205, 60, 80); //platform top right ceiling
 	Ground(110, 360, 94); //platform middle left
-	Wall(110, 160, 200); //platform middle left
 	Ground(230, 460, 90); //platform middle right
-	Wall(320, 260, 200); //platform middle right
 	Ground(100, 520, 153); //platform bottom
-	Wall(253, 460, 60); //platform bottom
-	Wall(100, 520, 599-520); //tube bottom right
 
 //	Wall(220, 0, 599); //test measuring line
 	
@@ -639,6 +698,26 @@ void Game::Screen2()
 }
 void Game::Screen3()
 {
+	//okay so the issue with falling through ground is created because if it interacts with a GroundPre(), it changes the theoretical y to be ontop of the platform... 
+	//...but if it interacts with an ADDITIONAL ground function (aka, they are close together, and he was traveling quickly enough to pass through both in one frame)
+	//...then it puts him at the y value of the last ground he interacted with; not the one that he would have directly hit
+	//
+	//So my line of thinking is that I need to run a check for which ground is closest to his DY.
+	//Perhaps I add "if" tHitGround (if he's already passed through a platform) then y - DY < ty - DY
+	//aka, the distance between this current platform must be less than that of the previous platform he just sent his y value to.
+	//this way he can pass through as many grounds as he wants in a frame, and he will always end up at the one that is ontop / closest to his starting fall position.
+	//obviously do the reverse function for ceiling, and do this with x for walls as well.
+
+	//*** okay new issue. when you pass by the platform on your way down, you hit the platform, register tHitGround, then have a ty value that is before the ground you're trying to land on.
+
+
+	//for testing purposes:
+	if (gin[0].GetY() + gin[0].GetW() + 1 >= 385)
+	{
+		gfx.PutPixel(255, 255, 255, 255, 255);
+	}
+
+
 	PlatformPre(400, 360, 20); //platform, right tube
 	GroundPre(0, 485, 500); //bottom
 	GroundPre(400, 30, 799 - 400); //top tube, ceiling
@@ -646,34 +725,26 @@ void Game::Screen3()
 	GroundPre(500, 130, 299); //top tube, floor
 	GroundPre(500, 260, 299); //middle tube, ceiling
 	GroundPre(500, 360, 299); //middle tube, floor
+	WallPre(400, 30, 385 - 30); //right tube, left side
 	WallPre(0, 0, 485); //border left
 	WallPre(100, 0, 385); //left tube, right side
-	WallPre(400, 30, 385 - 30); //right tube, left side
 	WallPre(500, 360, 485 - 360); //right tube, right side, bottom
 	WallPre(500, 130, 130); //right tube, right side, top
 
-	Platform(400, 360, 20); //platform, right tube
-	Ground(0, 485, 500); //bottom
+	Wall(400, 30, 385 - 30); //right tube, left side
 	Wall(0, 0, 485); //border left
 	Wall(100, 0, 385); //left tube, right side
-	Ground(400, 30, 799-400); //top tube, ceiling
-	
-	//for (int i = 0; i <= 1; i++) //do this for any corners you could fall on with a high velocity (aka, preventing you from clipping through the wall) //nevermind it doesn't work. figure this out
-	//{
-		Wall(400, 30, 385 - 30); //right tube, left side
-		Ground(100, 385, 300); //bottom tube, ceiling
-		
-		//Ground(100, 385, 300); //bottom tube, ceiling
-		//Wall(400, 30, 385 - 30); //right tube, left side
-	//}
-
 	Wall(500, 360, 485 - 360); //right tube, right side, bottom
 	Wall(500, 130, 130); //right tube, right side, top
+	Platform(400, 360, 20); //platform, right tube
+	Ground(0, 485, 500); //bottom
+	Ground(400, 30, 799-400); //top tube, ceiling
+	Ground(100, 385, 300); //bottom tube, ceiling
 	Ground(500, 130, 299); //top tube, floor
 	Ground(500, 260, 299); //middle tube, ceiling
 	Ground(500, 360, 299); //middle tube, floor
 
-//	MobGroupCharger(2);
+	MobGroupCharger(2);
 }
 void Game::Screen4()
 {
@@ -683,72 +754,146 @@ void Game::Screen5()
 }
 void Game::Screen6()
 {
+	//for testing purposes:
+	if (gin[0].GetY() - 1 <= 510)
+	{
+		gfx.PutPixel(255, 255, 255, 255, 255);
+	}
+
+	//Above ground
+	WallPre(620, 430, 475 - 430); //Ground wall
+	GroundPre(0, 475, 620); //Ground
+	GroundPre(620, 430, 799 - 620); //Ground right
+	//Underground
+	WallPre(270, 594, 599 - 594); //Left tube
+	WallPre(360, 594, 599 - 594); //Right tube
+	WallPre(195, 555, 594 - 555); //Left first wall
+	GroundPre(170, 555, 195 - 170); //Left first wall top
+	GroundPre(90, 550, 170 - 90); //Left blip top
+	GroundPre(20, 562, 90 - 20); //Left indent
+	GroundPre(0, 553, 20); //Left exit
+	WallPre(90, 550, 12); //Left indent right
+	WallPre(20, 553, 562 - 553); //Left indent left
+	WallPre(170, 550, 5); //Left first blip
+	GroundPre(195, 594, 270 - 195); //Floor Left
+	GroundPre(360, 594, 505 - 360); //Floor Right
+	//PlatformPre(270, 594, 360 - 270); //Tube cover
+	WallPre(220, 475, 495 - 475); //Left ceiling thing, close side
+	GroundPre(135, 495, 220 - 135); //Left ceiling thing
+	WallPre(135, 495, 510 - 495); //Left ceiling thing, bottleneck right
+	GroundPre(97, 510, 135 - 97); //Left ceiling thing			//////////////////////////////
+	WallPre(97, 490, 510 - 490); //Left ceiling thing, bottleneck left
+	GroundPre(0, 490, 97); //Far left ceiling
+	WallPre(250, 475, 525 - 475); //Middle ceiling thing, left side
+	WallPre(415, 475, 490 - 475); //Middle ceiling thing, right side
+	WallPre(345, 490, 525 - 490); //Middle ceiling thing, middle side
+	GroundPre(250, 525, 345 - 250); //Middle ceiling thing, bottom
+	GroundPre(345, 490, 415 - 345); //Middle ceiling thing, right
+	WallPre(430, 475, 565 - 475); //Stalagmite left
+	WallPre(455, 475, 565 - 475); //Stalagmite right
+	GroundPre(430, 565, 455 - 430); //Stalagmite bottom
+	WallPre(505, 500, 594 - 500); //Right ground obstacle, left side outer
+	GroundPre(505, 500, 540 - 505); //Right ground obstacle, left side
+	WallPre(540, 500, 10); //Right ground obstacle, left side inner
+	GroundPre(540, 510, 700 - 540); //Right ground obstacle long
+	WallPre(700, 510, 8); //Right ground obstacle, divet left side
+	GroundPre(700, 518, 15); //Right ground obstacle divet
+	WallPre(715, 475, 518 - 475); //Right ground obstacle, divet right side
+	WallPre(755, 475, 540 - 475); //Right ground obstacle, right side
+	GroundPre(715, 475, 755 - 715); //Right ground obstacle right
+	GroundPre(755, 540, 799 - 755); //Right exit
+	WallPre(790, 430, 495 - 430); //Right side barrier
+	GroundPre(790, 495, 799 - 790); //Right side barrier
+
 	//Above ground
 	Wall(620, 430, 475 - 430); //Ground wall
 	Ground(0, 475, 620); //Ground
 	Ground(620, 430, 799 - 620); //Ground right
-
 	//Underground
 	Wall(270, 594, 599 - 594); //Left tube
 	Wall(360, 594, 599 - 594); //Right tube
 	Wall(195, 555, 594 - 555); //Left first wall
+	Wall(90, 550, 12); //Left indent right
+	Wall(20, 553, 562 - 553); //Left indent left
+	Wall(170, 550, 5); //Left first blip
+	Wall(220, 475, 495 - 475); //Left ceiling thing, close side
+	Wall(135, 495, 510 - 495); //Left ceiling thing, bottleneck right
+	Wall(97, 490, 510 - 490); //Left ceiling thing, bottleneck left
+	Wall(250, 475, 525 - 475); //Middle ceiling thing, left side
+	Wall(415, 475, 490 - 475); //Middle ceiling thing, right side
+	Wall(345, 490, 525 - 490); //Middle ceiling thing, middle side
+	Wall(430, 475, 565 - 475); //Stalagmite left
+	Wall(455, 475, 565 - 475); //Stalagmite right
+	Wall(505, 500, 594 - 500); //Right ground obstacle, left side outer
+	Wall(540, 500, 10); //Right ground obstacle, left side inner
+	Wall(700, 510, 8); //Right ground obstacle, divet left side
+	Wall(715, 475, 518 - 475); //Right ground obstacle, divet right side
+	Wall(755, 475, 540 - 475); //Right ground obstacle, right side
+	Wall(790, 430, 495 - 430); //Right side barrier
 	Ground(170, 555, 195 - 170); //Left first wall top
 	Ground(90, 550, 170 - 90); //Left blip top
 	Ground(20, 562, 90 - 20); //Left indent
 	Ground(0, 553, 20); //Left exit
-	Wall(90, 550, 12); //Left indent right
-	Wall(20, 553, 562 - 553); //Left indent left
-	Wall(170, 550, 5); //Left first blip
 	Ground(195, 594, 270 - 195); //Floor Left
 	Ground(360, 594, 505 - 360); //Floor Right
 	Platform(270, 594, 360 - 270); //Tube cover
-	Wall(220, 475, 495 - 475); //Left ceiling thing, close side
 	Ground(135, 495, 220 - 135); //Left ceiling thing
-	Wall(135, 495, 510 - 495); //Left ceiling thing, bottleneck right
-	Ground(97, 510, 135 - 97); //Left ceiling thing
-	Wall(97, 490, 510 - 490); //Left ceiling thing, bottleneck left
+	Ground(97, 510, 135 - 97); //Left ceiling thing			////////////////////////////
 	Ground(0, 490, 97); //Far left ceiling
-	Wall(250, 475, 525 - 475); //Middle ceiling thing, left side
-	Wall(415, 475, 490 - 475); //Middle ceiling thing, right side
-	Wall(345, 490, 525 - 490); //Middle ceiling thing, middle side
 	Ground(250, 525, 345 - 250); //Middle ceiling thing, bottom
 	Ground(345, 490, 415 - 345); //Middle ceiling thing, right
-	Wall(430, 475, 565 - 475); //Stalagmite left
-	Wall(455, 475, 565 - 475); //Stalagmite right
 	Ground(430, 565, 455 - 430); //Stalagmite bottom
-	Wall(505, 500, 594 - 500); //Right ground obstacle, left side outer
 	Ground(505, 500, 540 - 505); //Right ground obstacle, left side
-	Wall(540, 500, 10); //Right ground obstacle, left side inner
 	Ground(540, 510, 700 - 540); //Right ground obstacle long
-	Wall(700, 510, 8); //Right ground obstacle, divet left side
 	Ground(700, 518, 15); //Right ground obstacle divet
-	Wall(715, 475, 518 - 475); //Right ground obstacle, divet right side
-	Wall(755, 475, 540 - 475); //Right ground obstacle, right side
 	Ground(715, 475, 755 - 715); //Right ground obstacle right
 	Ground(755, 540, 799 - 755); //Right exit
-	Wall(790, 430, 495 - 430); //Right side barrier
 	Ground(790, 495, 799 - 790); //Right side barrier
 }
 void Game::Screen7()
 {
+	GroundPre(110, 560, 799 - 110); //Ground
+	GroundPre(600, 60, 790 - 600); //Top platform
+	WallPre(680, 0, 8); //Ceiling barrier
+	GroundPre(20, 8, 680 - 20); //Ceiling barrier
+	GroundPre(200, 130, 560 - 200); //2nd top platform
+	WallPre(110, 400, 560 - 400); //Left barrier bottom
+	GroundPre(20, 400, 110 - 20); //Left barrier platform
+	WallPre(20, 8, 400 - 8); //Left barrier top
+	GroundPre(300, 235, 460 - 300); //Left platform bottom
+	WallPre(300, 205, 235 - 205); //Left platform
+	GroundPre(20, 205, 300 - 20); //Left platform top
+	WallPre(580, 380, 440 - 380); //Bottom platform
+	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
+	GroundPre(580, 380, 650 - 580); //Bottom platform top
+	PlatformPre(270, 362, 110); //Lower platform
+	PlatformPre(500, 310, 110); //Higher platform
+	GroundPre(650, 440, 790 - 650); //Right platform
+	WallPre(790, 0, 500); //Right wall
+	GroundPre(790, 500, 799 - 790); //Right exit top barrier
+//	WallPre(650, 500, 560 - 500); //Bottom tiny thing
+//	GroundPre(580, 500, 650 - 580); //Bottom tiny thing
+	GroundPre(480, 500, 70); //Bottom tiny divide right
+	GroundPre(280, 500, 70); //Bottom tiny divide left
+
+	Wall(680, 0, 8); //Ceiling barrier
+	Wall(110, 400, 560 - 400); //Left barrier bottom
+	Wall(20, 8, 400 - 8); //Left barrier top
+	Wall(300, 205, 235 - 205); //Left platform
+	Wall(580, 380, 440 - 380); //Bottom platform
+	Wall(790, 0, 500); //Right wall
 	Ground(110, 560, 799 - 110); //Ground
 	Ground(600, 60, 790 - 600); //Top platform
-	Wall(680, 0, 8); //Ceiling barrier
 	Ground(20, 8, 680 - 20); //Ceiling barrier
 	Ground(200, 130, 560 - 200); //2nd top platform
-	Wall(110, 400, 560 - 400); //Left barrier bottom
 	Ground(20, 400, 110 - 20); //Left barrier platform
-	Wall(20, 8, 400 - 8); //Left barrier top
 	Ground(300, 235, 460 - 300); //Left platform bottom
-	Wall(300, 205, 235 - 205); //Left platform
 	Ground(20, 205, 300 - 20); //Left platform top
-	Wall(580, 380, 440 - 380); //Bottom platform
 	Ground(195, 440, 580 - 195); //Bottom platform bottom
 	Ground(580, 380, 650 - 580); //Bottom platform top
 	Platform(270, 362, 110); //Lower platform
 	Platform(500, 310, 110); //Higher platform
 	Ground(650, 440, 790 - 650); //Right platform
-	Wall(790, 0, 500); //Right wall
 	Ground(790, 500, 799 - 790); //Right exit top barrier
 //	Wall(650, 500, 560 - 500); //Bottom tiny thing
 //	Ground(580, 500, 650 - 580); //Bottom tiny thing
@@ -1032,7 +1177,8 @@ void Game::UserRespawn()
 		if (RespawnInBed)
 		{
 			screen = 0;
-			gin[0].Respawn(715, 575 - 21);
+			//gin[0].Respawn(715, 575 - 21);
+			gin[0].Respawn(45, 60 - 21);
 		}
 		else
 		{
@@ -1045,7 +1191,7 @@ void Game::UserRespawn()
 void Game::UpdateModel()
 {
 	//Keep first
-	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_INSERT));
+	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_CONTROL));
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	//Keep middle?
@@ -1057,8 +1203,8 @@ void Game::UpdateModel()
 	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
-//	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value)
-	UserCollision(); //Keep after all movement functions
+//	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
+	//UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:
 	Screens();
@@ -1068,7 +1214,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	gin[0].Draw(gfx, Colors::Orange2/*, Colors::Pasty*/);
+	gin[0].Draw(gfx/*, Colors::Orange2, Colors::Pasty*/);
 	gin[0].DrawDash(gfx); //Keep after Draw()
 	HealthBar(); //Keep last, just so it's always on top
 
@@ -1077,5 +1223,9 @@ void Game::ComposeFrame()
 	{
 		Sleep(400);
 	}
-//	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
+
+	//if (gin[0].GetY() > 300)
+	//{
+	//	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
+	//}
 }

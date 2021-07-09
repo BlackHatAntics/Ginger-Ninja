@@ -203,12 +203,12 @@ void Charger::Movement(int Gx, int Gw)
 
 void Charger::Aggro(int Gx, int Gy, int Gw, int Gog)
 {
-	if (Gx < x + w + 1 + 300 && Gx + Gw + 1 > x - 300 && Gy <= y + w && Gy + Gw >= y /*- 81*/ && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
+	if (Gx < x + w + 1 + 350 && Gx + Gw + 1 > x - 350 && Gy <= y + w && Gy + Gw >= y /*- 81*/ && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
 	{
 		aggro = true;
 		//speed = 2;
 	}
-	else if (Gx > x + w + 1 + 260 + 100 || Gx + Gw + 1 < x - 260 - 100 || (Gog && Gy + Gw < y + w - 70) || Gy >= y + w + 20) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
+	else if (Gx > x + w + 1 + 350 + 130 || Gx + Gw + 1 < x - 350 - 130 || (Gog && Gy + Gw < y + w - 70) || Gy >= y + w + 20) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
 	{
 		//That 70 is a very critical number. That is the cutoff point between platforms taking you out of aggro, and leaving you in
 		//The 20 also dictactes how much lower you need to be

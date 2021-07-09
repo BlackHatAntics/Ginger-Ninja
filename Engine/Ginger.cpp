@@ -7,7 +7,7 @@ void Ginger::Init(int in_x, int in_y, int in_speed)
 	speed = in_speed;
 }
 
-void Ginger::Draw(Graphics& gfx, Color h/*, Color b*/)
+void Ginger::Draw(Graphics& gfx/*, Color h, Color b*/)
 {
 	if (!(DashStage > 0 && DashStage <= 4)) //You don't draw him if he's dashing (so it looks cool, and you just see the streak)
 	{
@@ -16,7 +16,7 @@ void Ginger::Draw(Graphics& gfx, Color h/*, Color b*/)
 		{
 			for (int loopy = 0; loopy < 6; loopy++)
 			{
-				gfx.PutPixel(x + loopx, y + loopy, h);
+				gfx.PutPixel(x + loopx, y + loopy, Colors::Orange2);
 			}
 		}
 		//body
@@ -288,11 +288,15 @@ void Ginger::HitWall2(int wx, int wy, int wh, bool UP)
 	{
 		HitWallRight = true;
 		HitWallLeft = false;
+
+		HitWall = true; //this is just here for the bullshit in Ground() that makes sure if you hit a wall and a ground at the exact same time (aka an outer corner), you don't clip through
 	}
 	else if (x < wx)
 	{
 		HitWallLeft = true;
 		HitWallRight = false;
+
+		HitWall = true; //This is reset to false each frame in OnWall()
 	}
 
 //	if (UP == false && dy != y) //If you have released the w key, are not on the ground, and are against the wall, then you are ready to press the w key and jump off the wall
@@ -345,26 +349,29 @@ bool Ginger::OnWall()
 {
 	//Just a reminder that wx isn't actually set to the wall's x value, but rather the x value of where you would be if you were up against it. Y and H *are* set to the real values though.
 	//The walls of course follow proper pixel formatting, starting from the top, and incrementing downwards. So if the height is 100, it's 100 pixels below the y.
+	
+	HitWall = false; //resetting to false each frame, so it tracks whether or not it hit THIS FRAME. (Only used in Ground. It has no business being in here, but the function was wall themed so why not?)
+
 	if (y + w >= TempWallValueY && y <= TempWallValueY + TempWallValueH) //If you are within the top&bottom of the wall
 	{
-		if (HitWallRight && x >= TempWallValueX) //If you are against the wall or inside of it
+		if ( (HitWallRight && x >= TempWallValueX) || (HitWallLeft && x <= TempWallValueX) )//If you are against the wall or inside of it
 		{
 			return true;
 		}
-		else if (HitWallLeft && x <= TempWallValueX) //If you are against the wall or inside of it
-		{
-			return true;
-		}
+		//else if (HitWallLeft && x <= TempWallValueX) //If you are against the wall or inside of it
+		//{
+		//	return true;
+		//}
 	}
 	//Remember that if it "returns" something, it ends the function, so if it returns true up there, it will never see this line of code down here. 
 	//So don't worry about it always returning false at the end of the function. You don't need to hide it inside an "else" statement or anything.
 	return false;
 }
 
-void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool INS)
+void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool CTRL)
 {
 	int FlySpeed = 11;
-	if (INS)
+	if (CTRL)
 	{
 		FlySpeed = 1;
 	}
@@ -460,6 +467,8 @@ void Ginger::Dash(bool SPACE)
 	{
 		isDashing = false;
 		//DashEndPoint = x + w / 2;
+		bG = 255; //making him pale(r) so there's a visual indication as to when his dash is on cooldown
+		bB = 255;
 	}
 
 	if (DashStage >= 50 && SPACE == false)
@@ -467,6 +476,8 @@ void Ginger::Dash(bool SPACE)
 		DashStage = 0;
 		DashLength = 40;
 		DashisReady = true;
+		bG = 224; //making him look normal again. aka dash is ready
+		bB = 218;
 	}
 }
 
@@ -669,5 +680,10 @@ int Ginger::GetStartPoint()
 bool Ginger::GetCheating()
 {
 	return cheating;
+}
+
+bool Ginger::GetHitWall()
+{
+	return HitWall;
 }
 

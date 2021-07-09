@@ -85,7 +85,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	static constexpr int GinSize = 2;
+	static constexpr int GinSize = 1; //I don't know why I even gave the option of having more than 1 ginger...
 	static constexpr int BasicSize = 60;
 	static constexpr int JumperSize = 60;
 	static constexpr int ChargerSize = 20;
