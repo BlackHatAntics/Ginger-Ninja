@@ -23,7 +23,7 @@ private:
 	int x /*= StartPointX*/;
 	int y /*= StartPointY*/;
 	static const int w = 9;
-	int speed = 1;
+	float speed = 1;
 	bool aggro = false;
 	bool MoveRight = false;
 	bool MoveLeft = false;

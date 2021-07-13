@@ -103,18 +103,17 @@ void Game::Go()
 
 
 	//Currently working on:
-//Making pellets shoot at the player
 //Planning && drawing level layouts
+//Making pellets shoot at the player
+//Better mob ai (wizard & ranger still just use the outdated basic_mob ai)
 
 	//Fix:
-//If you make contact with a wall at the exact moment you hit the ground, you will pass through the ground (or platform)
-//Mobs vibrating when underneath you && aggro
+//If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
 //Be able to use Dash in the air
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
-//Implement a visual, so user knows when dash is currently on cooldown
 //Be able to hold down spacebar to change the length of the dash
 //Add checkpoints/med kit spots to heal throughout the levels
 //Implement the level switcher
@@ -748,17 +747,46 @@ void Game::Screen3()
 }
 void Game::Screen4()
 {
+	WallPre(120, 130, 50); //top platform, left
+	WallPre(350, 260, 100); //middle tube
+	WallPre(700, 30, 230); //right
+	WallPre(0, 130, 130); //left
+	PlatformPre(585, 180, 85);
+	GroundPre(0, 30, 700); //ceiling
+	GroundPre(0, 130, 120); //top tube, floor
+	GroundPre(120, 180, 585 - 120); //top platform
+	GroundPre(585 + 85, 180, 30); //top platform, small bit, right side
+	GroundPre(350 + 70, 260, 700 - 350 - 70); //lower platform
+	GroundPre(0, 260, 350); //middle tube, ceiling
+	GroundPre(0, 360, 799); //floor
+
+	Wall(120, 130, 50); //top platform, left
+	Wall(350, 260, 100); //middle tube
+	Wall(700, 30, 230); //right
+	Wall(0, 130, 130); //left
+	Platform(585, 180, 85);
+	Ground(0, 30, 700); //ceiling
+	Ground(0, 130, 120); //top tube, floor
+	Ground(120, 180, 585 - 120); //top platform
+	Ground(585 + 85, 180, 30); //top platform, small bit, right side
+	Ground(350 + 70, 260, 700 - 350 - 70); //lower platform
+	Ground(0, 260, 350); //middle tube, ceiling
+	Ground(0, 360, 799); //floor
+
 }
 void Game::Screen5()
 {
+	GroundPre(0, 360, 110); //left platform
+
+	Ground(0, 360, 110); //left platform
 }
 void Game::Screen6()
 {
 	//for testing purposes:
-	if (gin[0].GetY() - 1 <= 510)
-	{
-		gfx.PutPixel(255, 255, 255, 255, 255);
-	}
+	//if (gin[0].GetY() - 1 <= 510)
+	//{
+	//	gfx.PutPixel(255, 255, 255, 255, 255);
+	//}
 
 	//Above ground
 	WallPre(620, 430, 475 - 430); //Ground wall
@@ -777,7 +805,7 @@ void Game::Screen6()
 	WallPre(170, 550, 5); //Left first blip
 	GroundPre(195, 594, 270 - 195); //Floor Left
 	GroundPre(360, 594, 505 - 360); //Floor Right
-	//PlatformPre(270, 594, 360 - 270); //Tube cover
+	PlatformPre(270, 594, 360 - 270); //Tube cover
 	WallPre(220, 475, 495 - 475); //Left ceiling thing, close side
 	GroundPre(135, 495, 220 - 135); //Left ceiling thing
 	WallPre(135, 495, 510 - 495); //Left ceiling thing, bottleneck right

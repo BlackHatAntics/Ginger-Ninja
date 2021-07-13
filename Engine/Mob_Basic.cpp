@@ -45,27 +45,43 @@ void Basic::Movement(int Gx, int Gw)
 	{
 		if (x + w / 2 > Gx + Gw / 2) //if midpoint of mob is to the right of midpoint of ginger, move left (in direction of ginger)
 		{
-			MoveLeft = true;
-			MoveRight = false;
+			//MoveLeft = true;
+			//MoveRight = false;
+			speed -= 0.5; //so they don't turn around IMMEDIATELY, and jumping over them is successful
 		}
-		else if (x + w / 2 < Gx + Gw / 2)
+		else if (x + w / 2 < Gx + Gw / 2) //if to the left, move right
 		{
-			MoveRight = true;
-			MoveLeft = false;
+			//MoveRight = true;
+			//MoveLeft = false;
+			speed += 0.5;
 		}
+		//else //if he's not to the left or to the right, but directly under/above, stand still
+		//{
+		//	MoveRight = false;
+		//	MoveLeft = false;
+		//}
+
+		//So mob never moves faster than 2 pixels per frame
+		if (speed > 2 || speed < -2)
+		{
+			speed = speed / 1.25; //this will make it always either 2 or -2. (The math works cause if it's ever over 2 it will always be 2.5)
+		}
+		
 
 		//Making sure they don't walk off the ledge
-		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
+		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. and +1 because it goes by 2 when aggro'd so sometimes clips wall by 1 pixel. too lazy to re-code it, I'll just take the 1 pixel loss
 		{
-			MoveRight = false;
+			x = (Px + Pw) - w - 3;
 		}
 		else if (x - 2 < Px) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
 		{
-			MoveLeft = false;
+			x = Px + 3;
 		}
 	}
 	else
 	{
+		//I could totally take 10m to code this all better, and have everything set speed instead of MoveLeft & MoveRight, but I honestly don't care.
+
 		RandStage++;
 		int test0 = 69; //Just initializing it to a stupid number you can't use (compiler doesn't like if you leave it empty)
 		//Randomly generate the movement
@@ -110,13 +126,20 @@ void Basic::Movement(int Gx, int Gw)
 	}
 
 	//Actually moving the mob
-	if (MoveRight)
+	if (aggro)
 	{
 		x += speed;
 	}
-	else if (MoveLeft)
+	else
 	{
-		x -= speed;
+		if (MoveRight)
+		{
+			x += speed;
+		}
+		else if (MoveLeft)
+		{
+			x -= speed;
+		}
 	}
 }
 
@@ -125,7 +148,7 @@ void Basic::Aggro(int Gx, int Gy, int Gw, int Gog)
 	if (Gx < x + w + 1 + 160 && Gx + Gw + 1 > x - 160 && Gy <= y + w && Gy + Gw >= y - 42 && !(Gog && Gy + Gw <= y + w - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
 	{
 		aggro = true;
-		speed = 2;
+		//speed = 2;
 	}
 	else if (Gx > x + w + 1 + 160 + 100 || Gx + Gw + 1 < x - 160 - 100 || (Gog && Gy + Gw < y + w - 70) || Gy + Gw >= y + w + 50) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
 	{

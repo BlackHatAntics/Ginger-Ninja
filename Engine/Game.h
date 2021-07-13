@@ -100,7 +100,7 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 3; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 4; //Start this at 0, but it's 7 right now for testing purposes
 	int Level = 0;
 	bool UserisColliding = false;
 	int UserHealth = 3;
