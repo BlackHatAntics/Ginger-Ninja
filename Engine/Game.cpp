@@ -42,13 +42,21 @@ Game::Game( MainWindow& wnd )
 	jum[7].Init(600, 290, 280, 383);
 	//screen 2
 	bas[11].Init(250, 220, 260, 65);
-	bas[12].Init(148, 110, 360, 90);
+	bas[12].Init(148, 110, 360, 94);
 	bas[13].Init(249, 230, 460, 90);
 	bas[14].Init(140, 100, 520, 153);
 	jum[8].Init(200, 100, 520, 153);
 	//screen 3
 	cha[2].Init(340, 0, 485, 500);
 	//screen 4
+	bas[15].Init(60, 0, 260, 350);
+	bas[16].Init(440, 350, 360, 799 - 350);
+	bas[17].Init(520, 350, 360, 799 - 350);
+	bas[18].Init(610, 350, 360, 799 - 350);
+	bas[19].Init(680, 350, 360, 799 - 350);
+	ran[2].Init(480, 120, 180, 700 - 120);
+	ran[3].Init(315, 0, 260, 350);
+	//screen5
 
 	//screen 7
 	bas[0].Init(200, 20, 205, 280);
@@ -105,13 +113,14 @@ void Game::Go()
 	//Currently working on:
 //Planning && drawing level layouts
 //Making pellets shoot at the player
-//Better mob ai (wizard & ranger still just use the outdated basic_mob ai)
+//Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
 	//Fix:
 //If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
 //Be able to use Dash in the air
+//Make it so mobs only roam a certain distance from where they were initialized
 //For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Be able to hold down spacebar to change the length of the dash
@@ -772,6 +781,15 @@ void Game::Screen4()
 	Ground(350 + 70, 260, 700 - 350 - 70); //lower platform
 	Ground(0, 260, 350); //middle tube, ceiling
 	Ground(0, 360, 799); //floor
+
+	MobGroupRanger(2);
+	MobGroupRanger(3);
+
+	MobGroupBasic(15);
+	MobGroupBasic(16);
+	MobGroupBasic(17);
+	MobGroupBasic(18);
+	MobGroupBasic(19);
 
 }
 void Game::Screen5()

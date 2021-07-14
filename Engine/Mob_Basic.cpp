@@ -66,14 +66,14 @@ void Basic::Movement(int Gx, int Gw)
 		{
 			speed = speed / 1.25; //this will make it always either 2 or -2. (The math works cause if it's ever over 2 it will always be 2.5)
 		}
-		
+
 
 		//Making sure they don't walk off the ledge
-		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. and +1 because it goes by 2 when aggro'd so sometimes clips wall by 1 pixel. too lazy to re-code it, I'll just take the 1 pixel loss
+		if (x + w + 3 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. and +1 because it goes by 2 when aggro'd so sometimes clips wall by 1 pixel. too lazy to re-code it, I'll just take the 1 pixel loss
 		{
 			x = (Px + Pw) - w - 3;
 		}
-		else if (x - 2 < Px) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
+		else if (x - 3 < Px) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
 		{
 			x = Px + 3;
 		}

@@ -60,28 +60,80 @@ void Ranger::Movement(int Gx, int Gw)
 	//Change the movement, I don't want it to be the same as Basic Mob
 	if (aggro)
 	{
-		if (x + w / 2 > Gx + Gw / 2) //if midpoint of mob is to the right of midpoint of ginger, move right (away from ginger)
+		if (x + w / 2 > Gx + Gw / 2) //if midpoint of mob is to the right of midpoint of ginger
 		{
-			MoveRight = true;
-			MoveLeft = false;
-		}
-		else if (x + w / 2 < Gx + Gw / 2)
+			if ((x + w / 2) - (Gx + Gw / 2) < 150) //if he's within a certain distance
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = 2;
+			}
+			else if ((x + w / 2) - (Gx + Gw / 2) < 210) //if he's within a certain distance (less close)
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = 1;
+			}
+			else if ((x + w / 2) - (Gx + Gw / 2) > 340) //if he's a certain distance away
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = -2;
+			}
+			else if ((x + w / 2) - (Gx + Gw / 2) > 300) //if he's a certain distance away (less far)
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = -1;
+			}
+			else //he must be in the middle
+			{
+				speed = 0;
+			}
+		}	
+		else if (x + w / 2 < Gx + Gw / 2) //if midpoint of mob is to the left of midpoint of ginger
 		{
-			MoveLeft = true;
-			MoveRight = false;
+			if ( (Gx + Gw / 2) - (x + w / 2) < 150) //if he's within a certain distance
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = -2;
+			}
+			else if ( (Gx + Gw / 2) - (x + w / 2) < 210) //if he's within a certain distance (less close)
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = -1;
+			}
+			else if ( (Gx + Gw / 2) - (x + w / 2) > 340) //if he's a certain distance away
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = 2;
+			}
+			else if ((Gx + Gw / 2) - (x + w / 2) > 300) //if he's a certain distance away (less far)
+			{
+				//MoveRight = true;
+				//MoveLeft = false;
+				speed = 1;
+			}
+			else //he must be in the middle
+			{
+				speed = 0;
+			}
 		}
 
 		//Making sure they don't walk off the ledge
-		if (x + w + Gw / 2 > Px + Pw) // + Gw/2 so you still have space to dash through them if they're close to a wall
+		if (x + w + 3 + Gw / 2 > Px + Pw) // + Gw/2 so you still have space to dash through them if they're close to a wall
 		{
-			MoveRight = false;
+			x = Px + Pw - w - 3 - Gw / 2;
 		}
 		else if (x - Gw / 2 < Px)
 		{
-			MoveLeft = false;
+			x = Px + Gw / 2;
 		}
 	}
-	else
+	else //if not aggro
 	{
 		RandStage++;
 		int test0 = 69; //Just initializing it to a stupid number you can't use (compiler doesn't like if you leave it empty)
@@ -127,7 +179,11 @@ void Ranger::Movement(int Gx, int Gw)
 	}
 
 	//Actually moving the mob
-	if (MoveRight)
+	if (aggro)
+	{
+		x += speed;
+	}
+	else if (MoveRight)
 	{
 		x += speed;
 	}
@@ -139,12 +195,12 @@ void Ranger::Movement(int Gx, int Gw)
 
 void Ranger::Aggro(int Gx, int Gy, int Gw, int Gog)
 {
-	if (Gx < x + w + 1 + 160 && Gx + Gw + 1 > x - 160 && Gy <= y + h && Gy + Gw >= y - 42 && !(Gog && Gy + Gw <= y + h - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
+	if (Gx + Gw / 2 < x + w / 2 + 300 && Gx + Gw / 2 > x + w / 2 - 300 && Gy <= y + h && Gy + Gw >= y - 42 && !(Gog && Gy + Gw <= y + h - 50)) //If Ginger is within _ pixels on either side, and at the same basic height level, and not on another platform too high up, then the mob will be aggro'd
 	{
 		aggro = true;
-		speed = 2;
+		//speed = 2;
 	}
-	else if (Gx > x + w + 1 + 160 + 100 || Gx + Gw + 1 < x - 160 - 100 || (Gog && Gy + Gw < y + h - 70) || Gy + Gw >= y + h + 50) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
+	else if (Gx + Gw / 2 > x + w / 2 + 300 + 170 || Gx + Gw / 2 < x + w / 2 - 300 - 170 || (Gog && Gy + Gw < y + h - 70) || Gy + Gw >= y + h + 50) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
 	{
 		//That 70 is a very critical number. That is the cutoff point between platforms taking you out of aggro, and leaving you in
 		//The 50 also dictactes how much lower you need to be
@@ -181,12 +237,10 @@ bool Ranger::GetAlive()
 {
 	return alive;
 }
-
 bool Ranger::GetAggro()
 {
 	return aggro;
 }
-
 int Ranger::GetX()
 {
 	return x;
