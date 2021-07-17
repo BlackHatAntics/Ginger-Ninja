@@ -113,7 +113,6 @@ void Game::Go()
 
 	//Currently working on:
 //Planning && drawing level layouts
-//Making pellets shoot at the player
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
 	//Fix:
@@ -122,12 +121,10 @@ void Game::Go()
 	//Add:
 //Be able to use Dash in the air
 //Make it so mobs only roam a certain distance from where they were initialized
-//For Ranger: make it so if Gin is close, he backs up, if he's far away he walks towards him to stay in range, and if he's medium then ranger stands still
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Be able to hold down spacebar to change the length of the dash
-//Add checkpoints/med kit spots to heal throughout the levels
-//Implement the level switcher
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
+//?Implement the level switcher //nvm, don't need this anymore
 //Have a death animation for enemies
 //Add more enemy types
 //Plan out level layouts
@@ -792,6 +789,10 @@ void Game::Screen4()
 	MobGroupBasic(18);
 	MobGroupBasic(19);
 
+	if (checkpoint < 1)
+	{
+		Checkpoint(90, 130);
+	}
 }
 void Game::Screen5()
 {
@@ -995,13 +996,13 @@ void Game::Screen10()
 }
 void Game::Screen11()
 {
-	if (Level <= 1)
-	{
+	//if (Level <= 1)
+	//{
 		Ground(0, 445, 799); //Ground
 		Wall(0, 0, 445); //Left wall
 		Wall(799, 0, 410); //Right wall
 		Ground(799, 410, 0); //1 pixel at base of right wall, to stop you from clipping
-	}
+	//}
 }
 
 void Game::UserCollision()
@@ -1137,9 +1138,11 @@ void Game::MobGroupRanger(int i)
 
 	for (int Pi = 0; Pi < PelletSize; Pi++) //this is outside of GetAlive {} bracket so that a pellet in motion will keep falling after it's ranger dies
 	{
+		pel[i * PelletSize + Pi].Delta(); //keep before ShootyShootyPowPow
 		pel[i * PelletSize + Pi].ShootyShootyPowPow(/*ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY()*/);
 		if (pel[i * PelletSize + Pi].GetActive() == true) //so basically this is saying each ranger has his own set of pellets, and it will only loop through his ones. ex: ranger 0 has pellets 0-7. ranger 1 has pellets 8-15, etc. 
 		{
+			pel[i * PelletSize + Pi].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding, gin[0].GetDX(), gin[0].GetDY() ); //Keep after Movement.
 			pel[i * PelletSize + Pi].Draw(gfx); //i(ranger) * PelletSize(however many pellets are assigned to each ranger) + Pi(whatever pellet it's currently looping through here)
 		}
 	}
@@ -1173,14 +1176,14 @@ void Game::MobGroupWizard(int i)
 void Game::UserRespawn()
 {
 	//This is always active, and is just determining which place you will respawn
-	if (screen <= 3) //Yeah this will needlessly be called a shit-ton and isn't optimal code, but idc, it's clean.
-	{
-		RespawnInBed = true;
-	}
-	else if (screen == 10) //Just choosing if you respawn at screen 0 or screen 10. Basically if you make it to one side of the mobs, you will respawn on that side.
-	{
-		RespawnInBed = false;
-	}
+	//if (screen <= 3) //Yeah this will needlessly be called a shit-ton and isn't optimal code, but idc, it's clean.
+	//{
+	//	RespawnInBed = true;
+	//}
+	//else if (screen == 10) //Just choosing if you respawn at screen 0 or screen 10. Basically if you make it to one side of the mobs, you will respawn on that side.
+	//{
+	//	RespawnInBed = false;
+	//}
 
 	if (wnd.kbd.KeyIsPressed(0x52)) //"R" key allows manual reset; so you don't have to actually die to respawn
 	{
@@ -1221,24 +1224,85 @@ void Game::UserRespawn()
 			orb[i].Respawn();
 		}
 
-		if (RespawnInBed)
+		if (/*RespawnInBed*/checkpoint == 0)
 		{
 			screen = 0;
 			//gin[0].Respawn(715, 575 - 21);
 			gin[0].Respawn(45, 60 - 21);
 		}
-		else
+		else if (checkpoint == 1)
 		{
-			screen = 10;
-			gin[0].Respawn(420, 445 - 21);
+			screen = 3;
+			gin[0].Respawn(600, 60);
+		}
+		else if (checkpoint == 2)
+		{
+			//screen = ;
+			//gin[0].Respawn();
 		}
 	}
+}
+
+void Game::Cheats()
+{
+	//slow motion
+	if (wnd.kbd.KeyIsPressed(VK_RETURN))
+	{
+		Sleep(400);
+	}
+
+	//jump ahead in checkpoint
+	if (wnd.kbd.KeyIsPressed(VK_F1))
+	{
+		checkpoint = 0;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_F2))
+	{
+		checkpoint = 1;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_F3))
+	{
+		checkpoint = 2;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_F4))
+	{
+		checkpoint = 3;
+	}
+}
+
+void Game::Checkpoint(int x, int y)
+{
+	//horizontal rectangle
+	for (int loopx = 0; loopx <= 30; loopx++)
+	{
+		for (int loopy = 0; loopy <= 10; loopy++)
+		{
+			gfx.PutPixel(x - 10 + loopx, y - 30 + loopy, 66, 220, 41); //66, 220, 41
+		}
+	}
+	//vertical rectangle
+	for (int loopx = 0; loopx <= 10; loopx++)
+	{
+		for (int loopy = 0; loopy <= 30; loopy++)
+		{
+			gfx.PutPixel(x + loopx, y - 40 + loopy, 66, 220, 41); //48, 244, 15
+		}
+	}
+
+	//when you touch the checkpoint, it ups checkpoint, which changes where you respawn, and makes it disappear.
+	//Keep this after the draw code; it's just kinda nice to have a frame of lag, so you can sort of walk into it before it poofs.
+	if (gin[0].GetX() + gin[0].GetW() + 1 > x - 10 && gin[0].GetX() < x - 10 + 30 + 1 && gin[0].GetY() + gin[0].GetW() + 1 > y - 40 && gin[0].GetY() < y - 40 + 30 + 1)
+	{
+		checkpoint++;
+		UserHealth = 3; //fullheal, baby.
+	}	
 }
 
 void Game::UpdateModel()
 {
 	//Keep first
 	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_CONTROL));
+	Cheats();
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	//Keep middle?
@@ -1251,7 +1315,7 @@ void Game::UpdateModel()
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
 //	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
-	//UserCollision(); //Keep after all movement functions
+	UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:
 	Screens();
@@ -1266,13 +1330,13 @@ void Game::ComposeFrame()
 	HealthBar(); //Keep last, just so it's always on top
 
 //Test bullshit:
-	if (wnd.kbd.KeyIsPressed(VK_RETURN))
-	{
-		Sleep(400);
-	}
-
 	//if (gin[0].GetY() > 300)
 	//{
 	//	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
 	//}
+
+	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2), 255, 255, 255);
+	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2) + gin[0].GetW(), 255, 255, 255);
+	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2) + gin[0].GetW(), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2), 255, 255, 255);
+	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2) + gin[0].GetW(), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2) + gin[0].GetW(), 255, 255, 255);
 }

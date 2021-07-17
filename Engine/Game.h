@@ -78,6 +78,8 @@ private:
 	void MobGroupRanger(int i);
 	void MobGroupWizard(int i);
 	void UserRespawn();
+	void Cheats();
+	void Checkpoint(int x, int y);
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -100,13 +102,14 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 4; //Start this at 0, but it's 7 right now for testing purposes
-	int Level = 0;
+	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
+	//int Level = 0;
+	int checkpoint = 0;
 	bool UserisColliding = false;
 	int UserHealth = 3;
 	bool DamageLock = false;
 	int DamageLockCounter = 0;
-	bool RespawnInBed = true;
+	//bool RespawnInBed = true;
 //	int Pi = 0; // looping through pellet index
 //	int Oi = 0; // looping through orb index
 	/********************************/

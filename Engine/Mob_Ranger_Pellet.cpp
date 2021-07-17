@@ -11,6 +11,26 @@ void Pellet::Draw(Graphics & gfx/*, int Rx, int Ry, int Rw*/)
 	}
 }
 
+void Pellet::Collision(int Gx, int Gy, int Gw, bool & Colliding, int Gdx, int Gdy)
+{
+	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1)
+	{
+		Colliding = true;
+	}
+
+	//trying out the "colliding even if it is going so fast it technically never touches you" thing. I could add an || statement to the previous, but it's seperated for simplicity.
+	//Only takes a midpoint, but I could do a loop and make it take every point, so it could never pass through. Don't think it's necessary though.
+	int DXMid = x - ((x - dx) / 2); //made these ints just so the if statement looks simpler/cleaner
+	int DYMid = y - ((y - dy) / 2);
+	int DXMidG = Gx - ((Gx - Gdx) / 2);
+	int DYMidG = Gy - ((Gy - Gdy) / 2);
+
+	if (DXMidG + Gw > DXMid && DXMidG < DXMid + w && DYMidG + Gw > DYMid && DYMidG < DYMid + w)
+	{
+		Colliding = true;
+	}
+}
+
 void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, bool aggro, int Gx, int Gy, int Gw, int Gdx, int Gdy)
 {
 	if (PelletStage == 10 && active == false) //short delay before he starts firing
@@ -122,6 +142,12 @@ void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, b
 	{
 		PelletStage = 0;
 	}
+}
+
+void Pellet::Delta()
+{
+	dx = x;
+	dy = y;
 }
 
 void Pellet::ShootyShootyPowPow(/*int Rx, int Ry, int Rw, int Gx, int Gy, int Gw, int Gdx, int Gdy*/)

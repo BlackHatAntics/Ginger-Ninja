@@ -129,6 +129,8 @@ void Ginger::Delta()
 {
 	//Just keeping track of previous y position, so you can land on platforms if you were above them in the previous frame
 	//X pos is so you can tell which side you're hitting the wall from
+	//X also used to calculate velocity for where to fire pellets, 
+	//and x && y used to take mid-point of gin + pellet and it will hit you even if it was going too fast to hit you and "passed through you"
 	dy = y;
 	dx = x;
 }
