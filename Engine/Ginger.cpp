@@ -676,12 +676,10 @@ int Ginger::GetStartPoint()
 {
 	return DashStartPoint;
 }
-
 bool Ginger::GetCheating()
 {
 	return cheating;
 }
-
 bool Ginger::GetHitWall()
 {
 	return HitWall;

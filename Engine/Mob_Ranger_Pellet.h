@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics.h"
+//#include <cmath> //I guess this is already included by default?
 
 struct Pellet
 {
@@ -15,11 +16,12 @@ private:
 	int x = 0;
 	int y = 100;
 	static const int w = 4;
-	int SpeedX = 10;
-	int SpeedY = 0;
+	float SpeedX = 10;
+	float SpeedY = 0;
 	bool active = false;
 	//int PelletNumber = 0;
 	int PelletStage = 0;
 	int Direction = 1; //Whether the pellet flies left (-1) or right (1)
-	int PotentialSpeed = 50;
+	//int PotentialSpeed = 50;
+	//int MaxSpeedY = -21;
 };

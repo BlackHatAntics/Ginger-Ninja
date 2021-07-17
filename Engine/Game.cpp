@@ -55,6 +55,7 @@ Game::Game( MainWindow& wnd )
 	bas[18].Init(610, 350, 360, 799 - 350);
 	bas[19].Init(680, 350, 360, 799 - 350);
 	ran[2].Init(480, 120, 180, 700 - 120);
+	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
 	ran[3].Init(315, 0, 260, 350);
 	//screen5
 
@@ -1127,7 +1128,7 @@ void Game::MobGroupRanger(int i)
 //			int P = i * PelletSize + Pi;
 //			pel[P].Spawning(PelletSize, Pi, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
 //		}
-		pel[ran[i].PelletNumber + i * PelletSize].Spawning(PelletSize, ran[i].PelletNumber, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[i].GetDX(), gin[i].GetDY());
+		pel[ran[i].PelletNumber + i * PelletSize].Spawning(PelletSize, ran[i].PelletNumber, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDX(), gin[0].GetDY());
 
 		ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
