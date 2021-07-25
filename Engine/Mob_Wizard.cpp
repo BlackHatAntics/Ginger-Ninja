@@ -31,8 +31,10 @@ void Wizard::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 {
 	if (Gds > 0 && Gds <= 4) //If dashing
 	{
-		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
-			&& Gy + Gw > y && Gy < y + h) //Gotta be at the same height level
+		//if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
+		//	&& Gy + Gw > y && Gy < y + h) //Gotta be at the same height level
+		if (((Gsp <= x && Gx + Gw >= x + w) || (Gsp >= x + w && Gx <= x))
+			&& Gy + Gw >= y && Gy <= y + w)
 		{
 			alive = false;
 		}
@@ -72,13 +74,13 @@ void Wizard::Movement(int Gx, int Gw)
 		}
 
 		//Making sure they don't walk off the ledge
-		if (x + w + Gw / 2 > Px + Pw) // + Gw/2 so you still have space to dash through them if they're close to a wall
+		if (x + w + 3 > Px + Pw) //have to do +3 because it still adds 2 each frame at the bottom of the function. Too lazy to re-code it.
 		{
-			MoveRight = false;
+			x = Px + Pw - w - 3;
 		}
-		else if (x - Gw / 2 < Px)
+		else if (x - 3 < Px)
 		{
-			MoveLeft = false;
+			x = Px + 3;
 		}
 	}
 	else
@@ -122,7 +124,7 @@ void Wizard::Movement(int Gx, int Gw)
 		{
 			MoveRight = true;
 			MoveLeft = false;
-			RandStage = 0;
+			RandStage = 0; //I'm super lazy and will gladly call this every frame, lol
 		}
 	}
 

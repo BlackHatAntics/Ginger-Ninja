@@ -122,6 +122,7 @@ void Game::Go()
 
 
 	//Currently working on:
+//Dash length changing depending on how long you hold down spacebar
 //Planning && drawing level layouts
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
@@ -887,9 +888,6 @@ void Game::Screen5()
 		GroundPre(771, 100, 27);
 		Ground(771, 100, 27, Colors::Red); //thank god for optional function variables
 	}
-
-
-
 }
 void Game::Screen6()
 {

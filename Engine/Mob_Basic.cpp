@@ -31,8 +31,10 @@ void Basic::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 {
 	if (Gds > 0 && Gds <= 4) //If dashing
 	{
-		if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
-			&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
+		//if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
+		//	&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
+		if (((Gsp <= x && Gx + Gw >= x + w) || (Gsp >= x + w && Gx <= x))
+			&& Gy + Gw >= y && Gy <= y + w)
 		{
 			alive = false;
 		}
