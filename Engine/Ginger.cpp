@@ -63,6 +63,15 @@ void Ginger::Movement(bool SHIFT)
 	{
 		speed = 3;
 	}
+	//Rayven's a fucking noob, so I switched sprint to default
+	//if (SHIFT)
+	//{
+	//	speed = 3;
+	//}
+	//else
+	//{
+	//	speed = 5;
+	//}
 
 	if (MoveRight)
 	{

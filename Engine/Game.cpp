@@ -58,6 +58,16 @@ Game::Game( MainWindow& wnd )
 	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
 	ran[3].Init(315, 0, 260, 350);
 	//screen5
+	bas[20].Init(370, 310, 250, 150);
+	bas[21].Init(500, 460, 250, 150);
+	jum[9].Init(100, 0, 560, 370);
+	jum[10].Init(300, 0, 560, 370);
+	jum[11].Init(481, 381, 560, 735 - 381);
+	jum[12].Init(681, 381, 560, 735 - 381);
+	ran[4].Init(160, 0, 560, 370);
+	ran[5].Init(541, 381, 560, 735 - 381);
+	wiz[1].Init(500, 460, 350, 100);
+	//screen6
 
 	//screen 7
 	bas[0].Init(200, 20, 205, 280);
@@ -194,11 +204,11 @@ void Game::UserMovement()
 //	}
 }
 
-void Game::Ground(int x, int y, int w)
+void Game::Ground(int x, int y, int w, Color c)
 {
 	for (int loopx = 0; loopx <= w; loopx++)
 	{
-		gfx.PutPixel(x + loopx, y, Colors::White);
+		gfx.PutPixel(x + loopx, y, c);
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
@@ -270,11 +280,11 @@ void Game::Platform(int x, int y, int w)
 	}
 }
 
-void Game::Wall(int x, int y, int h)
+void Game::Wall(int x, int y, int h, Color c)
 {
 	for (int loopy = 0; loopy <= h; loopy++)
 	{
-		gfx.PutPixel(x, y + loopy, Colors::White);
+		gfx.PutPixel(x, y + loopy, c);
 	}
 	for (int i = 0; i < GinSize; i++)
 	{
@@ -642,6 +652,7 @@ void Game::Screen1()
 	GroundPre(130, 370, 380); //2nd platform
 	WallPre(130, 200, 370 - 200); //2nd platform wall left
 	GroundPre(290, 280, 383); //top platform
+	//GroundPre(260, 280, 383 + 30); //top platform
 	WallPre(290 + 383, 220, 60); //first step
 	GroundPre(290 + 383, 220, 63); //first step
 	WallPre(736, 220 - 60, 60); //2nd step
@@ -796,9 +807,89 @@ void Game::Screen4()
 }
 void Game::Screen5()
 {
-	GroundPre(0, 360, 110); //left platform
+	WallPre(110, 360, 60); //left platform
+	WallPre(0, 360, 200); //left wall
+	WallPre(735, 190, 560 - 190); //right wall, lower
+	WallPre(799, 0, 190); //right wall, higher
+	WallPre(770, 0, 155); //right tube, left side
+	WallPre(370, 530, 30); //dinky barrier, left side
+	WallPre(381, 530, 30); //dinky barrier, right side
+	WallPre(460, 210, 210); //middle/main platform divider
+	WallPre(560, 350, 140); //bottom platform
+	WallPre(310, 250, 170); //middle/main platform left side
+	WallPre(196, 420, 70); //rectangle platform left
+	WallPre(196 + 25, 420, 70); //rectangle platform right
+	WallPre(650, 315, 490 - 315); //floating wall bottom right
+	GroundPre(0, 360, 110); //far left platform
+	GroundPre(170, 300, 75); //left platform, floating
+	GroundPre(0, 560, 735); //ground
+	GroundPre(650, 190, 149); //far right platform
+	GroundPre(370, 530, 11); //dinky barrier, top
+	GroundPre(310, 250, 300); //middle/main platform
+	GroundPre(450, 210, 20); //middle/main platform divider top
+	GroundPre(460, 350, 100); //bottom platform, tucked away
+	GroundPre(196, 420, 25); //rectangle platform top
+	GroundPre(196, 490, 25); //rectangle platform bottom
+	GroundPre(770, 155, 0); //right tube, left side, single pixel
 
-	Ground(0, 360, 110); //left platform
+	Wall(110, 360, 60); //left platform
+	Wall(0, 360, 200); //left wall
+	Wall(735, 190, 560 - 190); //right wall, lower
+	Wall(799, 0, 190); //right wall, higher
+	Wall(770, 0, 155); //right tube, left side
+	Wall(370, 530, 30); //dinky barrier, left side
+	Wall(381, 530, 30); //dinky barrier, right side
+	Wall(460, 210, 210); //middle/main platform divider
+	Wall(560, 350, 140); //bottom platform
+	Wall(310, 250, 170); //middle/main platform left side
+	Wall(196, 420, 70); //rectangle platform left
+	Wall(196 + 25, 420, 70); //rectangle platform right
+	Wall(650, 315, 490 - 315); //floating wall bottom right
+	Ground(0, 360, 110); //far left platform
+	Ground(170, 300, 75); //left platform, floating
+	Ground(0, 560, 735); //ground
+	Ground(650, 190, 149); //far right platform
+	Ground(370, 530, 11); //dinky barrier, top
+	Ground(310, 250, 300); //middle/main platform
+	Ground(450, 210, 20); //middle/main platform divider top
+	Ground(460, 350, 100); //bottom platform, tucked away
+	Ground(196, 420, 25); //rectangle platform top
+	Ground(196, 490, 25); //rectangle platform bottom
+	Ground(770, 155, 0); //right tube, left side, single pixel
+	
+	MobGroupBasic(20);
+	MobGroupBasic(21);
+
+	MobGroupJumper(9);
+	MobGroupJumper(10);
+	MobGroupJumper(11);
+	MobGroupJumper(12);
+
+	MobGroupRanger(4);
+	MobGroupRanger(5);
+
+	MobGroupWizard(1);
+
+	//creating the barrier that disappears once you kill all the mobs
+	bool AllDead = //if even one of the bools return false, the outcome is false. Every single bool has to be true for AllDead to return true.
+		   !bas[20].GetAlive()
+		&& !bas[21].GetAlive()
+		&& !jum[9].GetAlive()
+		&& !jum[10].GetAlive()
+		&& !jum[11].GetAlive()
+		&& !jum[12].GetAlive()
+		&& !ran[4].GetAlive()
+		&& !ran[5].GetAlive()
+		&& !wiz[1].GetAlive();
+
+	if (AllDead == false)
+	{
+		GroundPre(771, 100, 27);
+		Ground(771, 100, 27, Colors::Red); //thank god for optional function variables
+	}
+
+
+
 }
 void Game::Screen6()
 {
@@ -1315,7 +1406,7 @@ void Game::UpdateModel()
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
 //	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
-	UserCollision(); //Keep after all movement functions
+	//UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:
 	Screens();

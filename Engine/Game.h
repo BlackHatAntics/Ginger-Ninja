@@ -45,9 +45,9 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void UserMovement();
-	void Ground(int x, int y, int w);
+	void Ground(int x, int y, int w, Color c = Colors::White);
 	void Platform(int x, int y, int w);
-	void Wall(int x, int y, int h);
+	void Wall(int x, int y, int h, Color c = Colors::White);
 	void GroundPre(int x, int y, int w);
 	void WallPre(int x, int y, int h);
 	void PlatformPre(int x, int y, int w);
@@ -102,7 +102,7 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 5; //Start this at 0, but it's 7 right now for testing purposes
 	//int Level = 0;
 	int checkpoint = 0;
 	bool UserisColliding = false;
