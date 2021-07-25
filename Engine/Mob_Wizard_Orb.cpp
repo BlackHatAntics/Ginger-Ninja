@@ -13,7 +13,7 @@ void Orb::Draw(Graphics & gfx/*, int Rx, int Ry, int Rw*/)
 
 void Orb::Collision(int Gx, int Gy, int Gw, bool & Colliding)
 {
-	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1)
+	if ((Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1) && active)
 	{
 		Colliding = true;
 	}
@@ -25,7 +25,7 @@ void Orb::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 	{
 		//if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
 		//	&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
-		if (((Gsp <= x && Gx + Gw >= x + w) || (Gsp >= x + w && Gx <= x))
+		if (((Gsp - (Gw / 2 - 1) <= x && Gx + Gw >= x + w) || (Gsp + (Gw / 2 - 1) >= x + w && Gx <= x))
 			&& Gy + Gw >= y && Gy <= y + w)
 		{
 			active = false; //Killing the orb

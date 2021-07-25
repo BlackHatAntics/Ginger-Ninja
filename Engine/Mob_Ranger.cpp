@@ -21,7 +21,7 @@ void Ranger::Init(int in_x, int in_Px, int in_y, int in_Pw)
 
 void Ranger::Collision(int Gx, int Gy, int Gw, bool & Colliding)
 {
-	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + h + 1)
+	if ((Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + h + 1) && alive)
 	{
 		Colliding = true;
 	}
@@ -33,8 +33,8 @@ void Ranger::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 	{
 		//if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
 		//	&& Gy + Gw > y && Gy < y + h) //Gotta be at the same height level
-		if (((Gsp <= x && Gx + Gw >= x + w) || (Gsp >= x + w && Gx <= x))
-			&& Gy + Gw >= y && Gy <= y + w)
+		if (((Gsp - (Gw / 2 - 1) <= x && Gx + Gw >= x + w) || (Gsp + (Gw / 2 - 1) >= x + w && Gx <= x))
+			&& Gy + Gw >= y && Gy <= y + h)
 		{
 			alive = false;
 		}

@@ -21,7 +21,7 @@ void Basic::Init(int in_x, int in_Px, int in_y, int in_Pw)
 
 void Basic::Collision(int Gx, int Gy, int Gw, bool &Colliding)
 {
-	if (Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1)
+	if ((Gx + Gw + 1 > x && Gx < x + w + 1 && Gy + Gw + 1 > y && Gy < y + w + 1) && alive) //I know it only loads the function if it's alive so this seems redundant, but otherwise it's a frame late in deciding when you hit a mob, so sometimes you can take damage at the very end of your dash, even if you killed the mob.
 	{
 		Colliding = true;
 	}
@@ -33,7 +33,7 @@ void Basic::Death(int Gx, int Gy, int Gw, int Gds, int Gsp)
 	{
 		//if (((Gsp < x && Gx + Gw / 2 >= x + w) || (Gsp > x + w && Gx + Gw / 2 <= x)) //If you started from left and are now on their right, or started on right and are now to the left
 		//	&& Gy + Gw > y && Gy < y + w) //Gotta be at the same height level
-		if (((Gsp <= x && Gx + Gw >= x + w) || (Gsp >= x + w && Gx <= x))
+		if (((Gsp - (Gw / 2 - 1) <= x && Gx + Gw >= x + w) || (Gsp + (Gw / 2 - 1) >= x + w && Gx <= x))
 			&& Gy + Gw >= y && Gy <= y + w)
 		{
 			alive = false;
@@ -172,6 +172,7 @@ void Basic::Respawn()
 	alive = true;
 	x = StartPointX;
 	y = StartPointY;
+	aggro = false;
 }
 
 int Basic::GetStartPointX()

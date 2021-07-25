@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include "MainWindow.h"
 #include "Keyboard.h"
-//#include "Colors.h"
+#include "Colors.h"
 
 class Ginger
 {
@@ -23,6 +23,7 @@ public:
 	void HitWallOld(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
+	//void Direction();
 	//void TheoreticalValue(); //I think this is a pointless function. check, and delete
 	void WallJumpOld(bool UP);
 	void WallJump2(bool UP);
@@ -76,6 +77,7 @@ private:
 	int dx; //Delta X (Where x was the previous frame)
 	int ty; //Theoretical Y (where y is this frame -- before being edited by the platforms n shit) //all theoritical shit is done in Game
 	int tx; //Theoretical X (where x is this frame -- before being edited by the walls n shit) //all theoritical shit is done in Game
+	int d = 2; //Direction. 1 = left, 2 = right
 	bool MoveRight = false;
 	bool MoveLeft = false;
 	bool isJumping = false;
@@ -98,6 +100,7 @@ private:
 	bool CheatingLock = false;
 	int DashLength = 40;
 	int DashStage = 0;
+	int DashChargeup = 0;
 	bool DashisReady = true;
 	bool isDashing = false;
 	int DashStartPoint;
@@ -105,6 +108,7 @@ private:
 //	int hR = 255; //hair RGB
 //	int hG = 150;
 //	int hB = 9;
+	Color hC = Colors::Orange2; //hair colour
 	int bR = 255; //body RGB
 	int bG = 224;
 	int bB = 218;

@@ -122,18 +122,18 @@ void Game::Go()
 
 
 	//Currently working on:
-//Dash length changing depending on how long you hold down spacebar
+//Fixing ability to dash through walls based on load order
 //Planning && drawing level layouts
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
 	//Fix:
+//If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order.
 //If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
-//Be able to use Dash in the air
+//Be able to use Dash in the air?
 //Make it so mobs only roam a certain distance from where they were initialized
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
-//Be able to hold down spacebar to change the length of the dash
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //?Implement the level switcher //nvm, don't need this anymore
 //Have a death animation for enemies
@@ -146,7 +146,7 @@ void Game::Go()
 //?Have your bed restore 1hp/frame
 
 	//Thoughts & Ideas:
-//Your Dash feels really lame to use. Keep it, but let the player have another way to kill enemies.
+//Your Dash feels really lame to use. Keep it, but let the player have another way to kill enemies. Eh, nvm, the new "hold to change dash length" actually feels pretty good
 //In screen4, as part of platforming test, have a portal that lets you warp from bottom to top of screen (don't need to add new code, just let yourself fall and you auto move to top) Just draw some bs
 //?Create a Mob struct, and have all the functions that are the same for every mob class be in there. Just include Mob.h in all the different mob classes, and call the functions with their own variables..... Nevermind. It would benefit me if I had tons of mobs, but I only have ~6 so it's more inconvenient.
 //Is Dash method too easy? My prediction: if few mobs, too easy. if lots of mobs, really hard, and may force you to always corral the mobs. Which is anti-fun.
@@ -156,11 +156,10 @@ void Game::Go()
 
 	//Could fix, but honestly don't care:
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
-//Find a solution to the issue that you will clip on a corner where a wall and ground meet if you land perfectly? (besides just changing the load order) (honestly the solution is just to not use 1-pixel-thick walls)
 //Clean up orb code
 
 	//Remember:
-//Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump.
+//Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump. (nvm doesn't work anymore?)
 //You will be 1 frame late in determining when you stop colliding with a mob
 
 void Game::UserMovement()
@@ -813,8 +812,10 @@ void Game::Screen5()
 	WallPre(735, 190, 560 - 190); //right wall, lower
 	WallPre(799, 0, 190); //right wall, higher
 	WallPre(770, 0, 155); //right tube, left side
-	WallPre(370, 530, 30); //dinky barrier, left side
+
 	WallPre(381, 530, 30); //dinky barrier, right side
+	WallPre(370, 530, 30); //dinky barrier, left side
+	
 	WallPre(460, 210, 210); //middle/main platform divider
 	WallPre(560, 350, 140); //bottom platform
 	WallPre(310, 250, 170); //middle/main platform left side
@@ -838,8 +839,10 @@ void Game::Screen5()
 	Wall(735, 190, 560 - 190); //right wall, lower
 	Wall(799, 0, 190); //right wall, higher
 	Wall(770, 0, 155); //right tube, left side
-	Wall(370, 530, 30); //dinky barrier, left side
+
 	Wall(381, 530, 30); //dinky barrier, right side
+	Wall(370, 530, 30); //dinky barrier, left side
+
 	Wall(460, 210, 210); //middle/main platform divider
 	Wall(560, 350, 140); //bottom platform
 	Wall(310, 250, 170); //middle/main platform left side
@@ -1176,8 +1179,8 @@ void Game::MobGroupBasic(int i)
 	{
 		bas[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		bas[i].Movement(gin[0].GetX(), gin[0].GetW()); //Keep after Aggro
-		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		bas[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		bas[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		bas[i].Draw(gfx);
 
 		//mob.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding, + i, bas[0].GetX(), bas[0].GetY(), etc. )
@@ -1190,8 +1193,8 @@ void Game::MobGroupJumper(int i)
 	{
 //		jum[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		jum[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		jum[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		jum[i].Draw(gfx);
 	}
 }
@@ -1201,8 +1204,8 @@ void Game::MobGroupCharger(int i)
 	{
 		cha[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		cha[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
-		cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		cha[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		cha[i].Draw(gfx);
 	}
 }
@@ -1220,8 +1223,8 @@ void Game::MobGroupRanger(int i)
 //		}
 		pel[ran[i].PelletNumber + i * PelletSize].Spawning(PelletSize, ran[i].PelletNumber, ran[i].GetX(), ran[i].GetY(), ran[i].GetW(), ran[i].GetH(), ran[i].GetAggro(), gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDX(), gin[0].GetDY());
 
-		ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		ran[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		ran[i].Draw(gfx);
 	}
 
@@ -1244,10 +1247,10 @@ void Game::MobGroupWizard(int i)
 		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
 //		wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 		orb[i].Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
-		wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
-		orb[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement
 		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		orb[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
+		wiz[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
+		orb[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 
 		if (orb[i].GetActive() == true)
 		{
@@ -1334,6 +1337,9 @@ void Game::UserRespawn()
 
 void Game::Cheats()
 {
+	//All that flying/taking no damage/clip through walls bs
+	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_CONTROL));
+
 	//slow motion
 	if (wnd.kbd.KeyIsPressed(VK_RETURN))
 	{
@@ -1390,12 +1396,12 @@ void Game::Checkpoint(int x, int y)
 void Game::UpdateModel()
 {
 	//Keep first
-	gin[0].Cheating(wnd.kbd.KeyIsPressed(VK_UP), wnd.kbd.KeyIsPressed(VK_DOWN), wnd.kbd.KeyIsPressed(VK_LEFT), wnd.kbd.KeyIsPressed(VK_RIGHT), wnd.kbd.KeyIsPressed(0x43), wnd.kbd.KeyIsPressed(VK_CONTROL));
 	Cheats();
 	UserMovement();
 	gin[0].Delta(); //Keep before Gravity && Movement
 	//Keep middle?
 	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
+	//gin[0].Direction(); //keep before EyeLogic, but after Movement
 	gin[0].EyeLogic();
 	gin[0].OnGround(); //Keep before Jump && Dash
 	gin[0].OnWall(); //Keep before WallJump
@@ -1409,7 +1415,6 @@ void Game::UpdateModel()
 	//Keep last:
 	Screens();
 	ScreenSwitch(); //I keep this after Screens, so you don't accidentally activate a switch by jumping against a wall close to edge
-
 }
 
 void Game::ComposeFrame()

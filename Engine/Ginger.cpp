@@ -16,7 +16,7 @@ void Ginger::Draw(Graphics& gfx/*, Color h, Color b*/)
 		{
 			for (int loopy = 0; loopy < 6; loopy++)
 			{
-				gfx.PutPixel(x + loopx, y + loopy, Colors::Orange2);
+				gfx.PutPixel(x + loopx, y + loopy, hC);
 			}
 		}
 		//body
@@ -42,12 +42,12 @@ void Ginger::Draw(Graphics& gfx/*, Color h, Color b*/)
 
 void Ginger::EyeLogic()
 {
-	//Maybe just put this inside Movement
-	if (MoveRight && !MoveLeft)
+	//Maybe just put this inside Movement?
+	if (d == 2)
 	{
 		eye = 15;
 	}
-	if (MoveLeft && !MoveRight)
+	if (d == 1)
 	{
 		eye = 1;
 	}
@@ -55,7 +55,7 @@ void Ginger::EyeLogic()
 
 void Ginger::Movement(bool SHIFT)
 {
-	if (SHIFT)
+	if (SHIFT && DashChargeup == 0) //So he moves slower while charging up his dash
 	{
 		speed = 5;
 	}
@@ -64,11 +64,11 @@ void Ginger::Movement(bool SHIFT)
 		speed = 3;
 	}
 	//Rayven's a fucking noob, so I switched sprint to default
-	//if (SHIFT)
+	//if (SHIFT || DashChargeup > 0)
 	//{
 	//	speed = 3;
 	//}
-	//else
+	//else if (DashChargeup == 0)
 	//{
 	//	speed = 5;
 	//}
@@ -76,10 +76,12 @@ void Ginger::Movement(bool SHIFT)
 	if (MoveRight)
 	{
 		x += speed;
+		d = 2; //Direction. Used in EyeLogic && Dash
 	}
 	if (MoveLeft)
 	{
 		x -= speed;
+		d = 1;
 	}
 }
 
@@ -143,6 +145,19 @@ void Ginger::Delta()
 	dy = y;
 	dx = x;
 }
+
+//void Ginger::Direction()
+//{
+//	//this shit is only used in EyeLogic and Dash
+//	if (MoveRight && !MoveLeft)
+//	{
+//		d = 2;
+//	}
+//	if (MoveLeft && !MoveRight)
+//	{
+//		d = 1;
+//	}
+//}
 
 //void Ginger::TheoreticalValue()
 //{
@@ -447,20 +462,35 @@ void Ginger::ScreenSwitch()
 
 void Ginger::Dash(bool SPACE)
 {
-	if (OnGround() && SPACE && DashisReady && x != dx) //Can't be standing still
+	if (/*OnGround() &&*/ SPACE && DashisReady)
+	{
+   		DashChargeup++;
+	}
+	//else if (OnGround() && !SPACE && DashisReady && DashChargeup > 0) //this is so if you chargeup, and then release space without moving, it doesn't suddenly dash once you move
+	//{
+	//	DashChargeup = 0;
+	//}
+
+	if (DashChargeup > 50)
+	{
+		DashChargeup = 50;
+	}
+
+	if (OnGround() && !SPACE && DashisReady && DashChargeup > 0) //Can't be standing still
 	{
 		isDashing = true;
 		DashStartPoint = x + w / 2;
+		DashLength = DashChargeup /* * 10*/;
 	}
 
 	if (isDashing)
 	{
-		if (x > dx)
+		if (d == 2)
 		{
 			//DashStartPoint = x + w;
 			x += DashLength;	
 		}
-		else if (x < dx)
+		else if (d == 1)
 		{
 			//DashStartPoint = x;
 			x -= DashLength;
@@ -480,6 +510,9 @@ void Ginger::Dash(bool SPACE)
 		//DashEndPoint = x + w / 2;
 		bG = 255; //making him pale(r) so there's a visual indication as to when his dash is on cooldown
 		bB = 255;
+		hC = Colors::White;
+
+		DashChargeup = 0;
 	}
 
 	if (DashStage >= 50 && SPACE == false)
@@ -489,6 +522,7 @@ void Ginger::Dash(bool SPACE)
 		DashisReady = true;
 		bG = 224; //making him look normal again. aka dash is ready
 		bB = 218;
+		hC = Colors::Orange2;
 	}
 }
 
@@ -558,8 +592,8 @@ void Ginger::Respawn(int X, int Y)
 	dy = Y; //So the Ground function doesn't pull you back
 }
 
-void Ginger::HitWallOld(int wx, bool UP)
-{
+//void Ginger::HitWallOld(int wx, bool UP)
+//{
 	//if (isWallJumping) //Resetting, so you don't just bounce off a wall, but rather set up for another wall jump
 	//{
 	//	isWallJumping = false; //Maybe this is a bad idea, because it stops all upward movement
@@ -597,7 +631,7 @@ void Ginger::HitWallOld(int wx, bool UP)
 	//
 	//	wjh = WallJumpHeight; //Resetting it, so you can chain jumps along walls
 	//}
-}
+//}
 
 void Ginger::HitCeiling(int py)
 {
