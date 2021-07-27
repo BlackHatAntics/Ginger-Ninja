@@ -52,12 +52,14 @@ void Jumper::Draw(Graphics& gfx)
 //	}
 }
 
-void Jumper::Init(int in_x, int in_Px, int in_y, int in_Pw)
+void Jumper::Init(int in_x, int in_Px, int in_y, int in_Pw, int in_roam)
 {
 	x = in_x;
 	y = in_y - w - 1;
 	Px = in_Px;
 	Pw = in_Pw;
+	InitX = in_x;
+	roam = in_roam;
 }
 
 void Jumper::Collision(int Gx, int Gy, int Gw, bool &Colliding)
@@ -142,9 +144,13 @@ void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
 			JumpX = rand() % 42 - 6; //Assigning the random value. The -6 is so it gives you a value between -6 and +6. (higher values will mean no movement) //Make this % value higher if you ever re-implement aggro
 
 			//stopping it from going over the edge
-			while (JumpX <= 6 && (x + (JumpX * (sjh + 1)) < Px || x + w + (JumpX * (sjh + 1)) > Px + Pw)) //<= 6 is making sure it's actually a jumpable variable (otherwise it will just constantly re-roll), and rest is making sure it won't go over left || right side.
+			//this is terrible to read, so here's the old code before I implemented roam value (in case you're trying to understand):
+			//while (JumpX <= 6 && (x + (JumpX * (sjh + 1)) < Px || x + w + (JumpX * (sjh + 1)) > Px + Pw))
+			while (JumpX <= 6 && ((x + (JumpX * (sjh + 1)) < Px || x + (JumpX * (sjh + 1)) < InitX - roam) 
+				|| (x + w + (JumpX * (sjh + 1)) > Px + Pw || x + (JumpX * (sjh + 1)) > InitX + roam))) //<= 6 is making sure it's actually a jumpable variable (otherwise it will just constantly re-roll), and rest is making sure it won't go over left || right side.
 			{
-				JumpX = rand() % 65 - 6; //if it's going to go over the edge, just re-roll
+				//JumpX = rand() % 65 - 6; //if it's going to go over the edge, just re-roll
+				JumpX = rand() % 13 - 6; //13 makes it so if it were going to jump, it will still jump. Keeps consistancy the same, even if you're close to a border.
 			}
 
 			if (JumpX <= 6)

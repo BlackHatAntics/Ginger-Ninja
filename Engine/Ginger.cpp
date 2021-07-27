@@ -10,13 +10,14 @@ void Ginger::Init(int in_x, int in_y, int in_speed)
 void Ginger::Draw(Graphics& gfx/*, Color h, Color b*/)
 {
 	if (!(DashStage > 0 && DashStage <= 4)) //You don't draw him if he's dashing (so it looks cool, and you just see the streak)
+		//(his hair and body colour are manipulated a bunch in Dash)
 	{
 		//hair
-		for (int loopx = 0; loopx <= w; loopx++)
+		for (int loopx = 0; loopx <= w; loopx++) 
 		{
 			for (int loopy = 0; loopy < 6; loopy++)
 			{
-				gfx.PutPixel(x + loopx, y + loopy, hC);
+				gfx.PutPixel(x + loopx, y + loopy, hC); 
 			}
 		}
 		//body
@@ -465,22 +466,26 @@ void Ginger::Dash(bool SPACE)
 	if (/*OnGround() &&*/ SPACE && DashisReady)
 	{
    		DashChargeup++;
+		bB -= 2;
+		bG -= 2;
 	}
 	//else if (OnGround() && !SPACE && DashisReady && DashChargeup > 0) //this is so if you chargeup, and then release space without moving, it doesn't suddenly dash once you move
 	//{
 	//	DashChargeup = 0;
 	//}
 
-	if (DashChargeup > 50)
+	if (DashChargeup > 40)
 	{
-		DashChargeup = 50;
+		DashChargeup = 40;
+		bG = 104;
+		bB = 98;
 	}
 
 	if (OnGround() && !SPACE && DashisReady && DashChargeup > 0) //Can't be standing still
 	{
 		isDashing = true;
 		DashStartPoint = x + w / 2;
-		DashLength = DashChargeup /* * 10*/;
+		DashLength = DashChargeup + 10/* * 10*/;
 	}
 
 	if (isDashing)

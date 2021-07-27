@@ -11,12 +11,14 @@ void Basic::Draw(Graphics& gfx)
 	}
 }
 
-void Basic::Init(int in_x, int in_Px, int in_y, int in_Pw)
+void Basic::Init(int in_x, int in_Px, int in_y, int in_Pw, int in_roam)
 {
 	x = in_x;
 	y = in_y - w - 1; //so he properly sits ontop of the platform without having to type extra bs. Saves me time. I can just copy-paste values from the Ground() function that he's being placed on
 	Px = in_Px;
 	Pw = in_Pw;
+	InitX = in_x;
+	roam = in_roam;
 }
 
 void Basic::Collision(int Gx, int Gy, int Gw, bool &Colliding)
@@ -113,13 +115,14 @@ void Basic::Movement(int Gx, int Gw)
 		}
 
 		//Making sure they don't walk off the edge (if aggro'd it just stops movement. If here in idle it makes them move back the other way)
-		if (x + w + 2 > Px + Pw) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
+		//|| making sure they don't walk further than their roam distance; whichever comes first.
+		if (x + w + 2 > Px + Pw || x > InitX + roam) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
 		{
 			MoveLeft = true;
 			MoveRight = false;
 			RandStage = 0; //Stopping any potential jittery bullshit where you turn around the very next frame.
 		}
-		else if (x - 2 < Px) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
+		else if (x - 2 < Px || x < InitX - roam) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
 		{
 			MoveRight = true;
 			MoveLeft = false;

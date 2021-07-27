@@ -6,7 +6,7 @@ class Ranger
 {
 public:
 	void Draw(Graphics& gfx);
-	void Init(int in_x, int in_Px, int in_y, int in_Pw);
+	void Init(int in_x, int in_Px, int in_y, int in_Pw, int in_roam = 800);
 	void Collision(int Gx, int Gy, int Gw, bool &Colliding);
 	void Death(int Gx, int Gy, int Gw, int Gds, int Gsp);
 	void StartPoint();
@@ -42,6 +42,8 @@ private:
 	int RandStage = 0;
 	int Px; //Platform x (of the platform it is standing on. This is manually determined in the Init function)
 	int Pw; //Platform width
+	int InitX; //Initial X position
+	int roam; //how far the mob can roam from InitX
 	bool alive = true;
 	
 };

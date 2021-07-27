@@ -32,16 +32,16 @@ Game::Game( MainWindow& wnd )
 	gin[0].Init(45, 60 - 21, 3);
 	//gin[0].Init(705, 60 - 21, 3);
 	//screen 0
-	bas[7].Init(640, 420, 500, 799 - 420);
+	bas[7].Init(640, 420, 500, 799 - 420, 140);
 	//screen 1
 	bas[8].Init(370, 0, 500, 610);
 	bas[9].Init(500, 0, 500, 610);
-	bas[10].Init(550, 290, 280, 383);
-	jum[5].Init(300, 130, 370, 380);
+	bas[10].Init(550, 290, 280, 383, 175);
+	jum[5].Init(300, 130, 370, 380, 140);
 	jum[6].Init(400, 290, 280, 383);
 	jum[7].Init(600, 290, 280, 383);
 	//screen 2
-	bas[11].Init(250, 220, 260, 65);
+	bas[11].Init(262, 220, 260, 65);
 	bas[12].Init(148, 110, 360, 94);
 	bas[13].Init(249, 230, 460, 90);
 	bas[14].Init(140, 100, 520, 153);
@@ -49,14 +49,14 @@ Game::Game( MainWindow& wnd )
 	//screen 3
 	cha[2].Init(340, 0, 485, 500);
 	//screen 4
-	bas[15].Init(60, 0, 260, 350);
+	bas[15].Init(60, 0, 260, 350, 130);
 	bas[16].Init(440, 350, 360, 799 - 350);
 	bas[17].Init(520, 350, 360, 799 - 350);
 	bas[18].Init(610, 350, 360, 799 - 350);
 	bas[19].Init(680, 350, 360, 799 - 350);
-	ran[2].Init(480, 120, 180, 700 - 120);
+	ran[2].Init(480, 120, 180, 700 - 120, 120);
 	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
-	ran[3].Init(315, 0, 260, 350);
+	ran[3].Init(315, 0, 260, 350, 90);
 	//screen5
 	bas[20].Init(370, 310, 250, 150);
 	bas[21].Init(500, 460, 250, 150);
@@ -122,17 +122,15 @@ void Game::Go()
 
 
 	//Currently working on:
-//Fixing ability to dash through walls based on load order
 //Planning && drawing level layouts
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
 	//Fix:
-//If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order.
+//If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
 //If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
 //Be able to use Dash in the air?
-//Make it so mobs only roam a certain distance from where they were initialized
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //?Implement the level switcher //nvm, don't need this anymore
@@ -1410,7 +1408,7 @@ void Game::UpdateModel()
 	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
 	gin[0].Gravity(); //Keep last in the movement functions
 //	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
-	//UserCollision(); //Keep after all movement functions
+	UserCollision(); //Keep after all movement functions
 	UserRespawn();
 	//Keep last:
 	Screens();
@@ -1429,6 +1427,27 @@ void Game::ComposeFrame()
 	//	gfx.PutPixel(ran[0].GetX() + ran[0].GetW() / 2 + 50, ran[0].GetY(), 255, 255, 255);
 	//}
 
+	//seeing if this works
+	//if (6 < (5 || 7) )
+	//{
+	//	gfx.PutPixel(255, 255, 255, 255, 255);
+	//}
+
+	//seeing the length of 100, 200, 300 pixels
+	//for (int loop = 0; loop <= 100; loop++)
+	//{
+	//	gfx.PutPixel(100 + loop, 100, 255, 255, 255);
+	//}
+	//for (int loop = 0; loop <= 200; loop++)
+	//{
+	//	gfx.PutPixel(100 + loop, 200, 255, 255, 255);
+	//}
+	//for (int loop = 0; loop <= 300; loop++)
+	//{
+	//	gfx.PutPixel(100 + loop, 300, 255, 255, 255);
+	//}
+
+	//leaves a trail at all corners of gin. For use with the archer pellets.
 	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2), 255, 255, 255);
 	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2) + gin[0].GetW(), 255, 255, 255);
 	//gfx.PutPixel(gin[0].GetX() - ((gin[0].GetX() - gin[0].GetDX()) / 2) + gin[0].GetW(), gin[0].GetY() - ((gin[0].GetY() - gin[0].GetDY()) / 2), 255, 255, 255);
