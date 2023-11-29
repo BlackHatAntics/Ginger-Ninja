@@ -57,6 +57,7 @@ void Ranger::Respawn()
 	aggro = false;
 	//speed = 1;
 	RandStage = 0;
+	DeathStage = 0;
 }
 
 void Ranger::Movement(int Gx, int Gw)
@@ -213,6 +214,19 @@ void Ranger::Aggro(int Gx, int Gy, int Gw, int Gog)
 	}
 }
 
+void Ranger::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (h / 3);
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (h - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, Colors::Brown);
+		}
+	}
+	DeathStage++;
+}
+
 //void Ranger::Shoot(int Gx, int Gy, int Gw)
 //{
 //	if (aggro)
@@ -260,6 +274,10 @@ int Ranger::GetW()
 int Ranger::GetH()
 {
 	return h;
+}
+int Ranger::GetDeathStage()
+{
+	return DeathStage;
 }
 
 //int Ranger::GetPelletNumber()

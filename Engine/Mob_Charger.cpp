@@ -222,6 +222,19 @@ void Charger::Aggro(int Gx, int Gy, int Gw, int Gog)
 	}
 }
 
+void Charger::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (w / 3);
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (w - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, Colors::White1);
+		}
+	}
+	DeathStage++;
+}
+
 //void Charger::EyeLogic()
 //{
 //}
@@ -241,9 +254,15 @@ void Charger::Respawn()
 	RandStage = 0;
 	aggro = false;
 	speed = 1;
+	DeathStage = 0;
 }
 
 bool Charger::GetAlive()
 {
 	return alive;
+}
+
+int Charger::GetDeathStage()
+{
+	return DeathStage;
 }

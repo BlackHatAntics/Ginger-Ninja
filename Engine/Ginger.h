@@ -39,6 +39,7 @@ public:
 	void Dash(bool SPACE);
 	void DrawDash(Graphics& gfx);
 	void Respawn(int X, int Y);
+	void DeathAnimation(Graphics& gfx);
 
 	void SetMoveRight(bool z);
 	void SetMoveLeft(bool z);
@@ -61,6 +62,7 @@ public:
 	int GetStartPoint();
 	bool GetCheating();
 	bool GetHitWall();
+	int GetDeathStage();
 private:
 	int x;
 	int y;
@@ -115,4 +117,5 @@ private:
 //	int eR = 23; //eye RGB
 //	int eG = 105;
 //	int eB = 255;
+	int DeathStage = 0;
 };

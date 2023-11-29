@@ -13,6 +13,7 @@ public:
 	void Respawn();
 	void Movement(int Gx, int Gw/*, int Gdx*/);
 	void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void DeathAnimation(Graphics& gfx);
 	//void Shoot(int Gx, int Gy, int Gw);
 
 	bool GetAlive();
@@ -23,6 +24,7 @@ public:
 	int GetH();
 	//int GetPelletSize();
 	//int GetPelletNumber();
+	int GetDeathStage();
 
 	int PelletNumber = 0; //This is here instead of Mob_Ranger_Pellet, so each Ranger has a separate set of pellets. (Also public so I can change it in Mob_Ranger_Pellet. Too lazy to re-code)
 private:
@@ -45,5 +47,5 @@ private:
 	int InitX; //Initial X position
 	int roam; //how far the mob can roam from InitX
 	bool alive = true;
-	
+	int DeathStage = 0;
 };

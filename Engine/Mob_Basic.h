@@ -12,11 +12,13 @@ public:
 	void Respawn();
 	void Movement(int Gx, int Gw);
 	void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void DeathAnimation(Graphics& gfx);
 
 	int GetStartPointX();
 	int GetStartPointY();
 
 	bool GetAlive();
+	int GetDeathStage();
 private:
 	int StartPointX;
 	int StartPointY;
@@ -33,4 +35,5 @@ private:
 	int InitX; //Initial X position
 	int roam; //how far the mob can roam from InitX
 	bool alive = true;
+	int DeathStage = 0;
 };

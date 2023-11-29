@@ -13,6 +13,8 @@ public:
 	void Respawn();
 	void Movement(int Gx, int Gw/*, int Gdx*/);
 	void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void EyeLogic(int Gx, int Gy, int Gw);
+	void DeathAnimation(Graphics& gfx);
 	//void Shoot(int Gx, int Gy, int Gw);
 
 	bool GetAlive();
@@ -22,6 +24,8 @@ public:
 	int GetW();
 	int GetH();
 	//int GetPelletSize();
+	int GetDeathStage();
+
 private:
 	//static constexpr int PelletSize = 3;
 	//Pellet pel[PelletSize];
@@ -32,6 +36,9 @@ private:
 	int y;
 	static const int w = 10;
 	static const int h = 14;
+	int eye = w - 4;
+	int pEyeX = w - 1;
+	int pEyeY = 1;
 	int speed = 1;
 	bool aggro = false;
 	bool MoveRight = false;
@@ -44,4 +51,5 @@ private:
 	bool alive = true;
 	//int PelletNumber = 0;
 	//int PelletStage = 0;
+	int DeathStage = 0;
 };

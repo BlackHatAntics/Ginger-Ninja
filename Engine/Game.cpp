@@ -58,7 +58,26 @@ Game::Game( MainWindow& wnd )
 	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
 	ran[3].Init(315, 0, 260, 350, 90);
 	//screen5
-	bas[20].Init(370, 310, 250, 150);
+	//jum[13].Init(370, 100, 337, 370);
+	//jum[14].Init(170, 100, 337, 370);
+	//jum[15].Init(340, 100, 337, 370);
+	//jum[16].Init(190, 100, 337, 370);
+	//jum[17].Init(230, 100, 337, 370);
+	//jum[18].Init(250, 100, 337, 370);
+	//jum[19].Init(285, 100, 337, 370);
+	//jum[20].Init(320, 100, 337, 370);
+	//jum[21].Init(490, 470, 360, 799 - 470);
+	//jum[22].Init(500, 470, 360, 799 - 470);
+	//jum[23].Init(550, 470, 360, 799 - 470);
+	//jum[24].Init(580, 470, 360, 799 - 470);
+	//jum[25].Init(620, 470, 360, 799 - 470);
+	//jum[26].Init(700, 470, 360, 799 - 470);
+	//jum[27].Init(760, 470, 360, 799 - 470);
+	//jum[28].Init(585, 470, 360, 799 - 470);
+	//jum[29].Init(645, 470, 360, 799 - 470);
+	//jum[30].Init(720, 470, 360, 799 - 470);
+	//screen6
+	bas[20].Init(370, 310, 250, 150, 40);
 	bas[21].Init(500, 460, 250, 150);
 	jum[9].Init(100, 0, 560, 370);
 	jum[10].Init(300, 0, 560, 370);
@@ -67,8 +86,6 @@ Game::Game( MainWindow& wnd )
 	ran[4].Init(160, 0, 560, 370);
 	ran[5].Init(541, 381, 560, 735 - 381);
 	wiz[1].Init(500, 460, 350, 100);
-	//screen6
-
 	//screen 7
 	bas[0].Init(200, 20, 205, 280);
 	bas[1].Init(100, 20, 205, 280);
@@ -126,19 +143,23 @@ void Game::Go()
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 
 	//Fix:
+//**If you're in a corner, facing the edge of screen, charging up your dash, and you hit "r" to suicide, the game will break
+//Mobs sometimes glitch off the map??? Happens super rarely. I think it started when I implemented roaming ranges? Seen it twice with basic mob, and once with ranger. Another theory is that it happens when you reset the mobs a lot. or repeatedly die. Cause it only happens after you respawned and you first walk into a room.
 //If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
 //If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
 //Be able to use Dash in the air?
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
-//Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
+//**Ranger charge-up animation
+//Wizard charge-up animation?
+//Fall speed is reduced when hugging wall?
+//**Add a death animation. Imperative, so your players understand what happened, and you didn't just teleport. Also want them to see the red healthbar for at least a few frames.
 //?Implement the level switcher //nvm, don't need this anymore
-//Have a death animation for enemies
-//Add more enemy types
-//Plan out level layouts
+//**Add more enemy types
+//**Plan out level layouts
 //?Put Walls && Ground in their own class, so you can have moving platforms
-//?Don't let yourself wall hop if you're falling too quickly
+//?Don't let yourself wall hop if you're falling too quickly?
 //?Move all your movement code into Ginger
 //?Add burning via sun
 //?Have your bed restore 1hp/frame
@@ -473,6 +494,10 @@ void Game::ScreenSwitch()
 			{
 				screen = 10;
 			}
+			else if (screen == 7)
+			{
+				screen--;
+			}
 		}
 		//Going up
 		if (gin[0].GetY() < 0)
@@ -484,6 +509,10 @@ void Game::ScreenSwitch()
 			else if (screen == 10)
 			{
 				screen = 9;
+			}
+			else if (screen == 6)
+			{
+				screen++;
 			}
 		}
 
@@ -676,9 +705,9 @@ void Game::Screen1()
 }
 void Game::Screen2()
 {
-	GroundPre(0, 160, 220); //top
+	GroundPre(0, 160, 205); //top
 	WallPre(0, 160, 599 - 160); //left border
-	GroundPre(220, 260, 100); //platform top right
+	GroundPre(205, 260, 115); //platform top right
 	WallPre(285, 60, 200); //platform top right
 	GroundPre(205, 60, 80); //platform top right ceiling
 	GroundPre(110, 360, 94); //platform middle left
@@ -695,8 +724,8 @@ void Game::Screen2()
 	Wall(320, 260, 200); //platform middle right
 	Wall(253, 460, 60); //platform bottom
 	Wall(100, 520, 599 - 520); //tube bottom right
-	Ground(0, 160, 220); //top
-	Ground(220, 260, 100); //platform top right
+	Ground(0, 160, 205); //top
+	Ground(205, 260, 115); //platform top right
 	Ground(205, 60, 80); //platform top right ceiling
 	Ground(110, 360, 94); //platform middle left
 	Ground(230, 460, 90); //platform middle right
@@ -727,10 +756,10 @@ void Game::Screen3()
 
 
 	//for testing purposes:
-	if (gin[0].GetY() + gin[0].GetW() + 1 >= 385)
-	{
-		gfx.PutPixel(255, 255, 255, 255, 255);
-	}
+	//if (gin[0].GetY() + gin[0].GetW() + 1 >= 385)
+	//{
+	//	gfx.PutPixel(255, 255, 255, 255, 255);
+	//}
 
 
 	PlatformPre(400, 360, 20); //platform, right tube
@@ -804,6 +833,39 @@ void Game::Screen4()
 	}
 }
 void Game::Screen5()
+{
+	WallPre(100, 337, 23); //left side
+	WallPre(470, 337, 23); //right side
+	GroundPre(0, 360, 100); //left
+	GroundPre(100, 337, 370); //middle
+	GroundPre(470, 360, 799 - 470); //right
+
+	Wall(100, 337, 23); //left side
+	Wall(470, 337, 23); //right side
+	Ground(0, 360, 100); //left
+	Ground(100, 337, 370); //middle
+	Ground(470, 360, 799 - 470); //right
+
+	//MobGroupJumper(13);
+	//MobGroupJumper(14);
+	//MobGroupJumper(15);
+	//MobGroupJumper(16);
+	//MobGroupJumper(17);
+	//MobGroupJumper(18);
+	//MobGroupJumper(19);
+	//MobGroupJumper(20);
+	//MobGroupJumper(21);
+	//MobGroupJumper(22);
+	//MobGroupJumper(23);
+	//MobGroupJumper(24);
+	//MobGroupJumper(25);
+	//MobGroupJumper(26);
+	//MobGroupJumper(27);
+	//MobGroupJumper(28);
+	//MobGroupJumper(29);
+	//MobGroupJumper(30);
+}
+void Game::Screen6()
 {
 	WallPre(110, 360, 60); //left platform
 	WallPre(0, 360, 200); //left wall
@@ -889,8 +951,90 @@ void Game::Screen5()
 		GroundPre(771, 100, 27);
 		Ground(771, 100, 27, Colors::Red); //thank god for optional function variables
 	}
+
+	if (checkpoint < 2)
+	{
+		Checkpoint(75, 360);
+	}
 }
-void Game::Screen6()
+void Game::Screen7()
+{
+	GroundPre(110, 560, 799 - 110); //Ground
+	GroundPre(600, 60, 790 - 600); //Top platform
+	WallPre(680, 0, 8); //Ceiling barrier
+	GroundPre(20, 8, 680 - 20); //Ceiling barrier
+	GroundPre(200, 130, 560 - 200); //2nd top platform
+	WallPre(110, 400, 560 - 400); //Left barrier bottom
+	GroundPre(20, 400, 110 - 20); //Left barrier platform
+	WallPre(20, 8, 400 - 8); //Left barrier top
+	GroundPre(300, 235, 460 - 300); //Left platform bottom
+	WallPre(300, 205, 235 - 205); //Left platform
+	GroundPre(20, 205, 300 - 20); //Left platform top
+	WallPre(580, 380, 440 - 380); //Bottom platform
+	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
+	GroundPre(580, 380, 650 - 580); //Bottom platform top
+	PlatformPre(270, 362, 110); //Lower platform
+	PlatformPre(500, 310, 110); //Higher platform
+	GroundPre(650, 440, 790 - 650); //Right platform
+	WallPre(790, 0, 500); //Right wall
+	GroundPre(790, 500, 799 - 790); //Right exit top barrier
+//	WallPre(650, 500, 560 - 500); //Bottom tiny thing
+//	GroundPre(580, 500, 650 - 580); //Bottom tiny thing
+	GroundPre(480, 500, 70); //Bottom tiny divide right
+	GroundPre(280, 500, 70); //Bottom tiny divide left
+
+	Wall(680, 0, 8); //Ceiling barrier
+	Wall(110, 400, 560 - 400); //Left barrier bottom
+	Wall(20, 8, 400 - 8); //Left barrier top
+	Wall(300, 205, 235 - 205); //Left platform
+	Wall(580, 380, 440 - 380); //Bottom platform
+	Wall(790, 0, 500); //Right wall
+	Ground(110, 560, 799 - 110); //Ground
+	Ground(600, 60, 790 - 600); //Top platform
+	Ground(20, 8, 680 - 20); //Ceiling barrier
+	Ground(200, 130, 560 - 200); //2nd top platform
+	Ground(20, 400, 110 - 20); //Left barrier platform
+	Ground(300, 235, 460 - 300); //Left platform bottom
+	Ground(20, 205, 300 - 20); //Left platform top
+	Ground(195, 440, 580 - 195); //Bottom platform bottom
+	Ground(580, 380, 650 - 580); //Bottom platform top
+	Platform(270, 362, 110); //Lower platform
+	Platform(500, 310, 110); //Higher platform
+	Ground(650, 440, 790 - 650); //Right platform
+	Ground(790, 500, 799 - 790); //Right exit top barrier
+//	Wall(650, 500, 560 - 500); //Bottom tiny thing
+//	Ground(580, 500, 650 - 580); //Bottom tiny thing
+	Ground(480, 500, 70); //Bottom tiny divide right
+	Ground(280, 500, 70); //Bottom tiny divide left
+
+	MobGroupBasic(0);
+	MobGroupBasic(1);
+	MobGroupBasic(2);
+	MobGroupBasic(3);
+	MobGroupBasic(4);
+	MobGroupBasic(5);
+	MobGroupBasic(6);
+
+	MobGroupJumper(0);
+	MobGroupJumper(1);
+	MobGroupJumper(2);
+	MobGroupJumper(3);
+	MobGroupJumper(4);
+
+	MobGroupCharger(0);
+	MobGroupCharger(1);
+
+	MobGroupRanger(0);
+	MobGroupRanger(1);
+	//MobGroupRanger(2);
+
+	MobGroupWizard(0);
+	//MobGroupWizard(1);
+}
+void Game::Screen8()
+{
+}
+void Game::Screen9()
 {
 	//for testing purposes:
 	//if (gin[0].GetY() - 1 <= 510)
@@ -987,86 +1131,6 @@ void Game::Screen6()
 	Ground(715, 475, 755 - 715); //Right ground obstacle right
 	Ground(755, 540, 799 - 755); //Right exit
 	Ground(790, 495, 799 - 790); //Right side barrier
-}
-void Game::Screen7()
-{
-	GroundPre(110, 560, 799 - 110); //Ground
-	GroundPre(600, 60, 790 - 600); //Top platform
-	WallPre(680, 0, 8); //Ceiling barrier
-	GroundPre(20, 8, 680 - 20); //Ceiling barrier
-	GroundPre(200, 130, 560 - 200); //2nd top platform
-	WallPre(110, 400, 560 - 400); //Left barrier bottom
-	GroundPre(20, 400, 110 - 20); //Left barrier platform
-	WallPre(20, 8, 400 - 8); //Left barrier top
-	GroundPre(300, 235, 460 - 300); //Left platform bottom
-	WallPre(300, 205, 235 - 205); //Left platform
-	GroundPre(20, 205, 300 - 20); //Left platform top
-	WallPre(580, 380, 440 - 380); //Bottom platform
-	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
-	GroundPre(580, 380, 650 - 580); //Bottom platform top
-	PlatformPre(270, 362, 110); //Lower platform
-	PlatformPre(500, 310, 110); //Higher platform
-	GroundPre(650, 440, 790 - 650); //Right platform
-	WallPre(790, 0, 500); //Right wall
-	GroundPre(790, 500, 799 - 790); //Right exit top barrier
-//	WallPre(650, 500, 560 - 500); //Bottom tiny thing
-//	GroundPre(580, 500, 650 - 580); //Bottom tiny thing
-	GroundPre(480, 500, 70); //Bottom tiny divide right
-	GroundPre(280, 500, 70); //Bottom tiny divide left
-
-	Wall(680, 0, 8); //Ceiling barrier
-	Wall(110, 400, 560 - 400); //Left barrier bottom
-	Wall(20, 8, 400 - 8); //Left barrier top
-	Wall(300, 205, 235 - 205); //Left platform
-	Wall(580, 380, 440 - 380); //Bottom platform
-	Wall(790, 0, 500); //Right wall
-	Ground(110, 560, 799 - 110); //Ground
-	Ground(600, 60, 790 - 600); //Top platform
-	Ground(20, 8, 680 - 20); //Ceiling barrier
-	Ground(200, 130, 560 - 200); //2nd top platform
-	Ground(20, 400, 110 - 20); //Left barrier platform
-	Ground(300, 235, 460 - 300); //Left platform bottom
-	Ground(20, 205, 300 - 20); //Left platform top
-	Ground(195, 440, 580 - 195); //Bottom platform bottom
-	Ground(580, 380, 650 - 580); //Bottom platform top
-	Platform(270, 362, 110); //Lower platform
-	Platform(500, 310, 110); //Higher platform
-	Ground(650, 440, 790 - 650); //Right platform
-	Ground(790, 500, 799 - 790); //Right exit top barrier
-//	Wall(650, 500, 560 - 500); //Bottom tiny thing
-//	Ground(580, 500, 650 - 580); //Bottom tiny thing
-	Ground(480, 500, 70); //Bottom tiny divide right
-	Ground(280, 500, 70); //Bottom tiny divide left
-
-	MobGroupBasic(0);
-	MobGroupBasic(1);
-	MobGroupBasic(2);
-	MobGroupBasic(3);
-	MobGroupBasic(4);
-	MobGroupBasic(5);
-	MobGroupBasic(6);
-
-	MobGroupJumper(0);
-	MobGroupJumper(1);
-	MobGroupJumper(2);
-	MobGroupJumper(3);
-	MobGroupJumper(4);
-
-	MobGroupCharger(0);
-	MobGroupCharger(1);
-
-	MobGroupRanger(0);
-	MobGroupRanger(1);
-	//MobGroupRanger(2);
-
-	MobGroupWizard(0);
-	//MobGroupWizard(1);
-}
-void Game::Screen8()
-{
-}
-void Game::Screen9()
-{
 }
 void Game::Screen10()
 {
@@ -1184,6 +1248,10 @@ void Game::MobGroupBasic(int i)
 		//mob.Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding, + i, bas[0].GetX(), bas[0].GetY(), etc. )
 		//Honestly idk if I'm gonna do this/have a centralized "mob" class to pull functions from. I understand it would benefit me if I have 1000 types of mobs, but since I'm only have ~6, it's more inconvenient. 
 	}
+	else if (bas[i].GetDeathStage() <= 3 + 1) //if dead and the animation hasn't already happened
+	{
+		bas[i].DeathAnimation(gfx);
+	}
 }
 void Game::MobGroupJumper(int i)
 {
@@ -1195,6 +1263,10 @@ void Game::MobGroupJumper(int i)
 		jum[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		jum[i].Draw(gfx);
 	}
+	else if (jum[i].GetDeathStage() <= 3 + 1) //if dead and the animation hasn't already happened
+	{
+		jum[i].DeathAnimation(gfx);
+	}
 }
 void Game::MobGroupCharger(int i)
 {
@@ -1205,6 +1277,10 @@ void Game::MobGroupCharger(int i)
 		cha[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
 		cha[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		cha[i].Draw(gfx);
+	}
+	else if (cha[i].GetDeathStage() <= 3 + 1) //if dead and the animation hasn't already happened
+	{
+		cha[i].DeathAnimation(gfx);
 	}
 }
 void Game::MobGroupRanger(int i)
@@ -1225,6 +1301,10 @@ void Game::MobGroupRanger(int i)
 		ran[i].Collision(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), UserisColliding); //Keep after Movement && Death
 		ran[i].Draw(gfx);
 	}
+	else if (ran[i].GetDeathStage() <= 3 + 1) //if dead and the animation hasn't already happened
+	{
+		ran[i].DeathAnimation(gfx);
+	}
 
 	for (int Pi = 0; Pi < PelletSize; Pi++) //this is outside of GetAlive {} bracket so that a pellet in motion will keep falling after it's ranger dies
 	{
@@ -1243,6 +1323,7 @@ void Game::MobGroupWizard(int i)
 	{
 		wiz[i].Aggro(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetOnGroundValue());
 		wiz[i].Movement(gin[0].GetX(), gin[0].GetW()/*, gin[0].GetDX()*/); //Keep after Aggro
+		wiz[i].EyeLogic(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 //		wiz[i].Shoot(gin[0].GetX(), gin[0].GetY(), gin[0].GetW());
 		orb[i].Spawning(wiz[i].GetX(), wiz[i].GetY(), wiz[i].GetW(), wiz[i].GetH());
 		wiz[i].Death(gin[0].GetX(), gin[0].GetY(), gin[0].GetW(), gin[0].GetDashStage(), gin[0].GetStartPoint());
@@ -1261,6 +1342,10 @@ void Game::MobGroupWizard(int i)
 
 		wiz[i].Draw(gfx);
 	}
+	else if (wiz[i].GetDeathStage() <= 3 + 1) //if dead and the animation hasn't already happened
+	{
+		wiz[i].DeathAnimation(gfx);
+	}
 }
 
 void Game::UserRespawn()
@@ -1275,13 +1360,8 @@ void Game::UserRespawn()
 	//	RespawnInBed = false;
 	//}
 
-	if (wnd.kbd.KeyIsPressed(0x52)) //"R" key allows manual reset; so you don't have to actually die to respawn
-	{
-		UserHealth = 0;
-	}
-
-	//if you die, reset health, reset the mobs, and then respawn
-	if (UserHealth == 0)
+	//if you die and the animation is done, reset health, reset the mobs, and then respawn. (Movement() function also stops movement during the animation)
+	if (/*UserHealth == 0 &&*/ gin[0].GetDeathStage() > 13)
 	{
 		UserHealth = 3;
 
@@ -1327,9 +1407,17 @@ void Game::UserRespawn()
 		}
 		else if (checkpoint == 2)
 		{
-			//screen = ;
-			//gin[0].Respawn();
+			screen = 6;
+			gin[0].Respawn(45, 150);
 		}
+	}
+}
+
+void Game::UserSuicide()
+{
+	if (wnd.kbd.KeyIsPressed(0x52)) //"R" key allows manual reset; so you don't have to actually die to respawn
+	{
+		UserHealth = 0;
 	}
 }
 
@@ -1395,21 +1483,29 @@ void Game::UpdateModel()
 {
 	//Keep first
 	Cheats();
-	UserMovement();
-	gin[0].Delta(); //Keep before Gravity && Movement
-	//Keep middle?
-	gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
-	//gin[0].Direction(); //keep before EyeLogic, but after Movement
-	gin[0].EyeLogic();
-	gin[0].OnGround(); //Keep before Jump && Dash
-	gin[0].OnWall(); //Keep before WallJump
-	gin[0].Jump();
-	gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
-	gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
-	gin[0].Gravity(); //Keep last in the movement functions
-//	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
-	UserCollision(); //Keep after all movement functions
-	UserRespawn();
+	if (UserHealth != 0)
+	{
+		UserMovement();
+		gin[0].Delta(); //Keep before Gravity && Movement
+		//Keep middle?
+		gin[0].Movement(wnd.kbd.KeyIsPressed(VK_SHIFT));
+		//gin[0].Direction(); //keep before EyeLogic, but after Movement
+		gin[0].EyeLogic();
+		gin[0].OnGround(); //Keep before Jump && Dash
+		gin[0].OnWall(); //Keep before WallJump
+		gin[0].Jump();
+		gin[0].WallJump2(wnd.kbd.KeyIsPressed(0x57));
+		gin[0].Dash(wnd.kbd.KeyIsPressed(VK_SPACE));
+		gin[0].Gravity(); //Keep last in the movement functions
+	//	gin[0].TheoreticalValue(); //Keep after all movement functions, but before Screens (aka, before ground/walls adjust value) //you should probably delete this
+		UserCollision(); //Keep after all movement functions
+		UserSuicide();
+	}
+	if (UserHealth == 0) //you can't use an else statement, otherwise it will be 1 frame late in drawing the animation. (He will blink to black at start of animation)
+	{
+		UserRespawn();
+		gin[0].DeathAnimation(gfx);
+	}
 	//Keep last:
 	Screens();
 	ScreenSwitch(); //I keep this after Screens, so you don't accidentally activate a switch by jumping against a wall close to edge
@@ -1417,8 +1513,11 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	gin[0].Draw(gfx/*, Colors::Orange2, Colors::Pasty*/);
-	gin[0].DrawDash(gfx); //Keep after Draw()
+	if (UserHealth != 0)
+	{
+		gin[0].Draw(gfx/*, Colors::Orange2, Colors::Pasty*/);
+		gin[0].DrawDash(gfx); //Keep after Draw()
+	}
 	HealthBar(); //Keep last, just so it's always on top
 
 //Test bullshit:

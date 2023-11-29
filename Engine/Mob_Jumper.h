@@ -11,9 +11,11 @@ public:
 	void StartPoint();
 	void Respawn();
 	void Movement(int Gx, int Gw/*, int Gdx*/);
+	void DeathAnimation(Graphics& gfx);
 	//void Aggro(int Gx, int Gy, int Gw, int Gog);
 
 	bool GetAlive();
+	int GetDeathStage();
 private:
 	int StartPointX;
 	int StartPointY;
@@ -32,4 +34,5 @@ private:
 	int JumpX = 0;
 	bool aggro = false;
 //	int EyeDirection = 1; //Determined once in Movement()
+	int DeathStage = 0;
 };

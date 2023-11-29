@@ -2,11 +2,30 @@
 
 void Wizard::Draw(Graphics & gfx)
 {
+	//Body
 	for (int loopx = 0; loopx <= w; loopx++)
 	{
 		for (int loopy = 0; loopy <= h; loopy++)
 		{
 			gfx.PutPixel(x + loopx, y + loopy, Colors::Blue1);
+		}
+	}
+
+	//Eye white
+	for (int loopx = 0; loopx <= 4; loopx++)
+	{
+		for (int loopy = 0; loopy <= 4; loopy++)
+		{
+			gfx.PutPixel(x + eye + loopx, y + (2) + loopy, Colors::White);
+		}
+	}
+
+	//Eye pupil
+	for (int loopx = 0; loopx <= 1; loopx++)
+	{
+		for (int loopy = 0; loopy <= 2; loopy++)
+		{
+			gfx.PutPixel(x + pEyeX + loopx, y + 2 + (pEyeY) + loopy, Colors::Black);
 		}
 	}
 }
@@ -57,6 +76,7 @@ void Wizard::Respawn()
 	aggro = false;
 	//speed = 1;
 	RandStage = 0;
+	DeathStage = 0;
 }
 
 void Wizard::Movement(int Gx, int Gw)
@@ -85,49 +105,53 @@ void Wizard::Movement(int Gx, int Gw)
 			x = Px + 3;
 		}
 	}
-	else
+	else //I DISABLED ALL PASSIVE MOVEMENT. They just stand still now.
 	{
-		RandStage++;
-		int test0 = 69; //Just initializing it to a stupid number you can't use (compiler doesn't like if you leave it empty)
-		//Randomly generate the movement
-		if (RandStage == 4) //Making it so it only picks a possible value every _ number of frames. Stops it from looking so jittery
-		{
-			test0 = rand() % 10; //Deciding whether you will change the movement, or stay on the current path
-			RandStage = 0;
-		}
-		if (test0 == 0) //If you have passed the test, and you will move, you will now decide in which direction
-		{
-			int test1 = rand() % 8 + 1;
-			if (test1 == 1)
-			{
-				MoveRight = true;
-				MoveLeft = false;
-			}
-			else if (test1 == 2)
-			{
-				MoveLeft = true;
-				MoveRight = false;
-			}
-			else if (test1 >= 3)
-			{
-				MoveRight = false;
-				MoveLeft = false;
-			}
-		}
+		//RandStage++;
+		//int test0 = 69; //Just initializing it to a stupid number you can't use (compiler doesn't like if you leave it empty)
+		////Randomly generate the movement
+		//if (RandStage == 4) //Making it so it only picks a possible value every _ number of frames. Stops it from looking so jittery
+		//{
+		//	test0 = rand() % 10; //Deciding whether you will change the movement, or stay on the current path
+		//	RandStage = 0;
+		//}
+		//if (test0 == 0) //If you have passed the test, and you will move, you will now decide in which direction
+		//{
+		//	int test1 = rand() % 8 + 1;
+		//	if (test1 == 1)
+		//	{
+		//		MoveRight = true;
+		//		MoveLeft = false;
+		//	}
+		//	else if (test1 == 2)
+		//	{
+		//		MoveLeft = true;
+		//		MoveRight = false;
+		//	}
+		//	else if (test1 >= 3)
+		//	{
+		//		MoveRight = false;
+		//		MoveLeft = false;
+		//	}
+		//}
+		//
+		////Making sure they don't walk off the edge (if aggro'd it just stops movement. If here in idle it makes them move back the other way)
+		//if (x + w + 2 > Px + Pw || x > InitX + roam) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
+		//{
+		//	MoveLeft = true;
+		//	MoveRight = false;
+		//	RandStage = 0; //Stopping any potential jittery bullshit where you turn around the very next frame.
+		//}
+		//else if (x - 2 < Px || x < InitX - roam) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
+		//{
+		//	MoveRight = true;
+		//	MoveLeft = false;
+		//	RandStage = 0; //I'm super lazy and will gladly call this every frame, lol
+		//}
 
-		//Making sure they don't walk off the edge (if aggro'd it just stops movement. If here in idle it makes them move back the other way)
-		if (x + w + 2 > Px + Pw || x > InitX + roam) // + 1 to account for your proper width, and + 1 to stop you from being at the value of the wall, but rather 1 frame before it. 
-		{
-			MoveLeft = true;
-			MoveRight = false;
-			RandStage = 0; //Stopping any potential jittery bullshit where you turn around the very next frame.
-		}
-		else if (x - 2 < Px || x < InitX - roam) //(I'm lazy, and will gladly sacrifice the extra 1 pixel to make sure I never clip walls without need for any additional code)
-		{
-			MoveRight = true;
-			MoveLeft = false;
-			RandStage = 0; //I'm super lazy and will gladly call this every frame, lol
-		}
+		//only keep this if you want movement to stay disabled
+		MoveRight = false;
+		MoveLeft = false;
 	}
 
 	//Actually moving the mob
@@ -152,9 +176,54 @@ void Wizard::Aggro(int Gx, int Gy, int Gw, int Gog)
 	{
 		//That 70 is a very critical number. That is the cutoff point between platforms taking you out of aggro, and leaving you in
 		//The 50 also dictactes how much lower you need to be
+		//This no longer has a use. But I'm keeping it here in case I ever re-enable their non-aggro movement
+		//tbh I should just permanantly make their speed 2 and remove this. Okay, if I ever ship the game I will.
 		aggro = false;
 		speed = 1;
 	}
+}
+
+void Wizard::EyeLogic(int Gx, int Gy, int Gw)
+{
+	//Moving eye left and right
+	if (Gx + Gw/2 > x + w/2) //if midpoint of ginger is past the midpoint of wizard, look to the right. 
+	{
+		eye = w - 4;
+		pEyeX = w - 1;
+	}
+	else if (Gx + Gw / 2 < x + w / 2) //vice versa
+	{
+		eye = 0;
+		pEyeX = 0;
+	}
+
+	//Moving pupil up and down
+	//You should do a proper rise/run formula. This is just lazy implementation right now, for quick testing purposes.
+	if (Gy + Gw / 2 < y + h / 2 - 30) //look up
+	{
+		pEyeY = 0;
+	}
+	else if (Gy + Gw / 2 > y + h / 2 + 30) //look down
+	{
+		pEyeY = 2;
+	}
+	else //look straight ahead
+	{
+		pEyeY = 1;
+	}
+}
+
+void Wizard::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (h / 3);
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (h - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, Colors::Blue1);
+		}
+	}
+	DeathStage++;
 }
 
 //void Wizard::Shoot(int Gx, int Gy, int Gw)
@@ -185,12 +254,10 @@ bool Wizard::GetAlive()
 {
 	return alive;
 }
-
 bool Wizard::GetAggro()
 {
 	return aggro;
 }
-
 int Wizard::GetX()
 {
 	return x;
@@ -206,6 +273,11 @@ int Wizard::GetW()
 int Wizard::GetH()
 {
 	return h;
+}
+
+int Wizard::GetDeathStage()
+{
+	return DeathStage;
 }
 
 //int Wizard::GetPelletSize()

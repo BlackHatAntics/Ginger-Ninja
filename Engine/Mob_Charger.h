@@ -12,9 +12,11 @@ public:
 	void Respawn();
 	void Movement(int Gx, int Gw);
 	void Aggro(int Gx, int Gy, int Gw, int Gog);
+	void DeathAnimation(Graphics& gfx);
 	//void EyeLogic();
 
 	bool GetAlive();
+	int GetDeathStage();
 private:
 	int StartPointX;
 	int StartPointY;
@@ -35,4 +37,5 @@ private:
 	int eye = 2;
 	int Ed; //Eye direction
 	//bool isCharging = false;
+	int DeathStage = 0;
 };

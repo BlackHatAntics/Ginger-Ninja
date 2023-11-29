@@ -164,6 +164,19 @@ void Basic::Aggro(int Gx, int Gy, int Gw, int Gog)
 	}
 }
 
+void Basic::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (w / 3); //one third of the body height will dissapear from the top each frame.
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (w - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, Colors::Red2);
+		}
+	}
+	DeathStage++;
+}
+
 void Basic::StartPoint()
 {
 	StartPointX = x;
@@ -176,6 +189,7 @@ void Basic::Respawn()
 	x = StartPointX;
 	y = StartPointY;
 	aggro = false;
+	DeathStage = 0;
 }
 
 int Basic::GetStartPointX()
@@ -189,4 +203,9 @@ int Basic::GetStartPointY()
 bool Basic::GetAlive()
 {
 	return alive;
+}
+
+int Basic::GetDeathStage()
+{
+	return DeathStage;
 }

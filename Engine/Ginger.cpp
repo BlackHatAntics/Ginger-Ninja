@@ -466,6 +466,7 @@ void Ginger::Dash(bool SPACE)
 	if (/*OnGround() &&*/ SPACE && DashisReady)
 	{
    		DashChargeup++;
+		//giving a visual indicator for chargeup
 		bB -= 2;
 		bG -= 2;
 	}
@@ -477,6 +478,7 @@ void Ginger::Dash(bool SPACE)
 	if (DashChargeup > 40)
 	{
 		DashChargeup = 40;
+		//sudden jump in value indicates it's maxed out the dash length
 		bG = 104;
 		bB = 98;
 	}
@@ -485,7 +487,7 @@ void Ginger::Dash(bool SPACE)
 	{
 		isDashing = true;
 		DashStartPoint = x + w / 2;
-		DashLength = DashChargeup + 10/* * 10*/;
+		DashLength = DashChargeup + 10; //Gave it a minimum dash distance. Yummy.
 	}
 
 	if (isDashing)
@@ -513,9 +515,11 @@ void Ginger::Dash(bool SPACE)
 	{
 		isDashing = false;
 		//DashEndPoint = x + w / 2;
-		bG = 255; //making him pale(r) so there's a visual indication as to when his dash is on cooldown
-		bB = 255;
-		hC = Colors::White;
+		//bG = 255; //making him pale(r) so there's a visual indication as to when his dash is on cooldown
+		//bB = 255;
+		bG = 224; //Making him look normal again; aka no longer charging up. The reason I no longer make his body white is because him getting his colour back looks like he started charging up.
+		bB = 218;
+		hC = Colors::White; //giving him white hair, so there's an indicator to show his dash is on cooldown
 
 		DashChargeup = 0;
 	}
@@ -525,9 +529,9 @@ void Ginger::Dash(bool SPACE)
 		DashStage = 0;
 		DashLength = 40;
 		DashisReady = true;
-		bG = 224; //making him look normal again. aka dash is ready
-		bB = 218;
-		hC = Colors::Orange2;
+		//bG = 224; //making him look normal again. aka dash is ready
+		//bB = 218;
+		hC = Colors::Orange2; //dash is ready: visual indicator
 	}
 }
 
@@ -595,6 +599,20 @@ void Ginger::Respawn(int X, int Y)
 	dx = X; //So the Wall function doesn't pull you back
 	y = Y;
 	dy = Y; //So the Ground function doesn't pull you back
+	DeathStage = 0;
+}
+
+void Ginger::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (w / 5); //one sixth of the body height will dissapear from the top each frame.
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (w - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, bR, bG, bB);
+		}
+	}
+	DeathStage++;
 }
 
 //void Ginger::HitWallOld(int wx, bool UP)
@@ -733,5 +751,9 @@ bool Ginger::GetCheating()
 bool Ginger::GetHitWall()
 {
 	return HitWall;
+}
+int Ginger::GetDeathStage()
+{
+	return DeathStage;
 }
 

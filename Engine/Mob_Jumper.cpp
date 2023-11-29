@@ -99,6 +99,7 @@ void Jumper::Respawn()
 	RandStage = 0;
 	isJumping = false;
 	aggro = false;
+	DeathStage = 0;
 }
 
 void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
@@ -181,6 +182,19 @@ void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
 	}
 }
 
+void Jumper::DeathAnimation(Graphics & gfx)
+{
+	int fade = DeathStage + 1 * (w / 3);
+	for (int loopx = 0; loopx <= w; loopx++)
+	{
+		for (int loopy = 0; loopy <= (w - fade); loopy++)
+		{
+			gfx.PutPixel(x + loopx, y + fade + loopy, Colors::Green2);
+		}
+	}
+	DeathStage++;
+}
+
 //void Jumper::Aggro(int Gx, int Gy, int Gw, int Gog)
 //{
 	//I removed aggro functionality, because it made it too fucking impossible. Even if you COULD manage to kill them, it was anti-fun
@@ -201,4 +215,9 @@ void Jumper::Movement(int Gx, int Gw/*, int Gdx*/)
 bool Jumper::GetAlive()
 {
 	return alive;
+}
+
+int Jumper::GetDeathStage()
+{
+	return DeathStage;
 }
