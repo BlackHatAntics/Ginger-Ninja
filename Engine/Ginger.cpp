@@ -9,15 +9,15 @@ void Ginger::Init(int in_x, int in_y, int in_speed)
 
 void Ginger::Draw(Graphics& gfx/*, Color h, Color b*/)
 {
-	if (!(DashStage > 0 && DashStage <= 4)) //You don't draw him if he's dashing (so it looks cool, and you just see the streak)
+	if (!(DashStage > 0 && DashStage <= 4)/*isDashing == false*/) //You don't draw him if he's dashing (so it looks cool, and you just see the streak)
 		//(his hair and body colour are manipulated a bunch in Dash)
 	{
 		//hair
-		for (int loopx = 0; loopx <= w; loopx++) 
+		for (int loopx = 0; loopx <= w; loopx++)
 		{
 			for (int loopy = 0; loopy < 6; loopy++)
 			{
-				gfx.PutPixel(x + loopx, y + loopy, hC); 
+				gfx.PutPixel(x + loopx, y + loopy, hC);
 			}
 		}
 		//body
@@ -88,7 +88,7 @@ void Ginger::Movement(bool SHIFT)
 
 void Ginger::Jump()
 {
-	if (isJumping)
+	if (isJumping && !(DashStage > 0 && DashStage <= 5)) //pause jump while dashing
 	{
 		if (jh == JumpHeight) //Literally just doing this so it's only called once. Might even break the code, idk. Test it out
 		{
@@ -115,7 +115,7 @@ void Ginger::Jump()
 void Ginger::Gravity()
 {
 	//Maybe keep this last in load order?
-	if (isFalling && !isJumping && !isWallJumpingY && !isDashing && !cheating)
+	if (isFalling && !isJumping && !isWallJumpingY && /*!isDashing*/!(DashStage > 0 && DashStage <= 5) && !cheating)
 	{
 		y += fh;
 		fh += 2;
@@ -463,9 +463,9 @@ void Ginger::ScreenSwitch()
 
 void Ginger::Dash(bool SPACE)
 {
-	if (/*OnGround() &&*/ SPACE && DashisReady)
+	if (/*OnGround() &&*/ SPACE && DashisReady) //disabled OnGround so you can charge in the air
 	{
-   		DashChargeup++;
+   		DashChargeup++; //Charging up dash until you release space.
 		//giving a visual indicator for chargeup
 		bB -= 2;
 		bG -= 2;
@@ -477,13 +477,13 @@ void Ginger::Dash(bool SPACE)
 
 	if (DashChargeup > 40)
 	{
-		DashChargeup = 40;
+		DashChargeup = 40; //maxed out charge/power.
 		//sudden jump in value indicates it's maxed out the dash length
 		bG = 104;
 		bB = 98;
 	}
 
-	if (OnGround() && !SPACE && DashisReady && DashChargeup > 0) //Can't be standing still
+	if (/*OnGround() &&*/ !SPACE && DashisReady && DashChargeup > 0) //Disabled Onground so you can dash in the air.
 	{
 		isDashing = true;
 		DashStartPoint = x + w / 2;
@@ -495,7 +495,7 @@ void Ginger::Dash(bool SPACE)
 		if (d == 2)
 		{
 			//DashStartPoint = x + w;
-			x += DashLength;	
+			x += DashLength;
 		}
 		else if (d == 1)
 		{
@@ -560,7 +560,7 @@ void Ginger::DrawDash(Graphics& gfx)
 //	}
 
 
-	if (DashStage > 0 && DashStage <= 4) //He stays white for an extra frame after it ends. For dramatic effect, y'know?
+	if (DashStage > 0 && DashStage <= 4/*isDashing*/)
 	{
 		//Turning him white
 //		for (int loopx = 0; loopx <= w; loopx++)
@@ -573,7 +573,7 @@ void Ginger::DrawDash(Graphics& gfx)
 		//Drawing the white trail
 		for (int loopy = 0; loopy <= 1; loopy++)
 		{
-			if (x > dx)
+			if (x > /*dx*/DashStartPoint)
 			{
 				for (int loopx = 0; loopx <= x + w / 2 - DashStartPoint; loopx++)
 				{
@@ -581,7 +581,7 @@ void Ginger::DrawDash(Graphics& gfx)
 					gfx.PutPixel(DashStartPoint + loopx, y + (w / 2) - 1 + loopy, Colors::White);
 				}
 			}
-			else if (x < dx)
+			else if (x < /*dx*/DashStartPoint)
 			{
 				for (int loopx = 0; loopx <= DashStartPoint - x - w / 2; loopx++)
 				{
@@ -600,6 +600,14 @@ void Ginger::Respawn(int X, int Y)
 	y = Y;
 	dy = Y; //So the Ground function doesn't pull you back
 	DeathStage = 0;
+	DashStage = 50;
+	//DashLength = 40;
+	//DashisReady = true;
+	DashChargeup = 0;
+	//hC = Colors::Orange2;
+	bG = 224;
+	bB = 218;
+	//isDashing = false;
 }
 
 void Ginger::DeathAnimation(Graphics & gfx)

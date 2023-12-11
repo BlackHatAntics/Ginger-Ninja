@@ -70,6 +70,8 @@ private:
 	void Screen9();
 	void Screen10();
 	void Screen11();
+	void Screen19();
+	void Screen20(); //was gonna be frogs. now idk
 	void UserCollision();
 	void HealthBar();
 	void MobGroupBasic(int i);
@@ -103,7 +105,7 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 5; //Start this at 0, but it's 7 right now for testing purposes
 	//int Level = 0; //jk scrapped this entire idea just so I could call this game "done" sooner
 	int checkpoint = 0;
 	bool UserisColliding = false;
