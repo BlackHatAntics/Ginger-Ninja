@@ -20,12 +20,12 @@ public:
 	void Jump();
 	void Gravity();
 	void HitGround(int px, int py, int pw);
-	void HitWallOld(int wx, bool UP);
+	//void HitWallOld(int wx, bool UP);
 	void HitCeiling(int py);
 	void Delta();
 	//void Direction();
 	//void TheoreticalValue(); //I think this is a pointless function. check, and delete
-	void WallJumpOld(bool UP);
+	//void WallJumpOld(bool UP);
 	void WallJump2(bool UP);
 	void HitWall2(int wx, int wy, int wh, bool UP);
 	void HitGroundPre(int py);

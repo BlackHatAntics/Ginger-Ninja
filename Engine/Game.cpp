@@ -28,18 +28,18 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd )
 {
 	srand(time(NULL));
-	//gin[0].Init(200, 585 - 21, 3); //This is the proper one, for starting in Screen0. But use the other one until you're done working on the screens
-	gin[0].Init(45, 60 - 21, 3);
-	//gin[0].Init(705, 60 - 21, 3);
+	//gin[0].Init(200, 585 - 21, 3); //This is for starting in the Ginger hideout
+	//gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
+	gin[0].Init(695, 60, 3); //This is for testing Screen6 (spawn on Screen 5)
 	//screen 0
 	bas[7].Init(640, 420, 500, 799 - 420, 140);
 	//screen 1
 	bas[8].Init(370, 0, 500, 610);
 	bas[9].Init(500, 0, 500, 610);
-	bas[10].Init(550, 290, 280, 383, 175);
+	bas[10].Init(550, 275, 280, 398, 175);
 	jum[5].Init(300, 130, 370, 380, 140);
-	jum[6].Init(400, 290, 280, 383);
-	jum[7].Init(600, 290, 280, 383);
+	jum[6].Init(400, 275, 280, 398);
+	jum[7].Init(600, 275, 280, 398);
 	//screen 2
 	bas[11].Init(262, 220, 260, 65);
 	bas[12].Init(148, 110, 360, 94);
@@ -51,9 +51,9 @@ Game::Game( MainWindow& wnd )
 	//screen 4
 	bas[15].Init(60, 0, 260, 350, 130);
 	bas[16].Init(440, 350, 360, 799 - 350);
-	bas[17].Init(520, 350, 360, 799 - 350);
-	bas[18].Init(610, 350, 360, 799 - 350);
-	bas[19].Init(680, 350, 360, 799 - 350);
+	bas[17].Init(520, 350, 360, 799 - 350, 27);
+	bas[18].Init(610, 350, 360, 799 - 350, 27);
+	bas[19].Init(680, 350, 360, 799 - 350, 27);
 	ran[2].Init(480, 120, 180, 700 - 120, 120);
 	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
 	ran[3].Init(315, 0, 260, 350, 90);
@@ -159,6 +159,7 @@ void Game::Go()
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
 //Clean up orb code
 //Do proper rise/run wizard eyeball tracking
+//Make WallJump code less convoluted and in many different functions
 
 	//Remember:
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump. (nvm doesn't work anymore?)
@@ -346,15 +347,15 @@ void Game::WallPre(int x, int y, int h)
 {
 	for (int i = 0; i < GinSize; i++)
 	{
-		if ((gin[i].GetY() <= y + h && gin[i].GetY() + gin[i].GetW() >= y) || (gin[i].GetTY() <= y + h && gin[i].GetTY() + gin[i].GetW() >= y))
+		if ((gin[i].GetY() <= y + h && gin[i].GetY() + gin[i].GetW() >= y) || (gin[i].GetTY() <= y + h && gin[i].GetTY() + gin[i].GetW() >= y)) //if within wall y coordinates
 		{
-			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() > x - 1)
+			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() >= x - 1) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
 			{
 				//you hit the wall on the left side
 				gin[i].HitWallPre(x - gin[i].GetW() - 1);
 				tHitWall = true;
 			}
-			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() < x + 1)
+			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() <= x + 1) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
 			{
 				//you hit the wall on the right side
 				gin[i].HitWallPre(x + 1);
@@ -454,6 +455,10 @@ void Game::Screens()
 	{
 		Screen11();
 	}
+	else if (screen == 19)
+	{
+		Screen19();
+	}
 	else if (screen == 100)
 	{
 		Screen100(); //My bullshit test screen
@@ -485,7 +490,7 @@ void Game::ScreenSwitch()
 		//Going up
 		if (gin[0].GetY() < 0)
 		{
-			if (screen == 3)
+			if (screen == 3 || screen == 6)
 			{
 				screen--;
 			}
@@ -493,10 +498,10 @@ void Game::ScreenSwitch()
 			{
 				screen = 9;
 			}
-			else if (screen == 6)
-			{
-				screen++;
-			}
+			//else if (screen == 6)
+			//{
+			//	screen++;
+			//}
 		}
 
 		//Left and right
@@ -674,7 +679,7 @@ void Game::Screen1()
 	WallPre(610, 500 - 220, 220); //floor wall right
 	GroundPre(130, 370, 380); //2nd platform
 	WallPre(130, 200, 370 - 200); //2nd platform wall left
-	GroundPre(290, 280, 383); //top platform
+	GroundPre(275, 280, 398); //top platform
 	//GroundPre(260, 280, 383 + 30); //top platform
 	WallPre(290 + 383, 220, 60); //first step
 	GroundPre(290 + 383, 220, 63); //first step
@@ -687,7 +692,7 @@ void Game::Screen1()
 	Wall(736, 220 - 60, 60); //2nd step
 	Ground(0, 500, 610); //floor
 	Ground(130, 370, 380); //2nd platform
-	Ground(290, 280, 383); //top platform
+	Ground(275, 280, 398); //top platform
 	Ground(290 + 383, 220, 63); //first step
 	Ground(736, 160, 63); //2nd step
 
@@ -838,10 +843,10 @@ void Game::Screen5()
 	WallPre(70, 337, 597 - 337); //left side tube
 	WallPre(124, 337, 543 - 337); //right side tube
 	WallPre(282, 244, 40); //hovering wall
-	WallPre(670, 385, 568 - 385); //bottom right ledge
+	WallPre(670, 385, 566 - 385); //bottom right ledge
 	WallPre(799, 0, 385); //right border
-	WallPre(799 - 50, 385, 597 - 385); //corner ledge tube, right side
-	WallPre(720, 385, 568 - 385); //corner ledge tube, left side
+	WallPre(799 - 49, 385, 597 - 385); //corner ledge tube, right side
+	WallPre(719, 385, 566 - 385); //corner ledge tube, left side
 	WallPre(400, 568, 597 - 568); //ground
 	WallPre(429, 597, 2); //bottom tube right side pixels
 	GroundPre(0, 360, 70); //left of tube
@@ -849,10 +854,11 @@ void Game::Screen5()
 	GroundPre(70, 337, 0); //pixel at top left of tube
 	GroundPre(124, 337, 0); //pixel at top right of tube
 	GroundPre(124, 543, 0); //pixel at bottom right of tube
-	GroundPre(400, 568, 320); //ground (raised layer)
+	GroundPre(400, 566, 319); //ground (raised layer)
 	GroundPre(429, 597, 749 - 429); //ground, right
 	GroundPre(70, 597, 330); //ground, left
-	GroundPre(312, 472, 50); //low platform
+	//GroundPre(312, 472, 50); //low platform //Keep it like this if you want it to be the original "hard" version
+	GroundPre(302, 472, 60); //low platform //This is the easy version //Honestly I think it's better. Still early in the game
 	GroundPre(400, 404, 7); //small platform 1
 	GroundPre(321, 342, 7); //small platform 2
 	PlatformPre(350, 205, 50); //top platform
@@ -860,16 +866,16 @@ void Game::Screen5()
 	GroundPre(470, 215, 7); //small top platform 2
 	GroundPre(520, 208, 7); //small top platform 3
 	GroundPre(560, 178, 7); //small top platform 4
-	GroundPre(670, 385, 50); //corner ledge (left)
-	GroundPre(799 - 50, 385, 50); //corner ledge (right)
+	GroundPre(670, 385, 49); //corner ledge (left)
+	GroundPre(799 - 49, 385, 49); //corner ledge (right)
 
 	Wall(70, 337, 597-337); //left side tube
 	Wall(124, 337, 543 - 337); //right side tube
 	Wall(282, 244, 40); //hovering wall
-	Wall(670, 385, 568 - 385); //bottom right ledge
+	Wall(670, 385, 566 - 385); //bottom right ledge
 	Wall(799, 0, 385); //right border
-	Wall(799-50, 385, 597-385); //corner ledge tube, right side
-	Wall(720, 385, 568-385); //corner ledge tube, left side
+	Wall(799-49, 385, 597-385); //corner ledge tube, right side
+	Wall(719, 385, 566-385); //corner ledge tube, left side
 	Wall(400, 568, 597-568); //ground
 	Wall(429, 597, 2); //bottom tube right side pixels
 	Ground(0, 360, 70); //left of tube
@@ -877,10 +883,11 @@ void Game::Screen5()
 	Ground(70, 337, 0); //pixel at top left of tube
 	Ground(124, 337, 0); //pixel at top right of tube
 	Ground(124, 543, 0); //pixel at bottom right of tube
-	Ground(400, 568, 320); //ground (raised layer)
+	Ground(400, 566, 319); //ground (raised layer)
 	Ground(429, 597, 749-429); //ground, right
 	Ground(70, 597, 330); //ground, left
-	Ground(312, 472, 50); //low platform
+	//Ground(312, 472, 50); //low platform //Keep it like this if you want it to be the original "hard" version
+	Ground(302, 472, 60); //low platform //This is the easy version //Honestly I think it's better. Still early in the game
 	Ground(400, 404, 7); //small platform 1
 	Ground(321, 342, 7); //small platform 2
 	Platform(350, 205, 50); //top platform
@@ -888,8 +895,30 @@ void Game::Screen5()
 	Ground(470, 215, 7); //small top platform 2
 	Ground(520, 208, 7); //small top platform 3
 	Ground(560, 178, 7); //small top platform 4
-	Ground(670, 385, 50); //corner ledge (left)
-	Ground(799-50, 385, 50); //corner ledge (right)
+	Ground(670, 385, 49); //corner ledge (left)
+	Ground(799-49, 385, 49); //corner ledge (right)
+
+	//Drawing the indicator arrow
+	for (int i = 0; i < 50; i++) //body
+	{
+		gfx.PutPixel(97, 520 + i, Colors::Indicator);
+		gfx.PutPixel(98, 520 + i, Colors::Indicator);
+		gfx.PutPixel(99, 520 + i, Colors::Indicator);
+	}
+	for (int i = 0; i < 10; i++) //right tip
+	{
+		gfx.PutPixel(99 + i, 520 + i, Colors::Indicator);
+		gfx.PutPixel(99 + i, 521 + i, Colors::Indicator);
+		gfx.PutPixel(99 + i, 522 + i, Colors::Indicator);
+		gfx.PutPixel(99 + i, 523 + i, Colors::Indicator);
+	}
+	for (int i = 0; i < 10; i++) //left tip
+	{
+		gfx.PutPixel(97 - i, 520 + i, Colors::Indicator);
+		gfx.PutPixel(97 - i, 521 + i, Colors::Indicator);
+		gfx.PutPixel(97 - i, 522 + i, Colors::Indicator);
+		gfx.PutPixel(97 - i, 523 + i, Colors::Indicator);
+	}
 
 
 
@@ -897,6 +926,13 @@ void Game::Screen5()
 }
 void Game::Screen6()
 {
+	WallPre(429, 0, 13); //top pixels
+	GroundPre(300, 30, 200);
+	GroundPre(70, 0, 330); //Ceiling
+
+	Wall(429, 0, 13); //top pixels
+	Ground(300, 30, 200);
+	Ground(70, 0, 330); //Ceiling
 }
 void Game::Screen7()
 {

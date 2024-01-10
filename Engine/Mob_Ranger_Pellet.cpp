@@ -33,6 +33,12 @@ void Pellet::Collision(int Gx, int Gy, int Gw, bool & Colliding, int Gdx, int Gd
 
 void Pellet::Spawning(int PelletSize, int & i, int Rx, int Ry, int Rw, int Rh, bool aggro, int Gx, int Gy, int Gw, int Gdx, int Gdy)
 {
+	//if (PelletStage == 1/*>= 1 && PelletStage < 10*/)
+	//{
+	//	x = (Rx + Rw / 2) - w / 2; //Spawning pellets in middle of his body
+	//	y = (Ry + Rh / 2) - w / 2; //Spawning pellets in middle of his body
+	//	draw = true;
+	//}
 	if (PelletStage == 10 && active == false) //short delay before he starts firing
 	{
 		active = true; //this is saying: okay, now you can load up the pel.Shoot() function, and Pellet[PelletNumber] will be drawn in Game.cpp
@@ -160,6 +166,7 @@ void Pellet::ShootyShootyPowPow(/*int Rx, int Ry, int Rw, int Gx, int Gy, int Gw
 		if (x > 799 - w || x < 0 || y > 599 - w || y < 0) //borders
 		{
 			active = false;
+			//draw = false;
 			//x = 0;
 			//y = 0;
 		}

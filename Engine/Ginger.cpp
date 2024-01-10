@@ -56,23 +56,23 @@ void Ginger::EyeLogic()
 
 void Ginger::Movement(bool SHIFT)
 {
-	if (SHIFT && DashChargeup == 0) //So he moves slower while charging up his dash
-	{
-		speed = 5;
-	}
-	else
-	{
-		speed = 3;
-	}
-	//Rayven's a fucking noob, so I switched sprint to default
-	//if (SHIFT || DashChargeup > 0)
-	//{
-	//	speed = 3;
-	//}
-	//else if (DashChargeup == 0)
+	//if (SHIFT && DashChargeup == 0) //So he moves slower while charging up his dash
 	//{
 	//	speed = 5;
 	//}
+	//else
+	//{
+	//	speed = 3;
+	//}
+	//I switched sprint to default so absolute fucking noobs can play the game too. (Holding shift is not hard, guys. It's not my fault you've never touched a keyboard in your life...)
+	if (SHIFT || DashChargeup > 0)
+	{
+		speed = 3;
+	}
+	else if (DashChargeup == 0)
+	{
+		speed = 5;
+	}
 
 	if (MoveRight)
 	{
@@ -168,8 +168,8 @@ void Ginger::Delta()
 //	// ...nevermind I think this was pointless. Delete this function. (after you fix walls of course, and confirm you don't need this)
 //}
 
-void Ginger::WallJumpOld(bool UP)
-{
+//void Ginger::WallJumpOld(bool UP)
+//{
 	//Pretty much all the logic is inside HitWall. This is just the physical lift-off
 	//if (isWallJumping)
 	//{
@@ -191,12 +191,14 @@ void Ginger::WallJumpOld(bool UP)
 	//		isWallJumping = false;
 	//	}
 	//}
-}
+//}
 
 void Ginger::WallJump2(bool UP)
 {
+	//The order of this goes: Game.WallPre(), Game.Wall(), HitWall(), OnWall(), WallJump()
+
 	//ISSUES:
-	//You can still clip through walls somehow if you spam that shit enough. (Is this still ongoing? I should find out)
+	//You can still clip through walls somehow if you get into a tight space and spam that shit enough. (Is this still ongoing? I should find out)
 
 	//Seeing if you moved off the wall or not, and disabling WallJump if you have
 //	if (HitWallRight)
@@ -377,7 +379,7 @@ bool Ginger::OnWall()
 	//Just a reminder that wx isn't actually set to the wall's x value, but rather the x value of where you would be if you were up against it. Y and H *are* set to the real values though.
 	//The walls of course follow proper pixel formatting, starting from the top, and incrementing downwards. So if the height is 100, it's 100 pixels below the y.
 	
-	HitWall = false; //resetting to false each frame, so it tracks whether or not it hit THIS FRAME. (Only used in Ground. It has no business being in here, but the function was wall themed so why not?)
+	HitWall = false; //resetting to false each frame, so it tracks whether or not it hit THIS FRAME. (Only used in Ground(). It has no business being in here, but the function was wall themed so why not?)
 
 	if (y + w >= TempWallValueY && y <= TempWallValueY + TempWallValueH) //If you are within the top&bottom of the wall
 	{
