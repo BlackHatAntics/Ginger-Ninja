@@ -448,10 +448,12 @@ void Ginger::ScreenSwitch()
 	if (x < 0)
 	{
 		x = 799 - w;
+		DashStartPoint = 799; //this prevents crazy dash trail effects when dashing to the next screen.
 	}
 	if (x > 799 - w)
 	{
 		x = 0;
+		DashStartPoint = 0; //this prevents crazy dash trail effects when dashing to the next screen.
 	}
 	if (y < 0)
 	{

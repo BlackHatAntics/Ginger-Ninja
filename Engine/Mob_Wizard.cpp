@@ -175,7 +175,7 @@ void Wizard::Aggro(int Gx, int Gy, int Gw, int Gog)
 	else if (Gx > x + w + 1 + 160 + 100 || Gx + Gw + 1 < x - 160 - 100 || (Gog && Gy + Gw < y + h - 70) || Gy + Gw >= y + h + 50) //once you are aggro'd, you don't lose aggro unless you move a certain distance away. The reason I don't include his height, but rather only the hieight of him while on ground, is so you can't go onto a small platform, then lose aggro just by jumping (or just wall jumping). You only lose aggro when you're properly on a higher platform.
 	{
 		//That 70 is a very critical number. That is the cutoff point between platforms taking you out of aggro, and leaving you in
-		//The 50 also dictactes how much lower you need to be
+		//The 50 also dictates how much lower you need to be
 		//This no longer has a use. But I'm keeping it here in case I ever re-enable their non-aggro movement
 		//tbh I should just permanantly make their speed 2 and remove this. Okay, if I ever ship the game I will.
 		aggro = false;

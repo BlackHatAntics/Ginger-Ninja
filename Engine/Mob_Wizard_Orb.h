@@ -28,7 +28,7 @@ private:
 	float YValue = 0;
 	bool active = false;
 	//int PelletNumber = 0;
-	int OrbStage = 0;
+	int OrbStage = 200; //it takes 300 ticks to make orb spawn. so when you kill it you get a full delay. but there's only a short delay the first time you enter a room.
 	//int OrbTrackingCounter = 0;
 	//const int MaxSpeed = 4; //this is defined in ShootyShootyPowPow()
 	//const float MaxIncrement = 0.125; //This is 1/8

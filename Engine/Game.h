@@ -31,6 +31,7 @@
 #include "Mob_Ranger_Pellet.h"
 #include "Mob_Wizard.h"
 #include "Mob_Wizard_Orb.h"
+#include <string>
 
 class Game
 {
@@ -83,6 +84,7 @@ private:
 	void UserSuicide();
 	void Cheats();
 	void Checkpoint(int x, int y);
+	void DrawArrow(int x, int y, int length, std::string direction);
 	//void Screen[6](); //I wish...
 	/********************************/
 private:
@@ -91,12 +93,12 @@ private:
 	/********************************/
 	/*  User Variables              */
 	static constexpr int GinSize = 1; //I don't know why I even gave the option of having more than 1 ginger...
-	static constexpr int BasicSize = 60;
-	static constexpr int JumperSize = 60;
-	static constexpr int ChargerSize = 20;
-	static constexpr int RangerSize = 20;
+	static constexpr int BasicSize = 30;
+	static constexpr int JumperSize = 20;
+	static constexpr int ChargerSize = 5;
+	static constexpr int RangerSize = 10;
 	static constexpr int PelletSize = 8;
-	static constexpr int WizardSize = 20;
+	static constexpr int WizardSize = 5;
 	Ginger gin[GinSize];
 	Basic bas[BasicSize];
 	Jumper jum[JumperSize];
@@ -105,7 +107,7 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 5; //Start this at 0, but it's 7 right now for testing purposes
+	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
 	//int Level = 0; //jk scrapped this entire idea just so I could call this game "done" sooner
 	int checkpoint = 0;
 	bool UserisColliding = false;

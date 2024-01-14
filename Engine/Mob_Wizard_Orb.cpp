@@ -408,10 +408,11 @@ void Orb::ShootyShootyPowPow(/*int Wx, int Wy, int Ww,*/ int Gx, int Gy, int Gw/
 
 void Orb::Respawn()
 {
-	OrbStage = 0;
+	//OrbStage = 0; //Retired.
 	active = false;
 	XValue = 0;
 	YValue = 0;
+	OrbStage = 200; //So the first shot when you enter a room is fast
 }
 
 //void Orb::SetActive(bool Active)

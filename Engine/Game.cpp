@@ -21,6 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "time.h"
+//#include <chrono>
 
 Game::Game( MainWindow& wnd )
 	:
@@ -29,8 +30,8 @@ Game::Game( MainWindow& wnd )
 {
 	srand(time(NULL));
 	//gin[0].Init(200, 585 - 21, 3); //This is for starting in the Ginger hideout
-	//gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
-	gin[0].Init(695, 60, 3); //This is for testing Screen6 (spawn on Screen 5)
+	gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
+	//gin[0].Init(695, 60, 3); //This is for testing Screen6 (spawn on Screen 5)
 	//screen 0
 	bas[7].Init(640, 420, 500, 799 - 420, 140);
 	//screen 1
@@ -57,9 +58,13 @@ Game::Game( MainWindow& wnd )
 	ran[2].Init(480, 120, 180, 700 - 120, 120);
 	//ran[2].Init(750, 750, 180, 49); //for testing purposes only
 	ran[3].Init(315, 0, 260, 350, 90);
-	//screen5
-	wiz[1].Init(500, 460, 350, 100);
 	//screen6
+	wiz[1].Init(618, 590, 399, 206);
+	jum[13].Init(230, 114, 264, 362);
+	jum[14].Init(30, 0, 364, 362);
+	jum[15].Init(312, 114, 464, 362);
+	cha[3].Init(380, 0, 599, 766);
+	//screen??
 	bas[20].Init(370, 310, 250, 150, 40);
 	bas[21].Init(500, 460, 250, 150);
 	jum[9].Init(100, 0, 560, 370);
@@ -88,7 +93,7 @@ Game::Game( MainWindow& wnd )
 	ran[1].Init(430, 195, 440, 580 - 195);
 	//ran[2].Init(220, 110, 545, 799 - 110);
 	wiz[0].Init(40, 20, 400, 90);
-	//wiz[1].Init(420, 110, 545, 799 - 110);
+	//wiz[3].Init(420, 110, 545, 799 - 110);
 
 	for (int i = 0; i < BasicSize; i++) //So every time you call Respawn after, you can just loop through all mobs, and call "StartPoint", instead of manually plugging in variables
 	{
@@ -125,6 +130,7 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
+//Ginger switches sides before the screen switches.
 //If user is holding space (charging dash) as they die, they will keep charging after they respawn. There is no blocker shutting off the space key, or needed to release it to re-enable it.
 //Mobs sometimes glitch off the map??? Happens super rarely. I think it started when I implemented roaming ranges? Seen it twice with basic mob, and once with ranger. Another theory is that it happens when you reset the mobs a lot. or repeatedly die. Cause it only happens after you respawned and you first walk into a room.
 //If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
@@ -843,20 +849,22 @@ void Game::Screen5()
 	WallPre(70, 337, 597 - 337); //left side tube
 	WallPre(124, 337, 543 - 337); //right side tube
 	WallPre(282, 244, 40); //hovering wall
-	WallPre(670, 385, 566 - 385); //bottom right ledge
+	//WallPre(670, 385, 566 - 385); //bottom right ledge //removed cause it's ugly
+	WallPre(670, 385, 14); //fancy wall ledge thing
 	WallPre(799, 0, 385); //right border
 	WallPre(799 - 49, 385, 597 - 385); //corner ledge tube, right side
 	WallPre(719, 385, 566 - 385); //corner ledge tube, left side
-	WallPre(400, 568, 597 - 568); //ground
-	WallPre(429, 597, 2); //bottom tube right side pixels
+	WallPre(398, 567, 597 - 568); //ground, aka left of bottom exit tube
+	WallPre(429, 597, 2); //bottom exit tube right side pixels
 	GroundPre(0, 360, 70); //left of tube
 	GroundPre(124, 360, 61); //right of tube
 	GroundPre(70, 337, 0); //pixel at top left of tube
 	GroundPre(124, 337, 0); //pixel at top right of tube
 	GroundPre(124, 543, 0); //pixel at bottom right of tube
-	GroundPre(400, 566, 319); //ground (raised layer)
+	GroundPre(670, 399, 14); //fancy thing
+	GroundPre(398, 566, 321); //ground (raised layer)
 	GroundPre(429, 597, 749 - 429); //ground, right
-	GroundPre(70, 597, 330); //ground, left
+	GroundPre(70, 597, 328); //ground, left
 	//GroundPre(312, 472, 50); //low platform //Keep it like this if you want it to be the original "hard" version
 	GroundPre(302, 472, 60); //low platform //This is the easy version //Honestly I think it's better. Still early in the game
 	GroundPre(400, 404, 7); //small platform 1
@@ -872,20 +880,22 @@ void Game::Screen5()
 	Wall(70, 337, 597-337); //left side tube
 	Wall(124, 337, 543 - 337); //right side tube
 	Wall(282, 244, 40); //hovering wall
-	Wall(670, 385, 566 - 385); //bottom right ledge
+	//Wall(670, 385, 566 - 385); //bottom right ledge //removed cause it's ugly
+	Wall(670, 385, 14); //fancy wall ledge thing
 	Wall(799, 0, 385); //right border
 	Wall(799-49, 385, 597-385); //corner ledge tube, right side
 	Wall(719, 385, 566-385); //corner ledge tube, left side
-	Wall(400, 568, 597-568); //ground
-	Wall(429, 597, 2); //bottom tube right side pixels
+	Wall(398, 567, 597-568); //ground, aka left of bottom exit tube
+	Wall(429, 597, 2); //bottom exit tube right side pixels
 	Ground(0, 360, 70); //left of tube
 	Ground(124, 360, 61); //right of tube
 	Ground(70, 337, 0); //pixel at top left of tube
 	Ground(124, 337, 0); //pixel at top right of tube
 	Ground(124, 543, 0); //pixel at bottom right of tube
-	Ground(400, 566, 319); //ground (raised layer)
+	Ground(670, 399, 14); //fancy thing
+	Ground(398, 566, 321); //ground (raised layer)
 	Ground(429, 597, 749-429); //ground, right
-	Ground(70, 597, 330); //ground, left
+	Ground(70, 597, 328); //ground, left
 	//Ground(312, 472, 50); //low platform //Keep it like this if you want it to be the original "hard" version
 	Ground(302, 472, 60); //low platform //This is the easy version //Honestly I think it's better. Still early in the game
 	Ground(400, 404, 7); //small platform 1
@@ -898,43 +908,102 @@ void Game::Screen5()
 	Ground(670, 385, 49); //corner ledge (left)
 	Ground(799-49, 385, 49); //corner ledge (right)
 
-	//Drawing the indicator arrow
-	for (int i = 0; i < 50; i++) //body
-	{
-		gfx.PutPixel(97, 520 + i, Colors::Indicator);
-		gfx.PutPixel(98, 520 + i, Colors::Indicator);
-		gfx.PutPixel(99, 520 + i, Colors::Indicator);
-	}
-	for (int i = 0; i < 10; i++) //right tip
-	{
-		gfx.PutPixel(99 + i, 520 + i, Colors::Indicator);
-		gfx.PutPixel(99 + i, 521 + i, Colors::Indicator);
-		gfx.PutPixel(99 + i, 522 + i, Colors::Indicator);
-		gfx.PutPixel(99 + i, 523 + i, Colors::Indicator);
-	}
-	for (int i = 0; i < 10; i++) //left tip
-	{
-		gfx.PutPixel(97 - i, 520 + i, Colors::Indicator);
-		gfx.PutPixel(97 - i, 521 + i, Colors::Indicator);
-		gfx.PutPixel(97 - i, 522 + i, Colors::Indicator);
-		gfx.PutPixel(97 - i, 523 + i, Colors::Indicator);
-	}
 
+	DrawArrow(98, 520, 50, "up");
+	//DrawArrow(735, 371, 20, "down");
 
-
-	//MobGroupWizard(1);
+	if (checkpoint < 3)
+	{
+		Checkpoint(729, 385);
+	}
 }
 void Game::Screen6()
 {
-	WallPre(429, 0, 13); //top pixels
-	GroundPre(300, 30, 200);
-	GroundPre(70, 0, 330); //Ceiling
+	WallPre(429, 0, 30); //top wall right
+	WallPre(250, 31, 35); //first bend right side
+	WallPre(219, 0, 35); //first bend left side
+	WallPre(54, 35, 120); //2nd bend left side
+	WallPre(85, 66, 58); //2nd bend right side
+	WallPre(285, 94, 30); //3rd bend left side
+	WallPre(262 + 54, 125, 30); //3rd bend right side
+	WallPre(285 + 192, 125 - 31, 13); //4th bend right side
+	WallPre(285 + 161, 125, 13); //4th bend left side
+	WallPre(601, 138, 85); //5th bend left side
+	WallPre(632, 107, 85 + 62); //5th bend right side
+	WallPre(486, 223, 0); //pixel at tip of 6th tube ceiling
+	WallPre(486, 254, 0); //pixel at tip of 6th tube floor
+	WallPre(0, 0, 600); //left wall
+	WallPre(476, 264, 235); //middle wall
+	WallPre(766, 399, 200); //right wall
+	GroundPre(250, 31, 179); //top floor
+	GroundPre(219, 0, 179); //Ceiling
+	GroundPre(85, 66, 250 - 85); //2nd tube floor (from top)
+	GroundPre(54, 35, 250 - 85); //2nd tube ceiling (from top)
+	GroundPre(54, 155, 262); //3rd tube floor
+	GroundPre(85, 124, 200); //3rd tube ceiling
+	GroundPre(262 + 54, 125, 130); //4th tube floor
+	GroundPre(285, 125 - 31, 192); //4th tube ceiling
+	GroundPre(285 + 161, 138, 155); //5th tube floor
+	GroundPre(285 + 192, 107, 155); //5th tube ceiling
+	GroundPre(486, 223, 115); //6th tube ceiling
+	GroundPre(486, 254, 146); //6th tube floor
+	GroundPre(114, 264, 362); //top platform left
+	GroundPre(0, 364, 362); //middle platform left
+	GroundPre(114, 464, 362); //bottom platform left
+	GroundPre(476, 499, 178); //bottom platform, right
+	GroundPre(590, 399, 209); //top platform, right
+	GroundPre(0, 599, 766); //ground
+	PlatformPre(200, 534, 70);
 
-	Wall(429, 0, 13); //top pixels
-	Ground(300, 30, 200);
-	Ground(70, 0, 330); //Ceiling
+	Wall(429, 0, 30); //top wall right
+	Wall(250, 31, 35); //first bend right side
+	Wall(219, 0, 35); //first bend left side
+	Wall(54, 35, 120); //2nd bend left side
+	Wall(85, 66, 58); //2nd bend right side
+	Wall(285, 94, 30); //3rd bend left side
+	Wall(262 + 54, 125, 30); //3rd bend right side
+	Wall(285 + 192, 125 - 31, 13); //4th bend right side
+	Wall(285 + 161, 125, 13); //4th bend left side
+	Wall(601, 138, 85); //5th bend left side
+	Wall(632, 107, 85 + 62); //5th bend right side
+	Wall(486, 223, 0); //pixel at tip of 6th tube ceiling
+	Wall(486, 254, 0); //pixel at tip of 6th tube floor
+	Wall(0, 0, 600); //left wall
+	Wall(476, 264, 235); //middle wall
+	Wall(766, 399, 200); //right wall
+	Ground(250, 31, 179); //top floor
+	Ground(219, 0, 179); //Ceiling
+	Ground(85, 66, 250-85); //2nd tube floor (from top)
+	Ground(54, 35, 250 - 85); //2nd tube ceiling (from top)
+	Ground(54, 155, 262); //3rd tube floor
+	Ground(85, 124, 200); //3rd tube ceiling
+	Ground(262 + 54, 125, 130); //4th tube floor
+	Ground(285, 125-31, 192); //4th tube ceiling
+	Ground(285 + 161, 138, 155); //5th tube floor
+	Ground(285 + 192, 107, 155); //5th tube ceiling
+	Ground(486, 223, 115); //6th tube ceiling
+	Ground(486, 254, 146); //6th tube floor
+	Ground(114, 264, 362); //top platform left
+	Ground(0, 364, 362); //middle platform left
+	Ground(114, 464, 362); //bottom platform left
+	Ground(476, 499, 178); //bottom platform, right
+	Ground(590, 399, 209); //top platform, right
+	Ground(0, 599, 766); //ground
+	Platform(200, 534, 70);
+
+	MobGroupWizard(1);
+	MobGroupJumper(13);
+	MobGroupJumper(14);
+	MobGroupJumper(15);
+	MobGroupCharger(3);
 }
 void Game::Screen7()
+{
+	GroundPre(0, 399, 799);
+
+	Ground(0, 399, 799);
+}
+void Game::Screen8()
 {
 	GroundPre(110, 560, 799 - 110); //Ground
 	GroundPre(600, 60, 790 - 600); //Top platform
@@ -1007,9 +1076,6 @@ void Game::Screen7()
 
 	MobGroupWizard(0);
 	//MobGroupWizard(1);
-}
-void Game::Screen8()
-{
 }
 void Game::Screen9()
 {
@@ -1496,8 +1562,8 @@ void Game::UserRespawn()
 		}
 		else if (checkpoint == 3)
 		{
-			screen = 6;
-			gin[0].Respawn(45, 150);
+			screen = 5;
+			gin[0].Respawn(765, 300);
 		}
 	}
 }
@@ -1566,6 +1632,59 @@ void Game::Checkpoint(int x, int y)
 		checkpoint++;
 		UserHealth = 3; //fullheal, baby.
 	}	
+}
+
+void Game::DrawArrow(int x, int y, int length, std::string direction)
+{
+	//note: the x and y are for the midpoint of the tip of the arrow
+	int tipLength = length / 5;
+
+	if (direction == "up")
+	{
+		for (int i = 0; i < length; i++) //body
+		{
+			gfx.PutPixel(x - 1, y + i, Colors::Indicator);
+			gfx.PutPixel(x, y + i, Colors::Indicator);
+			gfx.PutPixel(x + 1, y + i, Colors::Indicator);
+		}
+		for (int i = 0; i < tipLength; i++) //right tip
+		{
+			gfx.PutPixel(x + 1 + i, y + i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y + 1 + i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y + 2 + i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y + 3 + i, Colors::Indicator);
+		}
+		for (int i = 0; i < tipLength; i++) //left tip
+		{
+			gfx.PutPixel(x - 1 - i, y + i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y + 1 + i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y + 2 + i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y + 3 + i, Colors::Indicator);
+		}
+	}
+	else if (direction == "down")
+	{
+		for (int i = 0; i < length; i++) //body
+		{
+			gfx.PutPixel(x - 1, y - i, Colors::Indicator);
+			gfx.PutPixel(x, y - i, Colors::Indicator);
+			gfx.PutPixel(x + 1, y - i, Colors::Indicator);
+		}
+		for (int i = 0; i < tipLength; i++) //right tip
+		{
+			gfx.PutPixel(x + 1 + i, y - i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y - 1 - i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y - 2 - i, Colors::Indicator);
+			gfx.PutPixel(x + 1 + i, y - 3 - i, Colors::Indicator);
+		}
+		for (int i = 0; i < tipLength; i++) //left tip
+		{
+			gfx.PutPixel(x - 1 - i, y - i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y - 1 - i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y - 2 - i, Colors::Indicator);
+			gfx.PutPixel(x - 1 - i, y - 3 - i, Colors::Indicator);
+		}
+	}
 }
 
 void Game::UpdateModel()
