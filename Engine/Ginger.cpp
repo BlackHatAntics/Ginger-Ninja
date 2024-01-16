@@ -119,6 +119,11 @@ void Ginger::Gravity()
 	{
 		y += fh;
 		fh += 2;
+
+		if (fh > 51) //implementing a terminal velocity (aka, max fall speed). Takes one full screen loop to reach it. 
+		{
+			fh = 51;
+		}
 	}
 	else
 	{
@@ -409,7 +414,7 @@ void Ginger::Cheating(bool UP, bool DOWN, bool LEFT, bool RIGHT, bool C, bool CT
 	{
 		CheatingLock = false;
 	}
-	if (C && CheatingLock == false) //turns on and off gravity, allowing you to slowly fly around.
+	if (C && CTRL && CheatingLock == false) //turns on and off gravity, allowing you to slowly fly around.
 	{
 		cheating = !cheating;
 		CheatingLock = true; //This shit just stops you from accidentally switching the state of cheating many times by holding down the key for more than a single frame.

@@ -21,7 +21,6 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "time.h"
-//#include <chrono>
 
 Game::Game( MainWindow& wnd )
 	:
@@ -30,8 +29,8 @@ Game::Game( MainWindow& wnd )
 {
 	srand(time(NULL));
 	//gin[0].Init(200, 585 - 21, 3); //This is for starting in the Ginger hideout
-	gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
-	//gin[0].Init(695, 60, 3); //This is for testing Screen6 (spawn on Screen 5)
+	//gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
+	gin[0].Init(705, 325, 3); //This is for testing
 	//screen 0
 	bas[7].Init(640, 420, 500, 799 - 420, 140);
 	//screen 1
@@ -74,7 +73,7 @@ Game::Game( MainWindow& wnd )
 	ran[4].Init(160, 0, 560, 370);
 	ran[5].Init(541, 381, 560, 735 - 381);
 	wiz[2].Init(500, 460, 350, 100);
-	//screen 7
+	//screen ??
 	bas[0].Init(200, 20, 205, 280);
 	bas[1].Init(100, 20, 205, 280);
 	bas[2].Init(700, 110, 560, 799 - 110);
@@ -130,7 +129,6 @@ void Game::Go()
 //Planning && drawing level layouts
 
 	//Fix:
-//Ginger switches sides before the screen switches.
 //If user is holding space (charging dash) as they die, they will keep charging after they respawn. There is no blocker shutting off the space key, or needed to release it to re-enable it.
 //Mobs sometimes glitch off the map??? Happens super rarely. I think it started when I implemented roaming ranges? Seen it twice with basic mob, and once with ranger. Another theory is that it happens when you reset the mobs a lot. or repeatedly die. Cause it only happens after you respawned and you first walk into a room.
 //If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
@@ -161,6 +159,7 @@ void Game::Go()
 //2. I've changed my mind, I won't use the fancy jump mechanics. Maybe in another game.
 
 	//Could fix, but honestly don't care:
+//Time is frame-dependant. //Nvm. I fixed it and everything became choppy. Reverted the changes. Would have had to use that method from the get-go. Can't re-code everything.
 //Ginger code (in: jumping, gravity, and draw) is tied to !(DashStage > 0 && DashStage <= 4) instead of !isDashing. You should clean it up
 //Figure out why your WallJump takes slightly longer to activate now that you changed around the code.
 //Clean up orb code
@@ -461,10 +460,10 @@ void Game::Screens()
 	{
 		Screen11();
 	}
-	else if (screen == 19)
-	{
-		Screen19();
-	}
+	//else if (screen == 19)
+	//{
+	//	Screen19();
+	//}
 	else if (screen == 100)
 	{
 		Screen100(); //My bullshit test screen
@@ -480,30 +479,38 @@ void Game::ScreenSwitch()
 		//Going down
 		if (gin[0].GetY() > 599 - gin[0].GetW())
 		{
-			if (screen == 2 || screen == 5)
+			if (screen < 12)
 			{
 				screen++;
 			}
-			else if (screen == 9)
-			{
-				screen = 10;
-			}
-			else if (screen == 7)
-			{
-				screen--;
-			}
+			//if (screen == 2 || screen == 5 || screen == 8)
+			//{
+			//	screen++;
+			//}
+			//else if (screen == 9)
+			//{
+			//	screen = 10;
+			//}
+			//else if (screen == 7)
+			//{
+			//	screen--;
+			//}
 		}
 		//Going up
 		if (gin[0].GetY() < 0)
 		{
-			if (screen == 3 || screen == 6)
+			if (screen <= 12)
 			{
 				screen--;
 			}
-			else if (screen == 10)
-			{
-				screen = 9;
-			}
+			//if (screen == 3 || screen == 6 || screen == 9)
+			//{
+			//	screen--;
+			//}
+			//else if (screen == 10)
+			//{
+			//	screen = 9;
+			//}
 			//else if (screen == 6)
 			//{
 			//	screen++;
@@ -511,7 +518,7 @@ void Game::ScreenSwitch()
 		}
 
 		//Left and right
-		if (screen <= 9)
+		if (screen < 12)
 		{
 			if (gin[0].GetX() < 0)
 			{
@@ -522,17 +529,17 @@ void Game::ScreenSwitch()
 				screen++;
 			}
 		}
-		else if (screen > 9)
-		{
-			if (gin[0].GetX() < 0)
-			{
-				screen++;
-			}
-			else if (gin[0].GetX() > 799 - gin[0].GetW())
-			{
-				screen--;
-			}
-		}
+		//else if (screen >= 12)
+		//{
+		//	if (gin[0].GetX() < 0)
+		//	{
+		//		screen++;
+		//	}
+		//	else if (gin[0].GetX() > 799 - gin[0].GetW())
+		//	{
+		//		screen--;
+		//	}
+		//}
 
 		/* //All this shit down here is from before, when I had a different world layout
 		//Going down
@@ -1005,35 +1012,30 @@ void Game::Screen7()
 }
 void Game::Screen8()
 {
-	GroundPre(110, 560, 799 - 110); //Ground
-	GroundPre(600, 60, 790 - 600); //Top platform
-	WallPre(680, 0, 8); //Ceiling barrier
-	GroundPre(20, 8, 680 - 20); //Ceiling barrier
-	GroundPre(200, 130, 560 - 200); //2nd top platform
-	WallPre(110, 400, 560 - 400); //Left barrier bottom
-	GroundPre(20, 400, 110 - 20); //Left barrier platform
-	WallPre(20, 8, 400 - 8); //Left barrier top
-	GroundPre(300, 235, 460 - 300); //Left platform bottom
-	WallPre(300, 205, 235 - 205); //Left platform
-	GroundPre(20, 205, 300 - 20); //Left platform top
-	WallPre(580, 380, 440 - 380); //Bottom platform
-	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
-	GroundPre(580, 380, 650 - 580); //Bottom platform top
-	PlatformPre(270, 362, 110); //Lower platform
-	PlatformPre(500, 310, 110); //Higher platform
-	GroundPre(650, 440, 790 - 650); //Right platform
-	WallPre(790, 0, 500); //Right wall
-	GroundPre(790, 500, 799 - 790); //Right exit top barrier
-//	WallPre(650, 500, 560 - 500); //Bottom tiny thing
-//	GroundPre(580, 500, 650 - 580); //Bottom tiny thing
-	GroundPre(480, 500, 70); //Bottom tiny divide right
-	GroundPre(280, 500, 70); //Bottom tiny divide left
+	GroundPre(0, 399, 680);
+	WallPre(680, 399, 200);
+	WallPre(799, 0, 599);
 
+	Ground(0, 399, 680);
+	Wall(680, 399, 200);
+	Wall(799, 0, 599);
+}
+void Game::Screen9()
+{
+	WallPre(680, 0, 599);
+	WallPre(799, 0, 599);
+
+	Wall(680, 0, 599);
+	Wall(799, 0, 599);
+}
+void Game::Screen10()
+{
 	Wall(680, 0, 8); //Ceiling barrier
 	Wall(110, 400, 560 - 400); //Left barrier bottom
 	Wall(20, 8, 400 - 8); //Left barrier top
 	Wall(300, 205, 235 - 205); //Left platform
-	Wall(580, 380, 440 - 380); //Bottom platform
+	Wall(580, 380, 440 - 380); //Bottom square platform left
+	Wall(650, 380, 440 - 380); //Bottom square platform right
 	Wall(790, 0, 500); //Right wall
 	Ground(110, 560, 799 - 110); //Ground
 	Ground(600, 60, 790 - 600); //Top platform
@@ -1043,7 +1045,32 @@ void Game::Screen8()
 	Ground(300, 235, 460 - 300); //Left platform bottom
 	Ground(20, 205, 300 - 20); //Left platform top
 	Ground(195, 440, 580 - 195); //Bottom platform bottom
-	Ground(580, 380, 650 - 580); //Bottom platform top
+	Ground(580, 380, 70); //Bottom square platform top
+	Platform(270, 362, 110); //Lower platform
+	Platform(500, 310, 110); //Higher platform
+	Ground(650, 440, 790 - 650); //Right platform
+	Ground(790, 500, 799 - 790); //Right exit top barrier
+//	Wall(650, 500, 560 - 500); //Bottom tiny thing
+//	Ground(580, 500, 650 - 580); //Bottom tiny thing
+	Ground(480, 500, 70); //Bottom tiny divide right
+	Ground(280, 500, 70); //Bottom tiny divide left
+
+	Wall(680, 0, 8); //Ceiling barrier
+	Wall(110, 400, 560 - 400); //Left barrier bottom
+	Wall(20, 8, 400 - 8); //Left barrier top
+	Wall(300, 205, 235 - 205); //Left platform
+	Wall(580, 380, 440 - 380); //Bottom square platform left
+	Wall(650, 380, 440 - 380); //Bottom square platform right
+	Wall(790, 0, 500); //Right wall
+	Ground(110, 560, 799 - 110); //Ground
+	Ground(600, 60, 790 - 600); //Top platform
+	Ground(20, 8, 680 - 20); //Ceiling barrier
+	Ground(200, 130, 560 - 200); //2nd top platform
+	Ground(20, 400, 110 - 20); //Left barrier platform
+	Ground(300, 235, 460 - 300); //Left platform bottom
+	Ground(20, 205, 300 - 20); //Left platform top
+	Ground(195, 440, 580 - 195); //Bottom platform bottom
+	Ground(580, 380, 70); //Bottom square platform top
 	Platform(270, 362, 110); //Lower platform
 	Platform(500, 310, 110); //Higher platform
 	Ground(650, 440, 790 - 650); //Right platform
@@ -1077,7 +1104,62 @@ void Game::Screen8()
 	MobGroupWizard(0);
 	//MobGroupWizard(1);
 }
-void Game::Screen9()
+void Game::Screen11()
+{
+	WallPre(370, 280, 30); //Ceiling left
+	WallPre(500, 280, 30); //Ceiling right
+	WallPre(85, 280, 220); //Left wall top
+	WallPre(85, 560, 25); //Left wall bottom
+	WallPre(785, 280, 585 - 280); //Right wall
+	WallPre(748, 555, 585 - 555); //Bed headboard right
+	WallPre(745, 555, 585 - 555); //Bed headboard left
+	WallPre(695, 575, 585 - 575); //Bed end
+	GroundPre(85, 280, 370 - 85); //Ceiling left
+	GroundPre(370, 310, 130); //Ceiling middle
+	GroundPre(500, 280, 285); //Ceiling right
+	GroundPre(85, 585, 700); //Floor
+	GroundPre(695, 575, 745 - 695); //Bed platform
+	GroundPre(745, 555, 748 - 745); //Bed headboard cap
+	GroundPre(0, 500, 85); //Entrance ceiling
+	GroundPre(0, 560, 85); //Entrance floor
+	PlatformPre(630, 500, 70); //Platform 1
+	PlatformPre(520, 430, 70); //Platform 2
+	PlatformPre(480, 370, 70); //Platform 3
+	PlatformPre(360, 440, 70); //Platform 4
+	PlatformPre(300, 400, 70); //Platform 5
+
+	//if (gin[0].GetY() + gin[0].GetW() > 575)
+	//{
+	//	gfx.PutPixel(255, 255, 255, 255, 255);
+	//}
+
+	Wall(370, 280, 30); //Ceiling left
+	Wall(500, 280, 30); //Ceiling right
+	Wall(85, 280, 220); //Left wall top
+	Wall(85, 560, 25); //Left wall bottom
+	Wall(785, 280, 585 - 280); //Right wall
+	Wall(748, 555, 585 - 555); //Bed headboard right
+	Wall(745, 555, 585 - 555); //Bed headboard left
+	Wall(695, 575, 585 - 575); //Bed end
+	Ground(85, 280, 370 - 85); //Ceiling left
+	Ground(370, 310, 130); //Ceiling middle
+	Ground(500, 280, 285); //Ceiling right
+	Ground(85, 585, 700); //Floor
+	Ground(695, 575, 745 - 695); //Bed platform
+	Ground(745, 555, 748 - 745); //Bed headboard cap
+	Ground(0, 500, 85); //Entrance ceiling
+	Ground(0, 560, 85); //Entrance floor
+	Platform(630, 500, 70); //Platform 1
+	Platform(520, 430, 70); //Platform 2
+	Platform(480, 370, 70); //Platform 3
+	Platform(360, 440, 70); //Platform 4
+	Platform(300, 400, 70); //Platform 5
+}
+void Game::Screen22()
+{
+	
+}
+void Game::Screen23()
 {
 	//for testing purposes:
 	//if (gin[0].GetY() - 1 <= 510)
@@ -1175,7 +1257,7 @@ void Game::Screen9()
 	Ground(755, 540, 799 - 755); //Right exit
 	Ground(790, 495, 799 - 790); //Right side barrier
 }
-void Game::Screen10()
+void Game::Screen24()
 {
 	//Add some decoration?
 //	if (Level >= 2)
@@ -1191,7 +1273,7 @@ void Game::Screen10()
 	Ground(355, 345, 440 - 355); //Ceiling left
 	Ground(485, 345, 500 - 485); //Ceiling right
 }
-void Game::Screen11()
+void Game::Screen25()
 {
 	//if (Level <= 1)
 	//{
@@ -1201,7 +1283,7 @@ void Game::Screen11()
 		Ground(799, 410, 0); //1 pixel at base of right wall, to stop you from clipping
 	//}
 }
-void Game::Screen19()
+void Game::Screen20()
 {
 	WallPre(110, 360, 60); //left platform
 	WallPre(0, 360, 200); //left wall
@@ -1293,7 +1375,7 @@ void Game::Screen19()
 		Checkpoint(75, 360);
 	}
 }
-void Game::Screen20()
+void Game::Screen21()
 {
 	WallPre(100, 337, 23); //left side
 	WallPre(470, 337, 23); //right side
