@@ -615,6 +615,7 @@ void Ginger::Respawn(int X, int Y)
 	//hC = Colors::Orange2;
 	bG = 224;
 	bB = 218;
+	fh = 1; //so you can't spam "R" and progressively ramp up gravity until you fall super quickly
 	//isDashing = false;
 }
 

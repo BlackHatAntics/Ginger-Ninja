@@ -127,8 +127,11 @@ void Game::Go()
 
 	//Currently working on:
 //Planning && drawing level layouts
+//Add the little frog from your other game to this one
 
 	//Fix:
+//When spamming walljump against the same wall in a corner, if you hit it perfectly, you can clip through the ground.
+//If you are falling while pressing into a wall with a platform on the other side, pass by that platform in the same frame as you hit ground beneath you, you will clip through the ground. Because while checking the Pre functions, it think you are outside of the wall. until the wall actually resets you back into it, it's technically correct in assuming you hit that platform on the other side of the wall, and changes your TY value. (This literally never comes up in the game, except in screen 3, if you cheat and fly out of the map, then test it while sliding down in the middle area you can't normally get to)
 //If user is holding space (charging dash) as they die, they will keep charging after they respawn. There is no blocker shutting off the space key, or needed to release it to re-enable it.
 //Mobs sometimes glitch off the map??? Happens super rarely. I think it started when I implemented roaming ranges? Seen it twice with basic mob, and once with ranger. Another theory is that it happens when you reset the mobs a lot. or repeatedly die. Cause it only happens after you respawned and you first walk into a room.
 //If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
@@ -334,12 +337,12 @@ void Game::GroundPre(int x, int y, int w)
 		if ((gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x) || (gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x)) //within left/right bounds of the platform. TX is for if you hit a wall already this frame and it adjusted your position.
 		{
 			//have crossed past the platform && either haven't already hit a ground yet this frame, or you have hit one and this one is closer. (So if you travel through multiple, you will hit the one on top. and load order won't matter)
-			if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && /*y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY()*/ y - gin[i].GetW() - 1 < gin[i].GetTY() )))
+			if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && y - gin[i].GetW() - 1 < gin[i].GetTY() )))
 			{
 				gin[i].HitGroundPre(y);
 				tHitGround = true; //reset to false each frame in Screens()
 			}
-			else if ((gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y) && (tHitGround == false || (tHitGround == true && /*gin[i].GetDY() - y < gin[i].GetDY() - gin[i].GetTY()*/ y > gin[i].GetTY() )))
+			else if ((gin[i].GetDY() - 1 >= y && gin[i].GetY() - 1 <= y) && (tHitGround == false || (tHitGround == true && y > gin[i].GetTY() )))
 			{
 				gin[i].HitCeilingPre(y);
 				tHitGround = true;
@@ -354,13 +357,13 @@ void Game::WallPre(int x, int y, int h)
 	{
 		if ((gin[i].GetY() <= y + h && gin[i].GetY() + gin[i].GetW() >= y) || (gin[i].GetTY() <= y + h && gin[i].GetTY() + gin[i].GetW() >= y)) //if within wall y coordinates
 		{
-			if (gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() >= x - 1) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
+			if ((gin[i].GetDX() + gin[i].GetW() <= x - 1 && gin[i].GetX() + gin[i].GetW() >= x - 1) && (tHitWall == false || (tHitWall == true && x - gin[i].GetW() - 1 < gin[i].GetTX() ))) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
 			{
 				//you hit the wall on the left side
 				gin[i].HitWallPre(x - gin[i].GetW() - 1);
 				tHitWall = true;
 			}
-			else if (gin[i].GetDX() >= x + 1 && gin[i].GetX() <= x + 1) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
+			else if ((gin[i].GetDX() >= x + 1 && gin[i].GetX() <= x + 1) && (tHitWall == false || (tHitWall == true && x > gin[i].GetTX() ))) //Take away the second "=" if you want to go back to your "push into the wall before wall jumping" method
 			{
 				//you hit the wall on the right side
 				gin[i].HitWallPre(x + 1);
@@ -1015,19 +1018,24 @@ void Game::Screen8()
 {
 	GroundPre(0, 399, 680);
 	WallPre(680, 399, 200);
-	WallPre(799, 0, 599);
+	WallPre(790, 0, 599);
 
 	Ground(0, 399, 680);
 	Wall(680, 399, 200);
-	Wall(799, 0, 599);
+	Wall(790, 0, 599);
+
+	if (checkpoint < 4)
+	{
+		Checkpoint(100, 399);
+	}
 }
 void Game::Screen9()
 {
 	WallPre(680, 0, 599);
-	WallPre(799, 0, 599);
+	WallPre(790, 0, 599);
 
 	Wall(680, 0, 599);
-	Wall(799, 0, 599);
+	Wall(790, 0, 599);
 }
 void Game::Screen10()
 {
@@ -1129,11 +1137,6 @@ void Game::Screen11()
 	PlatformPre(360, 440, 70); //Platform 4
 	PlatformPre(300, 400, 70); //Platform 5
 
-	//if (gin[0].GetY() + gin[0].GetW() > 575)
-	//{
-	//	gfx.PutPixel(255, 255, 255, 255, 255);
-	//}
-
 	Wall(370, 280, 30); //Ceiling left
 	Wall(500, 280, 30); //Ceiling right
 	Wall(85, 280, 220); //Left wall top
@@ -1155,6 +1158,11 @@ void Game::Screen11()
 	Platform(480, 370, 70); //Platform 3
 	Platform(360, 440, 70); //Platform 4
 	Platform(300, 400, 70); //Platform 5
+
+	if (checkpoint < 5)
+	{
+		Checkpoint(100, 555);
+	}
 }
 void Game::Screen22()
 {
@@ -1648,6 +1656,16 @@ void Game::UserRespawn()
 			screen = 5;
 			gin[0].Respawn(765, 300);
 		}
+		else if (checkpoint == 4)
+		{
+			screen = 8;
+			gin[0].Respawn(745, 400);
+		}
+		else if (checkpoint == 5)
+		{
+			screen = 11;
+			gin[0].Respawn(705, 325);
+		}
 	}
 }
 
@@ -1686,6 +1704,14 @@ void Game::Cheats()
 	else if (wnd.kbd.KeyIsPressed(VK_F4))
 	{
 		checkpoint = 3;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_F5))
+	{
+		checkpoint = 4;
+	}
+	else if (wnd.kbd.KeyIsPressed(VK_F6))
+	{
+		checkpoint = 5;
 	}
 }
 
