@@ -334,7 +334,7 @@ void Game::GroundPre(int x, int y, int w)
 		if ((gin[i].GetX() <= x + w && gin[i].GetX() + gin[i].GetW() >= x) || (gin[i].GetTX() <= x + w && gin[i].GetTX() + gin[i].GetW() >= x)) //within left/right bounds of the platform. TX is for if you hit a wall already this frame and it adjusted your position.
 		{
 			//have crossed past the platform && either haven't already hit a ground yet this frame, or you have hit one and this one is closer. (So if you travel through multiple, you will hit the one on top. and load order won't matter)
-			if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && /*y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY()*/ y < gin[i].GetTY() )))
+			if ((gin[i].GetDY() + gin[i].GetW() + 1 <= y && gin[i].GetY() + gin[i].GetW() + 1 >= y) && (tHitGround == false || (tHitGround == true && /*y - gin[i].GetDY() < gin[i].GetTY() - gin[i].GetDY()*/ y - gin[i].GetW() - 1 < gin[i].GetTY() )))
 			{
 				gin[i].HitGroundPre(y);
 				tHitGround = true; //reset to false each frame in Screens()
@@ -409,6 +409,7 @@ void Game::Screens()
 	//resetting all the GroundPre and WallPre interactions for next frame
 	tHitWall = false; //theoretically hit a wall
 	tHitGround = false; //theoretically hit the ground
+	gin[0].TheoreticalValueReset();
 //	tHitCeiling = false; //theoretically hit the ceiling
 
 	//What a bunch of miserable code...
@@ -1030,30 +1031,30 @@ void Game::Screen9()
 }
 void Game::Screen10()
 {
-	Wall(680, 0, 8); //Ceiling barrier
-	Wall(110, 400, 560 - 400); //Left barrier bottom
-	Wall(20, 8, 400 - 8); //Left barrier top
-	Wall(300, 205, 235 - 205); //Left platform
-	Wall(580, 380, 440 - 380); //Bottom square platform left
-	Wall(650, 380, 440 - 380); //Bottom square platform right
-	Wall(790, 0, 500); //Right wall
-	Ground(110, 560, 799 - 110); //Ground
-	Ground(600, 60, 790 - 600); //Top platform
-	Ground(20, 8, 680 - 20); //Ceiling barrier
-	Ground(200, 130, 560 - 200); //2nd top platform
-	Ground(20, 400, 110 - 20); //Left barrier platform
-	Ground(300, 235, 460 - 300); //Left platform bottom
-	Ground(20, 205, 300 - 20); //Left platform top
-	Ground(195, 440, 580 - 195); //Bottom platform bottom
-	Ground(580, 380, 70); //Bottom square platform top
-	Platform(270, 362, 110); //Lower platform
-	Platform(500, 310, 110); //Higher platform
-	Ground(650, 440, 790 - 650); //Right platform
-	Ground(790, 500, 799 - 790); //Right exit top barrier
+	WallPre(680, 0, 8); //Ceiling barrier
+	WallPre(110, 400, 560 - 400); //Left barrier bottom
+	WallPre(20, 8, 400 - 8); //Left barrier top
+	WallPre(300, 205, 235 - 205); //Left platform
+	WallPre(580, 380, 440 - 380); //Bottom square platform left
+	WallPre(650, 380, 440 - 380); //Bottom square platform right
+	WallPre(790, 0, 500); //Right wall
+	GroundPre(110, 560, 799 - 110); //Ground
+	GroundPre(600, 60, 790 - 600); //Top platform
+	GroundPre(20, 8, 680 - 20); //Ceiling barrier
+	GroundPre(200, 130, 560 - 200); //2nd top platform
+	GroundPre(20, 400, 110 - 20); //Left barrier platform
+	GroundPre(300, 235, 460 - 300); //Left platform bottom
+	GroundPre(20, 205, 300 - 20); //Left platform top
+	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
+	GroundPre(580, 380, 70); //Bottom square platform top
+	PlatformPre(270, 362, 110); //Lower platform
+	PlatformPre(500, 310, 110); //Higher platform
+	GroundPre(650, 440, 790 - 650); //Right platform
+	GroundPre(790, 500, 799 - 790); //Right exit top barrier
 //	Wall(650, 500, 560 - 500); //Bottom tiny thing
 //	Ground(580, 500, 650 - 580); //Bottom tiny thing
-	Ground(480, 500, 70); //Bottom tiny divide right
-	Ground(280, 500, 70); //Bottom tiny divide left
+	GroundPre(480, 500, 70); //Bottom tiny divide right
+	GroundPre(280, 500, 70); //Bottom tiny divide left
 
 	Wall(680, 0, 8); //Ceiling barrier
 	Wall(110, 400, 560 - 400); //Left barrier bottom

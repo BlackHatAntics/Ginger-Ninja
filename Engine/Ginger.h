@@ -24,7 +24,7 @@ public:
 	void HitCeiling(int py);
 	void Delta();
 	//void Direction();
-	//void TheoreticalValue(); //I think this is a pointless function. check, and delete
+	void TheoreticalValueReset(); //So you are checking which walls/ground you've hit THIS FRAME, not previous frames.
 	//void WallJumpOld(bool UP);
 	void WallJump2(bool UP);
 	void HitWall2(int wx, int wy, int wh, bool UP);
