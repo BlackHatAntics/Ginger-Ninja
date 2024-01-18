@@ -31,6 +31,7 @@
 #include "Mob_Ranger_Pellet.h"
 #include "Mob_Wizard.h"
 #include "Mob_Wizard_Orb.h"
+#include "Froggy.h"
 #include <string>
 #include <chrono>
 
@@ -112,7 +113,8 @@ private:
 	Pellet pel[PelletSize * RangerSize]; //each ranger has PelletSize amount dedicated to them
 	Wizard wiz[WizardSize];
 	Orb orb[WizardSize];
-	int screen = 11; //Start this at 0, but it's 7 right now for testing purposes
+	Froggy fro;
+	int screen = 0; //Start this at 0, but it's 7 right now for testing purposes
 	//int Level = 0; //jk scrapped this entire idea just so I could call this game "done" sooner
 	int checkpoint = 0;
 	bool UserisColliding = false;

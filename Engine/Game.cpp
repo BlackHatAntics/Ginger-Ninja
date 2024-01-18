@@ -29,8 +29,8 @@ Game::Game( MainWindow& wnd )
 {
 	srand(time(NULL));
 	//gin[0].Init(200, 585 - 21, 3); //This is for starting in the Ginger hideout
-	//gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
-	gin[0].Init(705, 325, 3); //This is for testing
+	gin[0].Init(45, 60 - 21, 3); //This is for starting in Screen0
+	//gin[0].Init(705, 325, 3); //This is for testing
 	//screen 0
 	bas[7].Init(640, 420, 500, 799 - 420, 140);
 	//screen 1
@@ -73,11 +73,11 @@ Game::Game( MainWindow& wnd )
 	ran[4].Init(160, 0, 560, 370);
 	ran[5].Init(541, 381, 560, 735 - 381);
 	wiz[2].Init(500, 460, 350, 100);
-	//screen ??
+	//screen 10
 	bas[0].Init(200, 20, 205, 280);
 	bas[1].Init(100, 20, 205, 280);
 	bas[2].Init(700, 110, 560, 799 - 110);
-	bas[3].Init(440, 200, 130, 360);
+	bas[3].Init(440, 200, 130, 400);
 	bas[4].Init(230, 195, 440, 580 - 195);
 	bas[5].Init(500, 195, 440, 580 - 195);
 	bas[6].Init(710, 650, 440, 790 - 650);
@@ -86,7 +86,7 @@ Game::Game( MainWindow& wnd )
 	jum[2].Init(350, 110, 560, 799 - 110);
 	jum[3].Init(480, 110, 560, 799 - 110);
 	jum[4].Init(270, 20, 205, 280);
-	cha[0].Init(270, 200, 130, 360);
+	cha[0].Init(270, 200, 130, 400);
 	cha[1].Init(500, 110, 560, 799 - 110);
 	ran[0].Init(320, 110, 560, 799 - 110);
 	ran[1].Init(430, 195, 440, 580 - 195);
@@ -1046,10 +1046,11 @@ void Game::Screen10()
 	WallPre(580, 380, 440 - 380); //Bottom square platform left
 	WallPre(650, 380, 440 - 380); //Bottom square platform right
 	WallPre(790, 0, 500); //Right wall
+	WallPre(600, 60, 70); //Top platform connector
 	GroundPre(110, 560, 799 - 110); //Ground
 	GroundPre(600, 60, 790 - 600); //Top platform
 	GroundPre(20, 8, 680 - 20); //Ceiling barrier
-	GroundPre(200, 130, 560 - 200); //2nd top platform
+	GroundPre(200, 130, 600 - 200); //2nd top platform
 	GroundPre(20, 400, 110 - 20); //Left barrier platform
 	GroundPre(300, 235, 460 - 300); //Left platform bottom
 	GroundPre(20, 205, 300 - 20); //Left platform top
@@ -1071,10 +1072,11 @@ void Game::Screen10()
 	Wall(580, 380, 440 - 380); //Bottom square platform left
 	Wall(650, 380, 440 - 380); //Bottom square platform right
 	Wall(790, 0, 500); //Right wall
+	Wall(600, 60, 70); //Top platform connector
 	Ground(110, 560, 799 - 110); //Ground
 	Ground(600, 60, 790 - 600); //Top platform
 	Ground(20, 8, 680 - 20); //Ceiling barrier
-	Ground(200, 130, 560 - 200); //2nd top platform
+	Ground(200, 130, 600 - 200); //2nd top platform
 	Ground(20, 400, 110 - 20); //Left barrier platform
 	Ground(300, 235, 460 - 300); //Left platform bottom
 	Ground(20, 205, 300 - 20); //Left platform top
@@ -1163,6 +1165,12 @@ void Game::Screen11()
 	{
 		Checkpoint(100, 555);
 	}
+
+	//Your lil' froggy pet
+	fro.InRange(gin[0].GetX(), gin[0].GetW(), gin[0].GetY());
+	fro.Move();
+	fro.PickUp(gin[0].GetX(), gin[0].GetY(), wnd.kbd.KeyIsPressed(0x53));
+	fro.Draw(gfx);
 }
 void Game::Screen22()
 {

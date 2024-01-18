@@ -78,6 +78,9 @@
     <ClInclude Include="Mob_Wizard_Orb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Froggy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -126,6 +129,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mob_Wizard_Orb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Froggy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
