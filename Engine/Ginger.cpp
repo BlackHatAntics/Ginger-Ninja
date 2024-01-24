@@ -118,7 +118,14 @@ void Ginger::Gravity()
 	if (isFalling && !isJumping && !isWallJumpingY && /*!isDashing*/!(DashStage > 0 && DashStage <= 5) && !cheating)
 	{
 		y += fh;
-		fh += 2;
+		if (OnWall())
+		{
+			fh += 1;
+		}
+		else
+		{
+			fh += 2;
+		}
 
 		if (fh > 51) //implementing a terminal velocity (aka, max fall speed). Takes one full screen loop to reach it. 
 		{
