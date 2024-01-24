@@ -127,22 +127,16 @@ void Game::Go()
 
 	//Currently working on:
 //Planning && drawing level layouts
-//Add the little frog from your other game to this one
 
 	//Fix:
-//When spamming walljump against the same wall in a corner, if you hit it perfectly, you can clip through the ground.
-//If you are falling while pressing into a wall with a platform on the other side, pass by that platform in the same frame as you hit ground beneath you, you will clip through the ground. Because while checking the Pre functions, it think you are outside of the wall. until the wall actually resets you back into it, it's technically correct in assuming you hit that platform on the other side of the wall, and changes your TY value. (This literally never comes up in the game, except in screen 3, if you cheat and fly out of the map, then test it while sliding down in the middle area you can't normally get to)
-//If user is holding space (charging dash) as they die, they will keep charging after they respawn. There is no blocker shutting off the space key, or needed to release it to re-enable it.
+//If user is holding space (charging dash) as they die, they will keep charging after they respawn. There is currently no blocker shutting off the space key, or needed to release it to re-enable it.
 //Mobs sometimes glitch off the map??? Happens super rarely. I think it started when I implemented roaming ranges? Seen it twice with basic mob, and once with ranger. Another theory is that it happens when you reset the mobs a lot. or repeatedly die. Cause it only happens after you respawned and you first walk into a room.
-//If dash puts you far enough to touch 2 walls in 1 frame, it will put you at the one that's last in load order. (If I fix it will have the same issue as Ground / Fix #2)
-//If you touch 2 platforms in the same frame, one on either side of a wall, and the one on the other side of the wall is higher, you will pass through the lower one.
 
 	//Add:
 //Better mob ai (wizard & ranger & charger still just use the outdated basic_mob ai)
 //For Ranger: change aggro so once he spots him, he can be high up or low down on platforms, and will still shoot (within reason)
 //**Ranger charge-up animation
 //Wizard charge-up animation?
-//Fall speed is reduced when hugging wall?
 //?Implement the level switcher //nvm, don't need this anymore
 //**Add more enemy types
 //**Plan out level layouts
@@ -170,6 +164,7 @@ void Game::Go()
 //Make WallJump code less convoluted and in many different functions
 
 	//Remember:
+//GroundPre, WallPre, Wall, Ground. This is the only order that works.
 //Don't do single-pixel thick walls if they have an open edge. Otherwise you can jump into them from above/below and perform a walljump. (nvm doesn't work anymore?)
 //You will be 1 frame late in determining when you stop colliding with a mob
 
@@ -674,12 +669,14 @@ void Game::Screen00()
 }
 void Game::Screen0()
 {
-	WallPre(0, 0, 500); //wall left
+	
 	GroundPre(0, 500, 220); //ground left
-	WallPre(220, 500 - 70, 70); //left platform wall
-	WallPre(420, 500 - 70, 70); //right platform wall
 	GroundPre(220, 500 - 70, 200); //platform top
 	GroundPre(420, 500, 799 - 420); //right ground
+	WallPre(0, 0, 500); //wall left
+	WallPre(220, 500 - 70, 70); //left platform wall
+	WallPre(420, 500 - 70, 70); //right platform wall
+	
 
 	Wall(0, 0, 500); //wall left
 	Wall(220, 500 - 70, 70); //left platform wall
@@ -693,15 +690,14 @@ void Game::Screen0()
 void Game::Screen1()
 {
 	GroundPre(0, 500, 610); //floor
-	WallPre(610, 500 - 220, 220); //floor wall right
 	GroundPre(130, 370, 380); //2nd platform
-	WallPre(130, 200, 370 - 200); //2nd platform wall left
 	GroundPre(275, 280, 398); //top platform
-	//GroundPre(260, 280, 383 + 30); //top platform
-	WallPre(290 + 383, 220, 60); //first step
 	GroundPre(290 + 383, 220, 63); //first step
-	WallPre(736, 220 - 60, 60); //2nd step
 	GroundPre(736, 160, 63); //2nd step
+	WallPre(610, 500 - 220, 220); //floor wall right
+	WallPre(130, 200, 370 - 200); //2nd platform wall left
+	WallPre(290 + 383, 220, 60); //first step
+	WallPre(736, 220 - 60, 60); //2nd step
 
 	Wall(610, 500 - 220, 220); //floor wall right
 	Wall(130, 200, 370 - 200); //2nd platform wall left
@@ -724,15 +720,15 @@ void Game::Screen1()
 void Game::Screen2()
 {
 	GroundPre(0, 160, 205); //top
-	WallPre(0, 160, 599 - 160); //left border
 	GroundPre(205, 260, 115); //platform top right
-	WallPre(285, 60, 200); //platform top right
 	GroundPre(205, 60, 80); //platform top right ceiling
 	GroundPre(110, 360, 94); //platform middle left
-	WallPre(110, 160, 200); //platform middle left
 	GroundPre(230, 460, 90); //platform middle right
-	WallPre(320, 260, 200); //platform middle right
 	GroundPre(100, 520, 153); //platform bottom
+	WallPre(0, 160, 599 - 160); //left border
+	WallPre(285, 60, 200); //platform top right
+	WallPre(110, 160, 200); //platform middle left
+	WallPre(320, 260, 200); //platform middle right
 	WallPre(253, 460, 60); //platform bottom
 	WallPre(100, 520, 599 - 520); //tube bottom right
 
@@ -815,10 +811,6 @@ void Game::Screen3()
 }
 void Game::Screen4()
 {
-	WallPre(120, 130, 50); //top platform, left
-	WallPre(350, 260, 100); //middle tube
-	WallPre(700, 30, 230); //right
-	WallPre(0, 130, 130); //left
 	PlatformPre(585, 180, 85);
 	GroundPre(0, 30, 700); //ceiling
 	GroundPre(0, 130, 120); //top tube, floor
@@ -827,6 +819,10 @@ void Game::Screen4()
 	GroundPre(350 + 70, 260, 700 - 350 - 70); //lower platform
 	GroundPre(0, 260, 350); //middle tube, ceiling
 	GroundPre(0, 360, 799); //floor
+	WallPre(120, 130, 50); //top platform, left
+	WallPre(350, 260, 100); //middle tube
+	WallPre(700, 30, 230); //right
+	WallPre(0, 130, 130); //left
 
 	Wall(120, 130, 50); //top platform, left
 	Wall(350, 260, 100); //middle tube
@@ -857,16 +853,6 @@ void Game::Screen4()
 }
 void Game::Screen5()
 {
-	WallPre(70, 337, 597 - 337); //left side tube
-	WallPre(124, 337, 543 - 337); //right side tube
-	WallPre(282, 244, 40); //hovering wall
-	//WallPre(670, 385, 566 - 385); //bottom right ledge //removed cause it's ugly
-	WallPre(670, 385, 14); //fancy wall ledge thing
-	WallPre(799, 0, 385); //right border
-	WallPre(799 - 49, 385, 597 - 385); //corner ledge tube, right side
-	WallPre(719, 385, 566 - 385); //corner ledge tube, left side
-	WallPre(398, 567, 597 - 568); //ground, aka left of bottom exit tube
-	WallPre(429, 597, 2); //bottom exit tube right side pixels
 	GroundPre(0, 360, 70); //left of tube
 	GroundPre(124, 360, 61); //right of tube
 	GroundPre(70, 337, 0); //pixel at top left of tube
@@ -887,6 +873,16 @@ void Game::Screen5()
 	GroundPre(560, 178, 7); //small top platform 4
 	GroundPre(670, 385, 49); //corner ledge (left)
 	GroundPre(799 - 49, 385, 49); //corner ledge (right)
+	WallPre(70, 337, 597 - 337); //left side tube
+	WallPre(124, 337, 543 - 337); //right side tube
+	WallPre(282, 244, 40); //hovering wall
+	//WallPre(670, 385, 566 - 385); //bottom right ledge //removed cause it's ugly
+	WallPre(670, 385, 14); //fancy wall ledge thing
+	WallPre(799, 0, 385); //right border
+	WallPre(799 - 49, 385, 597 - 385); //corner ledge tube, right side
+	WallPre(719, 385, 566 - 385); //corner ledge tube, left side
+	WallPre(398, 567, 597 - 568); //ground, aka left of bottom exit tube
+	WallPre(429, 597, 2); //bottom exit tube right side pixels
 
 	Wall(70, 337, 597-337); //left side tube
 	Wall(124, 337, 543 - 337); //right side tube
@@ -930,22 +926,6 @@ void Game::Screen5()
 }
 void Game::Screen6()
 {
-	WallPre(429, 0, 30); //top wall right
-	WallPre(250, 31, 35); //first bend right side
-	WallPre(219, 0, 35); //first bend left side
-	WallPre(54, 35, 120); //2nd bend left side
-	WallPre(85, 66, 58); //2nd bend right side
-	WallPre(285, 94, 30); //3rd bend left side
-	WallPre(262 + 54, 125, 30); //3rd bend right side
-	WallPre(285 + 192, 125 - 31, 13); //4th bend right side
-	WallPre(285 + 161, 125, 13); //4th bend left side
-	WallPre(601, 138, 85); //5th bend left side
-	WallPre(632, 107, 85 + 62); //5th bend right side
-	WallPre(486, 223, 0); //pixel at tip of 6th tube ceiling
-	WallPre(486, 254, 0); //pixel at tip of 6th tube floor
-	WallPre(0, 0, 600); //left wall
-	WallPre(476, 264, 235); //middle wall
-	WallPre(766, 399, 200); //right wall
 	GroundPre(250, 31, 179); //top floor
 	GroundPre(219, 0, 179); //Ceiling
 	GroundPre(85, 66, 250 - 85); //2nd tube floor (from top)
@@ -965,6 +945,22 @@ void Game::Screen6()
 	GroundPre(590, 399, 209); //top platform, right
 	GroundPre(0, 599, 766); //ground
 	PlatformPre(200, 534, 70);
+	WallPre(429, 0, 30); //top wall right
+	WallPre(250, 31, 35); //first bend right side
+	WallPre(219, 0, 35); //first bend left side
+	WallPre(54, 35, 120); //2nd bend left side
+	WallPre(85, 66, 58); //2nd bend right side
+	WallPre(285, 94, 30); //3rd bend left side
+	WallPre(262 + 54, 125, 30); //3rd bend right side
+	WallPre(285 + 192, 125 - 31, 13); //4th bend right side
+	WallPre(285 + 161, 125, 13); //4th bend left side
+	WallPre(601, 138, 85); //5th bend left side
+	WallPre(632, 107, 85 + 62); //5th bend right side
+	WallPre(486, 223, 0); //pixel at tip of 6th tube ceiling
+	WallPre(486, 254, 0); //pixel at tip of 6th tube floor
+	WallPre(0, 0, 600); //left wall
+	WallPre(476, 264, 235); //middle wall
+	WallPre(766, 399, 200); //right wall
 
 	Wall(429, 0, 30); //top wall right
 	Wall(250, 31, 35); //first bend right side
@@ -1020,9 +1016,9 @@ void Game::Screen8()
 	WallPre(680, 399, 200);
 	WallPre(790, 0, 599);
 
-	Ground(0, 399, 680);
 	Wall(680, 399, 200);
 	Wall(790, 0, 599);
+	Ground(0, 399, 680);
 
 	if (checkpoint < 4)
 	{
@@ -1039,14 +1035,6 @@ void Game::Screen9()
 }
 void Game::Screen10()
 {
-	WallPre(680, 0, 8); //Ceiling barrier
-	WallPre(110, 400, 560 - 400); //Left barrier bottom
-	WallPre(20, 8, 400 - 8); //Left barrier top
-	WallPre(300, 205, 235 - 205); //Left platform
-	WallPre(580, 380, 440 - 380); //Bottom square platform left
-	WallPre(650, 380, 440 - 380); //Bottom square platform right
-	WallPre(790, 0, 500); //Right wall
-	WallPre(600, 60, 70); //Top platform connector
 	GroundPre(110, 560, 799 - 110); //Ground
 	GroundPre(600, 60, 790 - 600); //Top platform
 	GroundPre(20, 8, 680 - 20); //Ceiling barrier
@@ -1056,14 +1044,20 @@ void Game::Screen10()
 	GroundPre(20, 205, 300 - 20); //Left platform top
 	GroundPre(195, 440, 580 - 195); //Bottom platform bottom
 	GroundPre(580, 380, 70); //Bottom square platform top
-	PlatformPre(270, 362, 110); //Lower platform
-	PlatformPre(500, 310, 110); //Higher platform
 	GroundPre(650, 440, 790 - 650); //Right platform
 	GroundPre(790, 500, 799 - 790); //Right exit top barrier
-//	Wall(650, 500, 560 - 500); //Bottom tiny thing
-//	Ground(580, 500, 650 - 580); //Bottom tiny thing
 	GroundPre(480, 500, 70); //Bottom tiny divide right
 	GroundPre(280, 500, 70); //Bottom tiny divide left
+	PlatformPre(270, 362, 110); //Lower platform
+	PlatformPre(500, 310, 110); //Higher platform
+	WallPre(680, 0, 8); //Ceiling barrier
+	WallPre(110, 400, 560 - 400); //Left barrier bottom
+	WallPre(20, 8, 400 - 8); //Left barrier top
+	WallPre(300, 205, 235 - 205); //Left platform
+	WallPre(580, 380, 440 - 380); //Bottom square platform left
+	WallPre(650, 380, 440 - 380); //Bottom square platform right
+	WallPre(790, 0, 500); //Right wall
+	WallPre(600, 60, 70); //Top platform connector
 
 	Wall(680, 0, 8); //Ceiling barrier
 	Wall(110, 400, 560 - 400); //Left barrier bottom
@@ -1117,14 +1111,6 @@ void Game::Screen10()
 }
 void Game::Screen11()
 {
-	WallPre(370, 280, 30); //Ceiling left
-	WallPre(500, 280, 30); //Ceiling right
-	WallPre(85, 280, 220); //Left wall top
-	WallPre(85, 560, 25); //Left wall bottom
-	WallPre(785, 280, 585 - 280); //Right wall
-	WallPre(748, 555, 585 - 555); //Bed headboard right
-	WallPre(745, 555, 585 - 555); //Bed headboard left
-	WallPre(695, 575, 585 - 575); //Bed end
 	GroundPre(85, 280, 370 - 85); //Ceiling left
 	GroundPre(370, 310, 130); //Ceiling middle
 	GroundPre(500, 280, 285); //Ceiling right
@@ -1138,6 +1124,14 @@ void Game::Screen11()
 	PlatformPre(480, 370, 70); //Platform 3
 	PlatformPre(360, 440, 70); //Platform 4
 	PlatformPre(300, 400, 70); //Platform 5
+	WallPre(370, 280, 30); //Ceiling left
+	WallPre(500, 280, 30); //Ceiling right
+	WallPre(85, 280, 220); //Left wall top
+	WallPre(85, 560, 25); //Left wall bottom
+	WallPre(785, 280, 585 - 280); //Right wall
+	WallPre(748, 555, 585 - 555); //Bed headboard right
+	WallPre(745, 555, 585 - 555); //Bed headboard left
+	WallPre(695, 575, 585 - 575); //Bed end
 
 	Wall(370, 280, 30); //Ceiling left
 	Wall(500, 280, 30); //Ceiling right
