@@ -1,5 +1,5 @@
 Welcome to the trial version of Ginger Ninja.
-Please read this document in it's entirety, and enjoy the game!
+Please read this document in its entirety, and enjoy the game!
 
 CONTROLS:
 - A: Move left
