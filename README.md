@@ -13,6 +13,7 @@ CONTROLS:
 TIPS:
 - Push "W" while against a wall to perform a wall jump.
 - The longer you hold "SPACE" the further you will dash.
+- When wall jumping up a column, you do not need to move left and right. Just spam W for easy and quick elevation.
 
 CHEATS (do not use these):
 - Press "CTRL + C" to enter cheat mode. Press CTRL + C" again to exit.
